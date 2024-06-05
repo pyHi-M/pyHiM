@@ -15,7 +15,7 @@ We expect the BED file to have the following columns:
 - chrName
 - startSeq
 - endSeq
-- barcodeName
+- Barcode_ID
 
 For this first version, we don't consider, from the pyHiM trace table:
 - the "mask_id" column: it's can be linked to the "Cell_ID" column but sometimes it's not the case, two "mask_id" can be linked to the same Cell_ID.
@@ -83,7 +83,7 @@ def load_barcode_bed_file(bed_file):
         "chrName",
         "startSeq",
         "endSeq",
-        "barcodeName",
+        "Barcode_ID",
     ]
     # Load the BED file
     bed_data = pd.read_csv(bed_file, sep="\t", names=column_names, comment="#")
@@ -121,7 +121,7 @@ def get_output_file(ecsv_file, output_file):
 
 def find_chrom_info(bed_data, barcode_id):
     # Find the row with the given barcode ID
-    barcode_row = bed_data[bed_data["barcodeName"] == barcode_id]
+    barcode_row = bed_data[bed_data["Barcode_ID"] == barcode_id]
 
     # Check if the barcode ID was found
     if len(barcode_row) == 0:
@@ -139,7 +139,7 @@ def assign_chrom_info(ecsv_data, bed_data):
     # Loop over the rows in the ECSV data
     for i, row in enumerate(ecsv_data):
         # Extract the barcode ID
-        barcode_id = row["Barcode_ID"]
+        barcode_id = row["Barcode #"]
 
         # Find the chromosome information
         chrom, start, end = find_chrom_info(bed_data, barcode_id)
@@ -227,7 +227,7 @@ def get_header_comments(genome_assembly, experimenter_name, experimenter_contact
     header += f"#experimenter_name: {experimenter_name}\n"
     header += f"#experimenter_contact: {experimenter_contact}\n"
     header += "#additional_tables:\n"
-    header += "##columns=(Spot_ID, Trace_ID, X, Y, Z, Chrom, Chrom_Start, Chrom_End, Cell_ID, Extra_Cell_ROI_ID)\n"
+    header += "##columns=(Spot_ID, Trace_ID, X, Y, Z, Chrom, Chrom_Start, Chrom_End, Extra_Cell_ROI_ID)\n"
     return header
 
 
