@@ -1,15 +1,79 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+This script converts a pyHiM trace table in ECSV format to a CSV file fit for the FOF-CT format.
+(https://fish-omics-format.readthedocs.io/en/latest/index.html)
+
+We use a JSON file to store the metadata of the experiment, such as:
+- the genome assembly
+- the experimenter's name
+- contact information
+
+To link the traces to the chromosomes, we use a BED file that contains the barcode information.
+We expect the BED file to have the following columns:
+- chrName
+- startSeq
+- endSeq
+- barcodeName
+
+For this first version, we don't consider, from the pyHiM trace table:
+- the "mask_id" column: it's can be linked to the "Cell_ID" column but sometimes it's not the case, two "mask_id" can be linked to the same Cell_ID.
+- the "label" column: usually it's linked to RNA species but it's like a global mask for many cells, so it's not RNA spots.
+
+The output CSV file will have the following columns:
+- Spot_ID
+- Trace_ID
+- X
+- Y
+- Z
+- Chrom
+- Chrom_Start
+- Chrom_End
+- Extra_Cell_ROI_ID ("ROI #" in the pyHiM trace table)
+
+We need as run arguments:
+- the path to the ECSV file
+- the path to the BED file
+- the path to the JSON file (optional)
+- the path to the output CSV file (optional)
+
+Example:
+python export_trace_table.py --ecsv_file /path/to/Trace_3D_barcode_KDtree_ROI-5.ecsv --bed_file /path/to/barcode.bed --json_file /path/to/parameters.json --output_file /path/to/output.csv
+
+"""
+
 from astropy.io import ascii
 import csv
 import pandas as pd
+import json
+import sys
+import os
+from argparse import ArgumentParser
+
+
+def parse_args():
+    parser = ArgumentParser(
+        description="Convert a pyHiM trace table to a FOF-CT CSV file"
+    )
+    parser.add_argument("--ecsv_file", help="Path to the ECSV file")
+    parser.add_argument("--bed_file", help="Path to the BED file")
+    parser.add_argument(
+        "--json_file",
+        default=os.getcwd() + os.sep + "parameters.json",
+        help="Path to the JSON file with the metadata. Default: parameters.json",
+    )
+    # Optional argument
+    parser.add_argument(
+        "--output_file", default=None, help="Path to the output CSV file"
+    )
+    return parser.parse_args()
 
 
 def load_trace_ecsv_file(ecsv_file):
     # Load the ECSV file
     ecsv_data = ascii.read(ecsv_file, format="ecsv")
-
+    print(f"Trace table loaded from '{ecsv_file}'")
     return ecsv_data
 
 
@@ -20,16 +84,39 @@ def load_barcode_bed_file(bed_file):
         "startSeq",
         "endSeq",
         "barcodeName",
-        "numberOligos",
-        "genomicSize",
     ]
-
     # Load the BED file
     bed_data = pd.read_csv(bed_file, sep="\t", names=column_names, comment="#")
-
-    bed_data = bed_data[["chrName", "startSeq", "endSeq", "barcodeName"]]
-
+    print(f"BED file loaded from '{bed_file}'")
     return bed_data
+
+
+def load_json_file(json_file):
+    with open(json_file, "r") as f:
+        metadata = json.load(f)
+    print(f"Metadata loaded from '{json_file}'")
+    return metadata
+
+
+def check_metadata(metadata):
+    # Check if the metadata contains the required keys
+    required_keys = ["genome_assembly", "experimenter_name", "experimenter_contact"]
+    for key in required_keys:
+        if key not in metadata:
+            raise ValueError(f"Metadata JSON file is missing the key '{key}'")
+
+
+def get_output_file(ecsv_file, output_file):
+    # Check if the output file was provided
+    if output_file is not None:
+        if os.path.exists(output_file):
+            return output_file
+        else:
+            print(
+                f"[WARNING] Output file '{output_file}' does not exist, using default name."
+            )
+    basename = os.path.basename(ecsv_file).split(".")[0]
+    return os.getcwd() + os.sep + basename + "_FOFCT" + ".csv"
 
 
 def find_chrom_info(bed_data, barcode_id):
@@ -65,6 +152,62 @@ def assign_chrom_info(ecsv_data, bed_data):
     return ecsv_data
 
 
+def remove_unused_columns(ecsv_data):
+    # Remove unused columns
+    ecsv_data.remove_columns(["Barcode #", "Mask_id", "label"])
+    return ecsv_data
+
+
+def rename_pyhim_columns(ecsv_data):
+    # Rename columns
+    ecsv_data.rename_column("x", "X")
+    ecsv_data.rename_column("y", "Y")
+    ecsv_data.rename_column("z", "Z")
+    ecsv_data.rename_column("ROI #", "Extra_Cell_ROI_ID")
+    return ecsv_data
+
+
+def write_fof_ct_csv(csv_file, header, ecsv_data):
+    # Open the CSV file for writing
+    with open(csv_file, "w", newline="") as f:
+        f.write(header)
+
+        writer = csv.writer(f)
+        # Write the data
+        for row in ecsv_data:
+            writer.writerow(row)
+    print(f"CSV file written to '{csv_file}'")
+
+
+def get_initials(first_name):
+    initials = ""
+    for name in first_name.split("-"):
+        if initials == "":
+            initials += name[0]
+        else:
+            initials += "-" + name[0]
+    return initials
+
+
+def get_authors_from_copyright():
+    copyright_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), "..", "..", "COPYRIGHT.txt"
+    )
+    with open(copyright_path, "r") as f:
+        authors = f.read().splitlines()
+        authors_formatting = ""
+        for line in authors:
+            elt = line.split(",")
+            if len(elt) == 2:
+                author = elt[0].split(" ")
+                first_name = author[0]
+                last_name = author[1]
+                initials = get_initials(first_name)
+                authors_formatting = f"{last_name}, {initials};"
+
+    return authors_formatting
+
+
 def get_header_comments(genome_assembly, experimenter_name, experimenter_contact):
     header = ""
     header += "##FOF-CT_version=v0.1\n"
@@ -73,7 +216,8 @@ def get_header_comments(genome_assembly, experimenter_name, experimenter_contact
     header += "##XYZ_unit=micron\n"
     header += "#Software_Title: pyHiM\n"
     header += "#Software_Type: SpotLoc+Tracing\n"  # TODO: Check this
-    header += "#Software_Authors: Nollmann, M; Fiche, J-B; Goetz, M; Devos, X\n"
+    authors_formatting = get_authors_from_copyright()
+    header += f"#Software_Authors: {authors_formatting}\n"
     header += "#Software_Description: pyHiM implements the analysis of multiplexed DNA-FISH data.\n"
     header += "#Software_Repository: https://github.com/marcnol/pyHiM\n"
     header += (
@@ -101,28 +245,31 @@ def convert_ecsv_to_csv(
     # Assign chromosome information
     ecsv_data = assign_chrom_info(ecsv_data, bed_data)
     # Remove unused columns
-    ecsv_data.remove_columns(["Barcode #", "label"])
+    ecsv_data = remove_unused_columns(ecsv_data)
     # Rename columns
-    ecsv_data.rename_column("x", "X")
-    ecsv_data.rename_column("y", "Y")
-    ecsv_data.rename_column("z", "Z")
-    ecsv_data.rename_column("ROI #", "Extra_Cell_ROI_ID")
-    ecsv_data.rename_column("Mask_id", "Cell_ID")
+    ecsv_data = rename_pyhim_columns(ecsv_data)
     # Generate header comments
     header = get_header_comments(
         genome_assembly, experimenter_name, experimenter_contact
     )
-
-    # Open the CSV file for writing
-    with open(csv_file, "w", newline="") as f:
-        f.write(header)
-
-        writer = csv.writer(f)
-        # Write the data
-        for row in ecsv_data:
-            writer.writerow(row)
+    # Write the CSV file
+    write_fof_ct_csv(csv_file, header, ecsv_data)
 
 
-# # Use the function
-# path = "/home/xdevos/Repositories/marcnol/pyHiM/pyhim-small-dataset/resources/traces_dataset/OUT/build_traces/data/"
-# convert_ecsv_to_csv(path + "Trace_3D_barcode_KDtree_ROI-5.ecsv", path + "output.csv")
+if __name__ == "__main__":
+    args = parse_args()
+
+    # Load the metadata
+    metadata = load_json_file(args.json_file)
+    check_metadata(metadata)
+
+    output = get_output_file(args.ecsv_file, args.output_file)
+
+    convert_ecsv_to_csv(
+        args.ecsv_file,
+        output,
+        args.bed_file,
+        metadata["genome_assembly"],
+        metadata["experimenter_name"],
+        metadata["experimenter_contact"],
+    )
