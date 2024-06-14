@@ -5,14 +5,9 @@ Created on Mon Mar 15 15:41:58 2021
 
 @author: marcnol
 
-Purpose: Corrects drift in 3D
-
-Often there is drift in the z-position from cycle to cycle.
-
-The drift correction routines take care of the corrections in XY but not in Z.
+Purpose: Localizes spots in 3D
 
 steps:
-    - iterate over rois
     - load 3D file for cycle <i>
     - substract background
     - load global alignment for this cycle
