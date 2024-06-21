@@ -41,11 +41,12 @@ def parseArguments():
         "--gpu", help="If used it will use gpu mode", action="store_true"
     )
     parser.add_argument(
-        "--cli",
+        "--api",
         help="It will call the CLI command instead of the API (which sometimes crashes). Default = False",
         action="store_true",
+        default = False
     )
-    parser.add_argument("--cellprob", help="cellprob threshold. Default = -8.")
+    parser.add_argument("--cellprob", type = float, default= -8, help="cellprob threshold. Default = -8.")
     parser.add_argument("--flow", help="flow threshold. Default = 10.")
     parser.add_argument("--stitch", help="stitch threshold. Default = 0.1.")
     parser.add_argument("--diam", help="diameter. Default = 50.")
@@ -70,15 +71,12 @@ def parseArguments():
     else:
         p["gpu"] = [False, None]
 
-    if args.cli:
-        p["cli"] = True
-    else:
+    if args.api:
         p["cli"] = False
-
-    if args.cellprob:
-        p["cellprob"] = float(args.cellprob)
     else:
-        p["cellprob"] = -8
+        p["cli"] = True
+        
+    p["cellprob"] = float(args.cellprob)
 
     if args.flow:
         p["flow"] = float(args.flow)
@@ -170,18 +168,18 @@ def run_cellpose(
         + f"--chan 0 --diameter {diam} "
         + f"--stitch_threshold {stitch} "
         + f"--flow_threshold {flow} "
-        + f"--cellprob_threshold {cellprob}"
-        + f"--pretrained_model {pretrained_model}"
+        + f"--cellprob_threshold {cellprob} "
+        + f"--pretrained_model {pretrained_model} "
     )
 
     if gpu[0]:
         command = command + " --use_gpu"
 
-    print(f"$ will run: {command}")
+    print(f"> will run: {command}")
     subprocess.run(command, shell=True)
 
     mask_name = image_path.split(".")[0] + "_cp_masks.tif"  # "_seg.npy"
-    print(f"$ Reads TIF mask image: {mask_name}")
+    print(f"> Reads TIF mask image: {mask_name}")
 
     if os.path.exists(mask_name):
         img = imread(mask_name)
@@ -223,6 +221,8 @@ def process_images(
             save_folder = os.path.dirname(file)
             file_registered = shift_3d_mask(file)
 
+            print(f"> will now run cellpose on {file_registered}")
+            
             if cli:
                 mask = run_cellpose(
                     file_registered,
@@ -244,10 +244,11 @@ def process_images(
                     gpu=gpu,
                     pretrained_model=pretrained_model,
                 )
-            # Delete tempo registered file
+                
+            # Delete temp registered file
             os.unlink(file_registered)
 
-            # Save msk in 3D
+            # Save mask in 3D
             new_mask_name = (
                 save_folder
                 + folder_mask_3d
@@ -375,9 +376,11 @@ def get_dict_shifts():
     return load_json(dict_shifts_path)
 
 def shift_3d_mask(mask_3d_path):
+    
     roi_name = find_roi_name_in_path(mask_3d_path)
     label = find_label_in_path(mask_3d_path)
     dict_shifts = get_dict_shifts()
+    
     # uses existing shift calculated by align_images
     try:
         shift = dict_shifts[f"ROI:{roi_name}"][label]
@@ -389,12 +392,19 @@ def shift_3d_mask(mask_3d_path):
         ) from e
 
     mask_3d = imread(mask_3d_path).squeeze()
-
+    print(f"> image read: {mask_3d_path}")
+    print(f"> Now registering image: {mask_3d_path}")
+    
     # applies XY shift to 3D stack
-    print(f"$ Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
+    print(f"> Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
     mask_3d_registered = _shift_xy_mask_3d(mask_3d, shift)
+    
+    # writes registered image to file
     mask_3d_registered_path = mask_3d_path.split(".")[0] + "_3d_registered.tif"
     imwrite(mask_3d_registered_path, mask_3d_registered)
+
+    print(f"> wrote registered image to: {mask_3d_registered_path}")
+
     return mask_3d_registered_path
 
 
