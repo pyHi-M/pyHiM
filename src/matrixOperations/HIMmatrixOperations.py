@@ -1762,7 +1762,7 @@ def plot_matrix(
         plt.xlabel("barcode #", fontsize=float(font_size) * 1.2)
         plt.ylabel("barcode #", fontsize=float(font_size) * 1.2)
         plt.title(
-            f"{figtitle} | {str(mean_sc_matrix.shape[0])} barcodes | n={str(n_cells)} | FOVs={str(number_rois)}",
+            f"{figtitle} | {str(mean_sc_matrix.shape[0])} barcodes | n={str(n_cells)}",
             fontsize=float(font_size) * 1.3,
         )
 

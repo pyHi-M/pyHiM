@@ -159,6 +159,11 @@ def parse_arguments():
     else:
         run_parameters["dist_calc_mode"] = "KDE"
 
+    if run_parameters["dist_calc_mode"]=="proximity":
+        run_parameters["cmtitle"] = 'proximity frequency' 
+    else:
+        run_parameters["cmtitle"] = 'distance, um' 
+    
     if args.matrix_norm_mode:
         run_parameters["matrix_norm_mode"] = args.matrix_norm_mode
     else:
@@ -216,9 +221,10 @@ def main():
         c_min=run_parameters["cMin"],
         n_cells=n_cells,
         c_m=run_parameters["cmap"],
-        cmtitle="distance, um",
+        cmtitle=run_parameters["cmtitle"],
         filename_ending=fileNameEnding + run_parameters["plottingFileExtension"],
         font_size=run_parameters["fontsize"],
+        number_rois=1,
     )
 
     print("Output figure: {}".format(outputFileName))
