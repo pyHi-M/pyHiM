@@ -10,12 +10,30 @@ We use a JSON file to store the metadata of the experiment, such as:
 - the experimenter's name
 - contact information
 
+required_keys = ["genome_assembly", "experimenter_name", "experimenter_contact"]
+
+Example json file:
+{
+  "genome_assembly": "GRCh38",
+  "experimenter_name": "Dr. Pirulo",
+  "experimenter_contact": "pirulo@gmail.com"
+}
+
 To link the traces to the chromosomes, we use a BED file that contains the barcode information.
 We expect the BED file to have the following columns:
 - chrName
 - startSeq
 - endSeq
 - Barcode_ID
+
+The bed file should have no header.
+
+Example BED file:
+chr2L	2343645	2356099	5
+chr2L	2356147	2369783	9
+chr2L	2369828	2381912	13
+chr2L	2381947	2393854	17
+chr2L	2393892	2405589	21
 
 For this first version, we don't consider, from the pyHiM trace table:
 - the "mask_id" column: it's can be linked to the "Cell_ID" column but sometimes it's not the case, two "mask_id" can be linked to the same Cell_ID.
@@ -109,11 +127,11 @@ def check_metadata(metadata):
 def get_output_file(ecsv_file, output_file):
     # Check if the output file was provided
     if output_file is not None:
-        if os.path.exists(output_file):
+        if ~os.path.exists(output_file):
             return output_file
         else:
             print(
-                f"[WARNING] Output file '{output_file}' does not exist, using default name."
+                f"[WARNING] Output file '{output_file}' already exists, using default name."
             )
     basename = os.path.basename(ecsv_file).split(".")[0]
     return os.getcwd() + os.sep + basename + "_FOFCT" + ".csv"
