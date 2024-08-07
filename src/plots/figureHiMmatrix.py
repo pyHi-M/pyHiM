@@ -224,7 +224,6 @@ def main():
         cmtitle=run_parameters["cmtitle"],
         filename_ending=fileNameEnding + run_parameters["plottingFileExtension"],
         font_size=run_parameters["fontsize"],
-        number_rois=1,
     )
 
     print("Output figure: {}".format(outputFileName))
