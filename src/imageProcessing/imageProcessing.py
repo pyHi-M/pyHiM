@@ -14,7 +14,6 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 from photutils import Background2D, MedianBackground
 from skimage import exposure, io
 from tqdm import trange
-from concurrent.futures import ProcessPoolExecutor
 import time
 
 from core.dask_cluster import try_get_client
@@ -382,8 +381,6 @@ def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip,
     number_planes = image_3d.shape[0]
     output = np.empty_like(image_3d)
 
-    start_time = time.time()
-
     with ThreadPoolExecutor(max_workers=cpu_count()) as executor:
         futures = [
             executor.submit(process_plane, z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator)
@@ -392,10 +389,6 @@ def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip,
         for future in futures:
             z, result = future.result()
             output[z, :, :] = result
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Processing completed in {elapsed_time:.2f} seconds.")
 
     return output
 
