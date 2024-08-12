@@ -14,6 +14,8 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 from photutils import Background2D, MedianBackground
 from skimage import exposure, io
 from tqdm import trange
+from concurrent.futures import ProcessPoolExecutor
+import time
 
 from core.dask_cluster import try_get_client
 from core.pyhim_logging import print_log
@@ -329,6 +331,31 @@ def _remove_inhomogeneous_background_2d(im, filter_size=(3, 3), background=False
 
     return (im1_bkg_substracted, bkg) if background else im1_bkg_substracted
 
+def process_plane(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
+    image_2d = image_3d[z, :, :]
+    bkg = Background2D(
+        image_2d,
+        box_size,
+        filter_size=filter_size,
+        sigma_clip=sigma_clip,
+        bkg_estimator=bkg_estimator,
+    )
+    return z, image_2d - bkg.background
+
+def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
+    number_planes = image_3d.shape[0]
+    output = np.empty_like(image_3d)
+
+    with ProcessPoolExecutor() as executor:
+        futures = [
+            executor.submit(process_plane, z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator)
+            for z in range(number_planes)
+        ]
+        for future in futures:
+            z, result = future.result()
+            output[z, :, :] = result
+    
+    return output
 
 def _remove_inhomogeneous_background_3d(
     image_3d,
@@ -358,13 +385,15 @@ def _remove_inhomogeneous_background_3d(
         processed 3D image.
 
     """
+    start_time = time.time()  # Start timing
     client = try_get_client() if parallel_execution else None
     number_planes = image_3d.shape[0]
-    output = np.zeros(image_3d.shape)
 
     sigma_clip = SigmaClip(sigma=3)
     bkg_estimator = MedianBackground()
     if client is not None:
+        output = np.zeros(image_3d.shape)
+
         print_log(
             f"> Removing inhomogeneous background from {number_planes} planes using {len(client.scheduler_info()['workers'])} workers..."
         )
@@ -393,8 +422,11 @@ def _remove_inhomogeneous_background_3d(
 
     else:
         print_log(
-            f"> Removing inhomogeneous background from {number_planes} planes using 1 worker..."
+            f"> Removing inhomogeneous background from {number_planes} planes using parallel execution..."
         )
+        
+        output = np.zeros(image_3d.shape)
+
         z_range = trange(number_planes)
         for z in z_range:
             image_2d = image_3d[z, :, :]
@@ -406,5 +438,14 @@ def _remove_inhomogeneous_background_3d(
                 bkg_estimator=bkg_estimator,
             )
             output[z, :, :] = image_2d - bkg.background
-
+        """
+        output = parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip, bkg_estimator)
+        """
+    # Calculate and print the elapsed time
+    elapsed_time = time.time() - start_time
+    print(f"$ Processing completed in {elapsed_time:.2f} seconds.")
+    
     return (output, bkg.background) if background else output
+
+
+
