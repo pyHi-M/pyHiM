@@ -381,7 +381,7 @@ def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip,
     number_planes = image_3d.shape[0]
     output = np.empty_like(image_3d)
 
-    max_workers = int(np.min([cpu_count() number_planes]))
+    max_workers = int(np.min([cpu_count(),number_planes]))
 
     print(f"Number of CPUs: {os.cpu_count()}, workers to use: {max_workers}")
         
