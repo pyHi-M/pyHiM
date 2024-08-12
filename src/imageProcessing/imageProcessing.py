@@ -424,7 +424,7 @@ def _remove_inhomogeneous_background_3d(
         print_log(
             f"> Removing inhomogeneous background from {number_planes} planes using parallel execution..."
         )
-        
+        """
         output = np.zeros(image_3d.shape)
 
         z_range = trange(number_planes)
@@ -440,7 +440,7 @@ def _remove_inhomogeneous_background_3d(
             output[z, :, :] = image_2d - bkg.background
         """
         output = parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip, bkg_estimator)
-        """
+
     # Calculate and print the elapsed time
     elapsed_time = time.time() - start_time
     print(f"$ Processing completed in {elapsed_time:.2f} seconds.")
