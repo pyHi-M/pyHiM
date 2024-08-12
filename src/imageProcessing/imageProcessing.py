@@ -380,6 +380,7 @@ def process_plane(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator)
 def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
     number_planes = image_3d.shape[0]
     output = np.empty_like(image_3d)
+    print(f"Number of CPUs: {os.cpu_count()}")
 
     with ThreadPoolExecutor(max_workers=cpu_count()) as executor:
         futures = [
