@@ -365,7 +365,7 @@ from multiprocessing import Pool, cpu_count
 
 def process_plane(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
     # Log the process ID to ensure multiprocessing is working
-    print(f"Process ID: {os.getpid()} handling plane {z}")
+    #print(f"Process ID: {os.getpid()} handling plane {z}")
     
     image_2d = image_3d[z, :, :]
     bkg = Background2D(
