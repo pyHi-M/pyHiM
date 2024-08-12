@@ -331,6 +331,7 @@ def _remove_inhomogeneous_background_2d(im, filter_size=(3, 3), background=False
 
     return (im1_bkg_substracted, bkg) if background else im1_bkg_substracted
 
+'''
 def process_plane(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
     image_2d = image_3d[z, :, :]
     bkg = Background2D(
@@ -355,6 +356,46 @@ def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip,
             z, result = future.result()
             output[z, :, :] = result
     
+    return output
+
+'''
+from multiprocessing import Pool, cpu_count
+
+def process_plane(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
+    # Log the process ID to ensure multiprocessing is working
+    print(f"Process ID: {os.getpid()} handling plane {z}")
+    
+    image_2d = image_3d[z, :, :]
+    bkg = Background2D(
+        image_2d,
+        box_size,
+        filter_size=filter_size,
+        sigma_clip=sigma_clip,
+        bkg_estimator=bkg_estimator,
+    )
+    return z, image_2d - bkg.background
+
+def parallel_background_subtraction(image_3d, box_size, filter_size, sigma_clip, bkg_estimator):
+    number_planes = image_3d.shape[0]
+    output = np.empty_like(image_3d)
+
+    # Start timing
+    start_time = time.time()
+
+    # Use all available CPUs
+    with Pool(processes=cpu_count()) as pool:
+        # Map the process_plane function to each plane in the 3D image
+        results = pool.starmap(process_plane, [(z, image_3d, box_size, filter_size, sigma_clip, bkg_estimator) for z in range(number_planes)])
+
+    # Collect the results
+    for z, result in results:
+        output[z, :, :] = result
+
+    # End timing
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Processing completed in {elapsed_time:.2f} seconds.")
+
     return output
 
 def _remove_inhomogeneous_background_3d(
