@@ -114,10 +114,15 @@ class Mask3D:
             print_log("> Applying existing XY shift...")
         except KeyError as e:
             shift = None
+            '''
             raise SystemExit(
                 f"# Could not find dictionary with alignment parameters for this ROI: ROI:{roi_name}, label: {label}"
             ) from e
-
+            '''
+            print_log(f"# Could not find dictionary with alignment parameters for this ROI: ROI:{roi_name}, label: {label}")
+            print_log('--> will skip segmenting this file and move down the list.')
+            return
+        
         # applies XY shift to 3D stack
         if label != reference_fiducial:
             print_log(f"$ Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
