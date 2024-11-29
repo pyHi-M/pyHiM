@@ -117,6 +117,20 @@ def main(command_line_arguments=None):
                 datam.acquisition_params,
                 registration_params,
             )
+        # [align masks in 3D]
+        if "shift_mask" in pipe.cmds and (label in ("DAPI", "mask")):
+            registration_params = datam.labelled_params[label].registration
+            segmentation_params = datam.labelled_params[label].segmentation
+            pipe.shift_mask(
+                current_param,
+                label,
+                datam.processed_roi,
+                datam.m_data_path,
+                segmentation_params,
+                datam.dict_shifts_path,
+                datam.acquisition_params,
+                registration_params,
+            )
 
         # [segments sources in 3D]
         if "localize_3d" in pipe.cmds and label == "barcode":
