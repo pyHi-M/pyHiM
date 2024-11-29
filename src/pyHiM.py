@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Main file of pyHiM, include the top-level mechanism."""
 
-__version__ = "0.9.1"
+__version__ = "0.9.2a0"
 
 import os
 import sys

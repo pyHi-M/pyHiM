@@ -43,7 +43,7 @@ copyright = "2022, Marcelo Nollmann, Xavier Devos"
 author = "Marcelo Nollmann, Xavier Devos"
 
 # The full version, including alpha/beta/rc tags
-release = "0.9.1"
+release = "0.9.2a0"
 
 
 # -- General configuration ---------------------------------------------------

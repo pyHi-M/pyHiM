@@ -49,7 +49,7 @@ class Mask3D:
         self.filenames_to_process_list = []
         self.inner_parallel_loop = None
 
-    def _segment_3d_volumes(self, image_3d_aligned, seg_params: SegmentationParams):
+    def _segment_3d_volumes(self, image_3d, seg_params: SegmentationParams):
         if seg_params.stardist_basename is not None and os.path.exists(
             seg_params.stardist_basename
         ):
@@ -68,7 +68,7 @@ class Mask3D:
         else:
             model_name = "DAPI_3D_stardist_17032021_deconvolved"
         binary, segmented_image_3d = _segment_3d_masks(
-            image_3d_aligned,
+            image_3d,
             axis_norm=(0, 1, 2),
             pmin=1,
             pmax=99.8,
@@ -109,39 +109,31 @@ class Mask3D:
         # # drifts 3D stack in XY
         # if self.dict_shifts_available:
         # uses existing shift calculated by align_images
-        try:
+        if label in self.dict_shifts[f"ROI:{roi_name}"]:
+            output_extension = {"2D": "_Masks", "3D": "_3Dmasks"}
             shift = self.dict_shifts[f"ROI:{roi_name}"][label]
             print_log("> Applying existing XY shift...")
-        except KeyError as e:
-            shift = None
-            '''
-            raise SystemExit(
-                f"# Could not find dictionary with alignment parameters for this ROI: ROI:{roi_name}, label: {label}"
-            ) from e
-            '''
-            print_log(f"# Could not find dictionary with alignment parameters for this ROI: ROI:{roi_name}, label: {label}")
-            print_log('--> will skip segmenting this file and move down the list.')
-            return
-        
-        # applies XY shift to 3D stack
-        if label != reference_fiducial:
-            print_log(f"$ Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
-            image_3d_aligned = apply_xy_shift_3d_images(
-                image_3d, shift, parallel_execution=self.inner_parallel_loop
-            )
+            # applies XY shift to 3D stack
+            if label != reference_fiducial:
+                print_log(f"$ Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
+                image_3d = apply_xy_shift_3d_images(
+                    image_3d, shift, parallel_execution=self.inner_parallel_loop
+                )
+            else:
+                print_log("$ Running reference fiducial cycle: no shift applied!")
         else:
-            print_log("$ Running reference fiducial cycle: no shift applied!")
-            shift = np.array([0.0, 0.0])
-            image_3d_aligned = image_3d
+            output_extension = {
+                "2D": "_Masks_unregistered",
+                "3D": "_3Dmasks_unregistered",
+            }
 
         # segments 3D volumes
-        _, segmented_image_3d = self._segment_3d_volumes(image_3d_aligned, seg_params)
+        _, segmented_image_3d = self._segment_3d_volumes(image_3d, seg_params)
 
         number_masks = np.max(segmented_image_3d)
         print_log(f"$ Number of masks detected: {number_masks}")
 
         if number_masks > 0:
-            output_extension = {"2D": "_Masks", "3D": "_3Dmasks"}
             npy_labeled_image_base_2d = (
                 data_path
                 + os.sep
@@ -188,7 +180,7 @@ class Mask3D:
             # figures = []
             # figures.append(
             #     [
-            fig = plot_image_3d(image_3d_aligned, segmented_image_3d)
+            fig = plot_image_3d(image_3d, segmented_image_3d)
             end_file = output_extension["3D"] + ".png"
             #     ]
             # )
@@ -211,7 +203,7 @@ class Mask3D:
             # fig[0].savefig(file)
             fig.savefig(output_filename)
 
-        del image_3d_aligned, image_3d, image_3d_0
+        del image_3d, image_3d_0
 
     def segment_masks_3d_in_folder(
         self,
