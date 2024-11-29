@@ -325,7 +325,6 @@ class ChromatinTraceTable:
         ax1.set_ylim(0.0, 10)
         ax1.set_xlabel("barcode id")
 
-
     def trace_remove_label(self, label=""):
         """
         This function will remove traces that do not contain the word 'label' in the 'label' column
@@ -347,12 +346,12 @@ class ChromatinTraceTable:
         rows_to_remove = []
 
         for idx, row in enumerate(trace_table_new):
-            if label in row['label']:
+            if label in row["label"]:
                 rows_to_remove.append(idx)
 
         trace_table_new.remove_rows(rows_to_remove)
 
-        removed = len(trace_table)-len(trace_table_new)
+        removed = len(trace_table) - len(trace_table_new)
         print(f"$ Removed {removed} spots that contained the label: {label}")
 
         self.data = trace_table_new
@@ -378,12 +377,12 @@ class ChromatinTraceTable:
         rows_to_remove = []
 
         for idx, row in enumerate(trace_table_new):
-            if label not in row['label']:
+            if label not in row["label"]:
                 rows_to_remove.append(idx)
 
         trace_table_new.remove_rows(rows_to_remove)
 
-        removed = len(trace_table)-len(trace_table_new)
+        removed = len(trace_table) - len(trace_table_new)
         print(f"$ Removed {removed} spots that did not contain the label: {label}")
 
         self.data = trace_table_new
@@ -565,9 +564,8 @@ class ChromatinTraceTable:
             spots_to_remove = []
             for sub_table_barcode in tqdm(trace_table_indexed.groups):
                 barcode_name = list(set(sub_table_barcode["Barcode #"]))
-                if int(remove_barcode) in barcode_name:
+                if int(remove_barcode) == int(barcode_name):
                     print_log(f"$ Found barcode: {barcode_name}")
-
                     spots_to_remove.extend(row["Spot_ID"] for row in sub_table_barcode)
             print_log(f"$ Number of spots to remove: {len(spots_to_remove)}")
 

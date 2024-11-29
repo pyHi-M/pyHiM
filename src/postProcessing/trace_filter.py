@@ -15,7 +15,7 @@ will analyze 'Trace.ecsv' and remove spots with 4>z>5 amd z>175 and less than 3 
 
 --clean_spots will remove barcode spots that are repeated within a trace
 
---remove_barcode will remove the barcode name provided. This needs to be an integer
+--remove_barcode will remove the barcode name provided. This needs to be an integer or a comma-separeted integer
 
 --> outputs
 
@@ -58,9 +58,11 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--remove_label", help="Use this argument to remove traces with the label provided", action="store_true"
+        "--remove_label",
+        help="Use this argument to remove traces with the label provided",
+        action="store_true",
     )
-    
+
     parser.add_argument("--input", help="Name of input trace file.")
     parser.add_argument("--N_barcodes", help="minimum_number_barcodes. Default = 2")
     parser.add_argument(
@@ -80,7 +82,9 @@ def parse_arguments():
     )
     parser.add_argument("--remove_barcode", help="name of barcode to remove")
 
-    parser.add_argument("--label", help="Select traces containing this label, removes all other traces.")
+    parser.add_argument(
+        "--label", help="Select traces containing this label, removes all other traces."
+    )
 
     p = {}
 
@@ -104,7 +108,7 @@ def parse_arguments():
         p["keep"] = False
     else:
         p["keep"] = True
-        
+
     if args.N_barcodes:
         p["N_barcodes"] = int(args.N_barcodes)
     else:
@@ -154,7 +158,7 @@ def parse_arguments():
         p["label"] = args.label
     else:
         p["label"] = None
-        
+
     p["trace_files"] = []
     if args.pipe:
         p["pipe"] = True
@@ -184,8 +188,8 @@ def runtime(
     remove_duplicate_spots=False,
     remove_barcode=None,
     dist_max=np.inf,
-    label='',
-    keep = True,
+    label="",
+    keep=True,
 ):
     # checks number of trace files
     if len(trace_files) < 1:
@@ -238,25 +242,25 @@ def runtime(
                 trace.filter_repeated_barcodes(trace_file)
 
             if remove_barcode is not None:
-                trace.remove_barcode(remove_barcode)
+                bc_list = remove_barcode.split(",")
+                for bc in bc_list:
+                    trace.remove_barcode(bc)
 
             if label is not None:
                 if keep:
-                    trace.trace_keep_label(label)       
-                    file_tag= label
+                    trace.trace_keep_label(label)
+                    file_tag = label
                 else:
                     trace.trace_remove_label(label)
-                    file_tag='not:' + label
-                    
+                    file_tag = "not:" + label
+
                 # saves output trace
                 outputfile = (
                     trace_file.split(".")[0] + "_" + tag + "_" + file_tag + ".ecsv"
                 )
             else:
 
-                outputfile = (
-                    trace_file.split(".")[0] + "_" + tag + ".ecsv"
-                )
+                outputfile = trace_file.split(".")[0] + "_" + tag + ".ecsv"
             trace.save(outputfile, trace.data, comments=", ".join(comments))
             print(f"$ Saved output trace file at: {outputfile}")
     else:
@@ -273,7 +277,7 @@ def runtime(
 def main():
     begin_time = datetime.now()
 
-    print("="*10+"Started execution"+"="*10)
+    print("=" * 10 + "Started execution" + "=" * 10)
 
     # [parsing arguments]
     p = parse_arguments()
@@ -291,7 +295,7 @@ def main():
     )
 
     print(f"Processed <{n_traces_processed}> trace file(s)\n")
-    print("="*9+"Finished execution"+"="*9)
+    print("=" * 9 + "Finished execution" + "=" * 9)
 
 
 if __name__ == "__main__":
