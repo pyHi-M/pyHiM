@@ -564,7 +564,7 @@ class ChromatinTraceTable:
             spots_to_remove = []
             for sub_table_barcode in tqdm(trace_table_indexed.groups):
                 barcode_name = list(set(sub_table_barcode["Barcode #"]))
-                if int(remove_barcode) == int(barcode_name):
+                if int(remove_barcode) == barcode_name:
                     print_log(f"$ Found barcode: {barcode_name}")
                     spots_to_remove.extend(row["Spot_ID"] for row in sub_table_barcode)
             print_log(f"$ Number of spots to remove: {len(spots_to_remove)}")
