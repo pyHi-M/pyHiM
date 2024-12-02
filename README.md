@@ -1,3 +1,4 @@
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 
 ![](docs/website_illustration.png)
@@ -8,11 +9,11 @@
 
 ## Documentation
 
-Find the full documentation in [ReadtheDocs](https://pyhim.readthedocs.io/en/latest/) and [tutorials](https://pyhim.readthedocs.io/en/latest/getting_started/tutorials.html) illustrating the main steps of pyHiM analysis pipeline. 
+Find the full documentation in [ReadtheDocs](https://pyhim.readthedocs.io/en/latest/) and [tutorials](https://pyhim.readthedocs.io/en/latest/getting_started/tutorials.html) illustrating the main steps of pyHiM analysis pipeline.
 
 To install, please follow the instructions [here](https://pyhim.readthedocs.io/en/latest/getting_started/quick_install.html).
 
-After you installed *pyHiM*, you may want to consult a [guide](https://pyhim.readthedocs.io/en/latest/user_guide/pyhim_presentation.html) on how to use it. 
+After you installed *pyHiM*, you may want to consult a [guide](https://pyhim.readthedocs.io/en/latest/user_guide/pyhim_presentation.html) on how to use it.
 
 If you are a developer, follow instructions [here](https://pyhim.readthedocs.io/en/latest/contributor/dev_env.html).
 
@@ -45,5 +46,4 @@ Packages used by *pyHiM* are licensed under the revised 3-clause BSD style licen
 
 Check COPYRIGHT.txt for a list of authors and the git history for their individual contributions.
 
-*pyHiM* is a software package developed by the [Nollmann Lab](http://www.nollmannlab.org) at the [Center of Structural Biology](http://www.cbs.cnrs.fr), a department of the [CNRS](http://www.cnrs.fr) and the [INSERM](http://www.inserm.fr). 
-
+*pyHiM* is a software package developed by the [Nollmann Lab](http://www.nollmannlab.org) at the [Center of Structural Biology](http://www.cbs.cnrs.fr), a department of the [CNRS](http://www.cnrs.fr) and the [INSERM](http://www.inserm.fr).

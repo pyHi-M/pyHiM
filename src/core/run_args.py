@@ -175,6 +175,7 @@ class RunArgs:
             "segmentMasks",  # DEPRECATED
             "segmentMasks3D",  # DEPRECATED
             "segmentSources3D",  # DEPRECATED
+            "shift_mask",
             "filter_localizations",
             "register_localizations",
             "build_traces",

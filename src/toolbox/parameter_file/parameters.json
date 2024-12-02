@@ -87,7 +87,7 @@
             "reducePlanes": false,
             "residual_max": 2.5,
             "sigma_max": 5,
-            "tesselation": false,
+            "tessellation": false,
             "threshold_over_std": 1.0
         },
         "zProject": {
@@ -113,7 +113,7 @@
             "segmentedObjects": {
                 "area_max": 500,
                 "background_method": "inhomogeneous",
-                "tesselation": true
+                "tessellation": true
             }
         },
         "fiducial": {},

@@ -229,7 +229,8 @@ def visualize3D(coordinates, colors=[], cmap="hsv", title=[], output="visualize3
         colors = colors.flatten()
 
     ax.plot3D(xdata, ydata, zdata, "black")
-    pos = ax.scatter3D(
+    # 'terrain_r'
+    ax.scatter3D(
         xdata,
         ydata,
         zdata,
@@ -242,7 +243,7 @@ def visualize3D(coordinates, colors=[], cmap="hsv", title=[], output="visualize3
         alpha=0.7,
         vmin=0,
         vmax=1,
-    )  #'terrain_r'
+    )
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
@@ -276,7 +277,8 @@ def visualize2D(
             barcode_id.append(i)
 
         ax.plot(xdata, ydata, "black")
-        pos = ax.scatter(
+        # 'terrain_r'
+        ax.scatter(
             xdata,
             ydata,
             s=200,
@@ -288,7 +290,7 @@ def visualize2D(
             alpha=0.7,
             vmax=1,
             vmin=0,
-        )  #'terrain_r'
+        )
         ax.set_xlabel("x")
         ax.set_ylabel("y")
 
@@ -446,9 +448,7 @@ def plotsSubplot_sc_matrices(him_data, nRows, output="subplotMatrices.png"):
 
     iplot = 0
     for i_cell in cell_id:
-        pos = ax[iplot].imshow(
-            1 / sc_matrix[:, :, i_cell], cmap=cmap, vmin=0, vmax=vmax
-        )
+        ax[iplot].imshow(1 / sc_matrix[:, :, i_cell], cmap=cmap, vmin=0, vmax=vmax)
         ax[iplot].set_xticklabels(())
         ax[iplot].set_yticklabels(())
         ax[iplot].set_axis_off()
@@ -563,7 +563,6 @@ def plotsRgvalues(
 
     # calculates KDE with optimal bandwidth
     logprob, kde = kde_fit(RgListArray, x_d, bandwidth=bandwidth)
-    kde_params = kde.get_params()
     maxlogprob = logprob.max()
     ax.fill_between(x_d, np.exp(logprob) / np.exp(maxlogprob), alpha=0.3)
 
@@ -607,20 +606,11 @@ def makesPlotHistograms(
 def main():
     print(">>> Producing HiM matrix")
     root_folder, output_folder, run_parameters = parse_arguments()
-
     him_data = AnalysisHiMMatrix(run_parameters, root_folder)
-
     him_data.load_data()
-
-    n_cells = him_data.n_cells_loaded()
-
     him_data.retrieve_sc_matrix()
-
-    n_datasets = len(him_data.data["runName"])
-
     if output_folder == "none":
         output_folder = him_data.data_folder
-
     outputFileNameRoot = (
         output_folder
         + os.sep
@@ -663,7 +653,7 @@ def main():
     # "calculates the Rg for each cell from the PWD sc matrix"
     print("\n>>>Calculating Rg distributions<<<\n")
     output = outputFileNameRoot + "_RgValues" + run_parameters["plottingFileExtension"]
-    RgList = plotsRgvalues(
+    plotsRgvalues(
         him_data,
         nRows,
         run_parameters,

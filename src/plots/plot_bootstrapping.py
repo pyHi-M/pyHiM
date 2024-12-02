@@ -7,7 +7,7 @@ Created on Tue Oct 10 15:42:39 2023
 
 This script will perform bootstrapping analysis on PWD distance matrices
 
-INPUTS: 
+INPUTS:
     - PWD single cell maps in npy
     - uniquebarcode list
 
@@ -21,7 +21,7 @@ Options:
     - cmap: name of cmap
     - scalingParameter: Normalizing scaling parameter of colormap. Max will matrix.max()/scalingParameter. Default is 1.
     - outputFolder: name of outputfolder. 'plots' is the default
-    
+
 """
 
 
@@ -36,13 +36,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from plotting_functions import bootstraps_matrix, gets_matrix, plot_2d_matrix_simple
 
-from matrixOperations.HIMmatrixOperations import (
-    calculate_contact_probability_matrix,
-    plot_matrix,
-    shuffle_matrix,
-)
-
-# %% define and loads datasets
+# define and loads datasets
 
 
 def parse_arguments():
@@ -172,7 +166,7 @@ def plot_results(
     if c_max == 0:
         c_max = np.nanmax(matrix)
 
-    f1_ax1_im = plot_2d_matrix_simple(
+    plot_2d_matrix_simple(
         f_1,
         matrix,
         uniqueBarcodes,

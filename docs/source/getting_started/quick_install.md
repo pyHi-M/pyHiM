@@ -2,7 +2,7 @@
 
 |OS|Linux|Windows|Mac|
 |:-:|:-:|:-:|:-:|
-|**compatibility**|Yes|Yes|Yes| 
+|**compatibility**|Yes|Yes|Yes|
 
 ## Install conda
 
@@ -32,6 +32,3 @@ pip install pyhim
 To check if pyHiM is well installed, run:
 `pyhim --help`
 ```
-
-
-

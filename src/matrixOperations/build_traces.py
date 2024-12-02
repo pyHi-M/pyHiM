@@ -6,7 +6,7 @@ This script will build chromatin traces using a segmentObjects_barcode table.
 
 The methods that will be implemented are:
 
-- 1 = assigment by mask (either DAPI mask or other)
+- 1 = assignment by mask (either DAPI mask or other)
 - 2 = spatial clusterization using KDtree. This method is mask-free.
 
 Method 1 iterates over rois:
@@ -116,7 +116,7 @@ class BuildTraces:
 
         Returns
         -------
-        self.barcodes_in_mask # dictionnary with the identities of barcodes contained in each mask.
+        self.barcodes_in_mask # dictionary with the identities of barcodes contained in each mask.
             Keys: 'maskID_1', 'maskID_2', and so on
 
         self.n_barcodes_in_mask # vector containing the number of barcodes for each mask
@@ -424,7 +424,7 @@ class BuildTraces:
         Main function that:
             loads and processes barcode localization files, local alignment file, and masks
             initializes <cell_roi> class and assigns barcode localizations to masks
-            then constructs the single cell PWD matrix and outputs it toghether with the contact map and the N-map.
+            then constructs the single cell PWD matrix and outputs it together with the contact map and the N-map.
 
         Parameters
         ----------
@@ -565,7 +565,7 @@ class BuildTraces:
         ----------
         coordinates : numpy array, float
             Matrix containing the xyz coordinates of barcodes.
-        distance_threshold : float, defaul 1.0
+        distance_threshold : float, default 1.0
             Distance threshold in pixels used to detect neighboring barcodes.
 
         Returns
@@ -607,7 +607,7 @@ class BuildTraces:
         print_log(f"> Creating KDTree for {self.ndims} dimensions")
         x_tree = KDTree(coordinates)
 
-        ## set distance thresold
+        # set distance threshold
         r = matrix_params.KDtree_distance_threshold_mum
         # Groups points when they're less than r away
         points = [x_tree.query_ball_point(element, r, p=2.0) for element in coordinates]
@@ -749,7 +749,7 @@ class BuildTraces:
 
     def run(self, data_path, seg_params, matrix_params, acq_params: AcquisitionParams):
         """
-        Function that assigns barcode localizations to masks and constructs single cell cummulative PWD matrix.
+        Function that assigns barcode localizations to masks and constructs single cell cumulative PWD matrix.
 
         Parameters
         ----------

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyhim"
-version = "0.9.1"
+version = "0.9.2a0"
 description = "Pipeline and functions to analyse multiplexed DNA-FISH data"
 readme = "README.md"
 authors = [{ name = "Marcelo Nollmann", email = "marcelo.nollmann@cbs.cnrs.fr" }]
@@ -84,7 +84,7 @@ mask_manual = "postProcessing.mask_manual:main"
 include-package-data = true
 
 # [tool.setuptools.packages.find]
-# where = ["ressources"]
+# where = ["resources"]
 
 [tool.setuptools.package-data]
 "toolbox.parameter_file" = ["*.png", "*.json"]

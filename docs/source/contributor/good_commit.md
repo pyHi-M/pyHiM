@@ -1,6 +1,6 @@
-# Good practices before commiting
+# Good practices before committing
 
-Before commiting, please follow the following guidelines:
+Before committing, please follow the following guidelines:
 
 ## Before
 - Check that your code runs without error.
@@ -27,9 +27,9 @@ To improve readability, commit messages should follow this template:
     - `doc` for adding documentation
     - `refactor` for improvement of readability, reusability or structure
 
-- `<scope>` is the feature or field involved by this commit (optionnal)
+- `<scope>` is the feature or field involved by this commit (optional)
 
-- `<issue_number>` refer to GitHub issues (optionnal)
+- `<issue_number>` refer to GitHub issues (optional)
 
 **Example:**
 ```text

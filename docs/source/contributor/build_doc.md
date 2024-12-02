@@ -69,7 +69,7 @@ personalise_run
 
 ## Document features
 
-When you develop a new feature, please explain what it does and how use it in the user guide. 
+When you develop a new feature, please explain what it does and how use it in the user guide.
 
 ## Comment the code
 
@@ -125,7 +125,7 @@ def kos_root():
     2. Followed by a blank line
     3. Followed by a more elaborate description
 
-- On Spyder IDE and VSCode you can generate easly docstring by typing 3*`"`+`Enter`
+- On Spyder IDE and VSCode you can generate easily docstring by typing 3*`"`+`Enter`
 
 - [Python Docstring Generator](https://marketplace.visualstudio.com/items?itemName=njpwerner.autodocstring): useful vscode extension to comment easily (settings > docstring format > google/sphinx/numpy).
 
@@ -154,7 +154,7 @@ def extract_header(file_loc, print_cols=False):
 
 ### Type hinting
 
-For python 3.5+ user, we can use type hinting. 
+For python 3.5+ user, we can use type hinting.
 It's a simple way to describe input and output, this is an example:
 
 > ```python

@@ -9,7 +9,7 @@ Purpose: Localizes spots in 3D
 
 steps:
     - load 3D file for cycle <i>
-    - substract background
+    - subtract background
     - load global alignment for this cycle
     - re-align 3D image using XY alignment
     - segment objects to get labeled masks
@@ -235,7 +235,7 @@ class Localize3D:
             z_offset = 0
             print_log(f"$ z_range used = 0-{image_3d.shape[0]}")
 
-        # preprocesses image by background substraction and level normalization
+        # preprocesses image by background subtraction and level normalization
         if p["3Dmethod"] != "stardist":
             image_3d = preprocess_3d_image(
                 image_3d,
@@ -488,9 +488,9 @@ class Localize3D:
         # Merges Tables for different cycles and appends results Table to that of previous ROI
         output_table_global = vstack([output_table_global] + output_tables)
 
-        print_log(f"$ localize_3d procesing time: {datetime.now() - now}")
+        print_log(f"$ localize_3d processing time: {datetime.now() - now}")
 
-        # saves Table with all shifts in every iteration to avoid loosing computed data
+        # saves Table with all shifts in every iteration to avoid losing computed data
         output_table_global.write(
             self.output_filename,
             format="ascii.ecsv",

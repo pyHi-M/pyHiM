@@ -15,7 +15,7 @@ will analyze 'Trace.ecsv' and remove spots with 4>z>5 amd z>175 and less than 3 
 
 --clean_spots will remove barcode spots that are repeated within a trace
 
---remove_barcode will remove the barcode name provided. This needs to be an integer or a comma-separeted integer
+--remove_barcode will remove the barcode name provided. This needs to be an integer or a comma-separated integer
 
 --> outputs
 
@@ -29,10 +29,8 @@ will analyze 'Trace.ecsv' and remove spots with 4>z>5 amd z>175 and less than 3 
 # =============================================================================q
 
 import argparse
-import os
 import select
 import sys
-from datetime import datetime
 
 import numpy as np
 
@@ -275,10 +273,7 @@ def runtime(
 
 
 def main():
-    begin_time = datetime.now()
-
     print("=" * 10 + "Started execution" + "=" * 10)
-
     # [parsing arguments]
     p = parse_arguments()
     # [loops over lists of datafolders]

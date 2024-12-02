@@ -4,20 +4,20 @@
 
 - This script takes JSON file with folders where datasets are stored.
 - It searches for Trace files with the expected methods, loads them, and
-- combines them into a single table that is outputed to the buildPWDmatrix folder.
+- combines them into a single table that is outputted to the buildPWDmatrix folder.
 
 ## Invoke
 
-`trace_combinator` can be run from the command line in two manners: 
+`trace_combinator` can be run from the command line in two manners:
 
-- Provide input parameters in a `folders2Load.json` dictionary (see example below) at execution folder or at a `rootFolder` provided as argument. The script will read ALL the `Trace` files in the paths  provided in `folders2Load.json` and will combine them into a unique  `Trace_` files. 
+- Provide input parameters in a `folders2Load.json` dictionary (see example below) at execution folder or at a `rootFolder` provided as argument. The script will read ALL the `Trace` files in the paths  provided in `folders2Load.json` and will combine them into a unique  `Trace_` files.
   The output of `trace_combinator` will be generated at the `rootFolder` in the directory `combined_traces` that will contain a new `Trace` file with the combined traces.
 
   <u>*warning*</u>: `trace_combinator` will combine **ALL** traces found in the `buildPWDmatrix` folders within `folders2load.json`. If you want to filter which *Trace* files are used, we recommend you to use the second method described below. Alternatively, you can use the `--method` command-line argument to filter which `Trace` files are used. In that case, make sure to verify the terminal output to ensure the right `Trace` files have been used.
 
 - An alternative way to use `trace_combinator` is to use pipes. In this case, a list of `Trace` files to process is piped into `trace_combinator` and the `--pipe` argument is invoked. Piping can be either done using a command or by sending a list in a file. See examples below.
 
-  
+
 
   Example 1: using `ls`
 
@@ -25,23 +25,23 @@
   # use ls to select which files you want to combine
   $ ls folder1/Trace*3D*6.ecsv
   folder1/Trace_3D_barcode_KDtree_ROI:6.ecsv  folder1/Trace_3D_barcode_mask:DAPI_ROI:6.ecsv  folder1/Trace_3D_barcode_mask:mask0_ROI:6.ecsv
-  
+
   # then pipe these files into trace_combinator
   $ ls folder1/Trace*3D*6.ecsv | trace_combinator --pipe
   ```
 
   this will process the three `Trace` files listed using `ls`.
 
-  
+
 
   Example 2: using cat
 
   ```sh
   # first make list of files to process and write it in a file
-  $ cat files_to_combine 
+  $ cat files_to_combine
   folder1/Trace_3D_barcode_KDtree_ROI:15.ecsv
   folder2/Trace_3D_barcode_KDtree_ROI:6.ecsv
-  
+
   # then pipe these files into trace_combinator
   $ cat files_to_combine | trace_combinator --pipe
   ```

@@ -2,14 +2,9 @@
 # -*- coding: utf-8 -*-
 """Main file of pyHiM, include the top-level mechanism."""
 
-__version__ = "0.9.1"
+__version__ = "0.9.2a0"
 
-import os
-import sys
 from datetime import datetime
-
-import apifish
-import dask.distributed
 
 import core.function_caller as fc
 from core.data_manager import DataManager
@@ -108,6 +103,20 @@ def main(command_line_arguments=None):
             registration_params = datam.labelled_params[label].registration
             segmentation_params = datam.labelled_params[label].segmentation
             pipe.segment_masks_3d(
+                current_param,
+                label,
+                datam.processed_roi,
+                datam.m_data_path,
+                segmentation_params,
+                datam.dict_shifts_path,
+                datam.acquisition_params,
+                registration_params,
+            )
+        # [align masks in 3D]
+        if "shift_mask" in pipe.cmds and (label in ("DAPI", "mask")):
+            registration_params = datam.labelled_params[label].registration
+            segmentation_params = datam.labelled_params[label].segmentation
+            pipe.shift_mask(
                 current_param,
                 label,
                 datam.processed_roi,

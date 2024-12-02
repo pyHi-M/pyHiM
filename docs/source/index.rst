@@ -57,12 +57,12 @@ Main features
     :body: text-center p-2
     :footer: text-center p-2
     :column: col-lg-2 col-md-4 col-sm-6 col-xs-12 p-2
-    
+
     ---
     .. image:: _static/getting_started/dim_space.gif
        :height: 100
 
-    
+
     +++
 
     .. link-button:: user_guide/modules/preprocessing/make_projections
@@ -73,14 +73,14 @@ Main features
     ---
     .. image:: _static/registration_zoom.svg
        :height: 100
-    
+
     +++
 
     .. link-button:: user_guide/modules/preprocessing/align_images
             :type: ref
             :text: Image registration
             :classes: stretched-link
-    
+
     ---
     .. image:: _static/segmentation_mask.png
        :width: 100
@@ -91,8 +91,8 @@ Main features
             :type: ref
             :text: Segment nuclei
             :classes: stretched-link
-    
-    
+
+
     ---
     .. image:: _static/localizations.svg
        :width: 100
@@ -103,7 +103,7 @@ Main features
             :type: ref
             :text: Localize spots
             :classes: stretched-link
-    
+
     ---
     .. image:: _static/trace_zoom.png
        :height: 90
@@ -114,7 +114,7 @@ Main features
             :type: ref
             :text: Chromatin traces
             :classes: stretched-link
-    
+
     ---
     .. image:: _static/matrix_example.png
        :width: 100
@@ -186,7 +186,7 @@ Documentation
             :classes: btn-block btn-info stretched-link text-white
 
 
-`pyHiM` is a software package developed by the `Nollmann Lab <http://www.nollmannlab.org>`_ at the `Center of Structural Biology <http://www.cbs.cnrs.fr>`_, a department of the `CNRS <http://www.cnrs.fr>`_ and the `INSERM <http://www.inserm.fr>`_. 
+`pyHiM` is a software package developed by the `Nollmann Lab <http://www.nollmannlab.org>`_ at the `Center of Structural Biology <http://www.cbs.cnrs.fr>`_, a department of the `CNRS <http://www.cnrs.fr>`_ and the `INSERM <http://www.inserm.fr>`_.
 
 
 .. toctree::
@@ -226,6 +226,5 @@ Documentation
    contributor/no_python_files
    contributor/issues
    contributor/work_with_apifish
-   contributor/ressources
+   contributor/resources
    contributor/license
-

@@ -13,17 +13,17 @@ Takes a trace file and either:
     - ranks traces and plots a selection
     - plots a user-selected trace in .ecsv (barcode, xyz) and PDF formats. The output files contain the trace name.
     - saves output coordinates for selected traces in pdb format so they can be loaded by other means including https://www.rcsb.org/3d-view, pymol, or nglviewer.
-    
+
 future:
     - output PDBs for all the traces in a trace file
-    
---------    
+
+--------
 installs:
     pip install nglview, pdbparser
 
---------    
+--------
 example usage:
-    
+
 ls Trace_3D_barcode_KDtree_ROI:1.ecsv | trace_plot.py --pipe --selected_trace 5b1e6f89-0362-4312-a7ed-fc55ae98a0a5
 
 >> this pipes the file 'Trace_3D_barcode_KDtree_ROI:1.ecsv' into trace_plot and then selects a trace for conversion.
@@ -39,7 +39,7 @@ keys provide barcode names in the trace file, these should be attributed to 3 ch
 
 --------
 some useful pymol commands:
-    
+
 set grid_mode,1
 color green,  (name C*)
 color red, (name P*)
@@ -55,7 +55,6 @@ import argparse
 import os
 import select
 import sys
-from datetime import datetime
 
 from core.data_manager import create_folder
 from core.parameters import loads_barcode_dict
@@ -78,7 +77,7 @@ def parse_arguments():
     parser.add_argument("--selected_trace", help="Selected trace for analysis")
     parser.add_argument(
         "--barcode_type_dict",
-        help="Json dictionnary linking barcodes and atom types (MUST BE 3 characters long!). ",
+        help="Json dictionary linking barcodes and atom types (MUST BE 3 characters long!). ",
     )
     parser.add_argument(
         "--all", help="plots all traces in trace file", action="store_true"
@@ -183,9 +182,6 @@ def runtime(
             # filters trace
             trace.filter_traces_by_n(minimum_number_barcodes=N_barcodes)
 
-            # saves output trace
-            outputfile = trace_file.rstrip(".ecsv") + "_selected_traces" + ".xyz"
-
             # indexes traces by Trace_ID
             trace_table = trace.data
             trace_table_indexed = trace_table.group_by("Trace_ID")
@@ -226,7 +222,6 @@ def runtime(
 
 
 def main():
-    begin_time = datetime.now()
 
     # [parsing arguments]
     p = parse_arguments()

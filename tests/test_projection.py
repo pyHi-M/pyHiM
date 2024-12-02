@@ -3,7 +3,7 @@
 """
 Check the non regression of projection feature,
 - With the 4th modes: ["auto", "full", "manual", "laplacian"]
-- And the both options: ["MIP","sum"] 
+- And the both options: ["MIP","sum"]
   (inside the json file, DAPI is set for sum and others for MIP)
 """
 

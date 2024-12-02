@@ -22,7 +22,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from apifish.stack.io import read_table_from_ecsv, save_table_to_ecsv
 from astropy.table import Table, vstack
-from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 from stardist import random_label_cmap
 from tqdm import tqdm
@@ -190,8 +189,6 @@ class ChromatinTraceTable:
             print(
                 f"$ Number of original spots / traces: {len(trace_table)} / {len(trace_table_indexed.groups)}"
             )
-
-            coordinates = []
             rows_to_remove = []
             for idx, row in enumerate(trace_table):
                 coordinate = float(row[coor])
@@ -242,12 +239,9 @@ class ChromatinTraceTable:
 
         for trace in tqdm(trace_table_indexed.groups):
             unique_barcodes = list(set(trace["Barcode #"].data))
-            number_unique_barcodes = len(unique_barcodes)
             barcodes = list(trace["Barcode #"].data)
-            number_barcodes = len(barcodes)
 
             # if number_unique_barcodes < number_barcodes:
-
             barcode_stats = {}
             for barcode in unique_barcodes:
                 barcode_rep = barcodes.count(barcode)
@@ -457,9 +451,9 @@ class ChromatinTraceTable:
 
             if len(trace_table_new) > 0:
                 trace_table_indexed = trace_table_new.group_by("Trace_ID")
-                number_traces_left = len(trace_table_indexed.groups)
-            else:
-                number_traces_left = 0
+            #     number_traces_left = len(trace_table_indexed.groups)
+            # else:
+            #     number_traces_left = 0
 
             print(
                 f"$ After filtering, I see \n spots: {len(trace_table_new)} \n traces: {len(trace_table_indexed.groups)}"
@@ -575,7 +569,7 @@ class ChromatinTraceTable:
                 if spot_id in spots_to_remove:
                     rows_to_remove.append(idx)
 
-            # removes targetted spots
+            # removes targeted spots
             trace_table_new.remove_rows(rows_to_remove)
 
             # provides statistics
@@ -678,7 +672,6 @@ class ChromatinTraceTable:
             n_roi = data_roi["ROI #"][0]
             print(f"> Plotting barcode localization map for ROI: {n_roi}")
             color_dict = build_color_dict(data_roi, key="Barcode #")
-            n_barcodes = np.unique(data_roi["Barcode #"]).shape[0]
 
             # initializes figure
             fig = plt.figure(constrained_layout=False)
@@ -715,7 +708,6 @@ class ChromatinTraceTable:
 
             # calculates mean trace positions and sizes by looping over traces
             data_traces = data_roi.group_by("Trace_ID")
-            number_traces = len(data_traces.groups.keys)
             color_dict_traces = build_color_dict(data_traces, key="Trace_ID")
             colors_traces = [color_dict_traces[str(x)] for x in data_traces["Trace_ID"]]
             cmap_traces = plt.cm.get_cmap("hsv", np.max(colors_traces))
@@ -723,22 +715,6 @@ class ChromatinTraceTable:
             for trace, color, trace_id in zip(
                 data_traces.groups, colors_traces, data_traces.groups.keys
             ):
-                x_trace = np.mean(trace["x"].data) / pixel_size[0]
-                y_trace = np.mean(trace["y"].data) / pixel_size[1]
-                z_trace = np.mean(trace["z"].data) / pixel_size[2]
-                s_trace = (
-                    300
-                    * (
-                        np.mean(
-                            [
-                                np.std(trace["x"].data),
-                                np.std(trace["y"].data),
-                                np.std(trace["z"].data),
-                            ]
-                        )
-                    )
-                    / pixel_size[0]
-                )
 
                 # Plots polygons for each trace
                 poly_coord = np.array(

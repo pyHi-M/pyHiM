@@ -192,26 +192,26 @@ class BuildMatrix:
                                     itrace
                                 ] = newdistance
                             elif mode == "mean":
-                                sc_matrix[index_barcode_1][index_barcode_2][
-                                    itrace
-                                ] = np.nanmean(
-                                    [
-                                        newdistance,
-                                        sc_matrix[index_barcode_1][index_barcode_2][
-                                            itrace
-                                        ],
-                                    ]
+                                sc_matrix[index_barcode_1][index_barcode_2][itrace] = (
+                                    np.nanmean(
+                                        [
+                                            newdistance,
+                                            sc_matrix[index_barcode_1][index_barcode_2][
+                                                itrace
+                                            ],
+                                        ]
+                                    )
                                 )
                             elif mode == "min":
-                                sc_matrix[index_barcode_1][index_barcode_2][
-                                    itrace
-                                ] = np.nanmin(
-                                    [
-                                        newdistance,
-                                        sc_matrix[index_barcode_1][index_barcode_2][
-                                            itrace
-                                        ],
-                                    ]
+                                sc_matrix[index_barcode_1][index_barcode_2][itrace] = (
+                                    np.nanmin(
+                                        [
+                                            newdistance,
+                                            sc_matrix[index_barcode_1][index_barcode_2][
+                                                itrace
+                                            ],
+                                        ]
+                                    )
                                 )
 
         self.sc_matrix = sc_matrix

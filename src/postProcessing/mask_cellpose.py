@@ -6,13 +6,13 @@ Created on Mon Jul  3 18:05:08 2023
 @author: marcnol
 
 Usage:
-    
+
     $ ls scan_*ROI.tif | mask_cellpose.py --gpu
 
 or just for a single file
 
     mask_cellpose.py --input scan_001_DAPI_001_ROI.tif --gpu
-    
+
 
 """
 import argparse
@@ -44,9 +44,11 @@ def parseArguments():
         "--api",
         help="It will call the CLI command instead of the API (which sometimes crashes). Default = False",
         action="store_true",
-        default = False
+        default=False,
     )
-    parser.add_argument("--cellprob", type = float, default= -8, help="cellprob threshold. Default = -8.")
+    parser.add_argument(
+        "--cellprob", type=float, default=-8, help="cellprob threshold. Default = -8."
+    )
     parser.add_argument("--flow", help="flow threshold. Default = 10.")
     parser.add_argument("--stitch", help="stitch threshold. Default = 0.1.")
     parser.add_argument("--diam", help="diameter. Default = 50.")
@@ -75,7 +77,7 @@ def parseArguments():
         p["cli"] = False
     else:
         p["cli"] = True
-        
+
     p["cellprob"] = float(args.cellprob)
 
     if args.flow:
@@ -133,7 +135,7 @@ def run_cellpose_api(
 
     imgs = [imread(f) for f in files]
 
-    # define CHANNELS to run segementation on
+    # define CHANNELS to run segmentation on
     channels = [[0, 0]]
 
     # runs model
@@ -160,10 +162,8 @@ def run_cellpose(
     gpu=[False, None],
     pretrained_model="cyto",
 ):
-    save_folder = os.path.dirname(image_path)
-
     command = (
-        f"cellpose --verbose "
+        "cellpose --verbose "
         + f"--image_path {image_path} --no_npy --save_tif "
         + f"--chan 0 --diameter {diam} "
         + f"--stitch_threshold {stitch} "
@@ -200,8 +200,16 @@ def process_images(
         f"Parameters: diam={diam} | cellprob={cellprob} | flow={flow} | stitch={stitch}\n"
     )
     params = load_params()
-    folder_mask_2d = params["common"]["segmentedObjects"].get("mask_2d_folder","mask_2d") + os.sep + "data"
-    folder_mask_3d = params["common"]["segmentedObjects"].get("mask_3d_folder","mask_3d") + os.sep + "data"
+    folder_mask_2d = (
+        params["common"]["segmentedObjects"].get("mask_2d_folder", "mask_2d")
+        + os.sep
+        + "data"
+    )
+    folder_mask_3d = (
+        params["common"]["segmentedObjects"].get("mask_3d_folder", "mask_3d")
+        + os.sep
+        + "data"
+    )
     try:
         os.makedirs(folder_mask_2d)
         os.makedirs(folder_mask_3d)
@@ -222,7 +230,7 @@ def process_images(
             file_registered = shift_3d_mask(file)
 
             print(f"> will now run cellpose on {file_registered}")
-            
+
             if cli:
                 mask = run_cellpose(
                     file_registered,
@@ -244,7 +252,7 @@ def process_images(
                     gpu=gpu,
                     pretrained_model=pretrained_model,
                 )
-                
+
             # Delete temp registered file
             os.unlink(file_registered)
 
@@ -349,6 +357,7 @@ def _shift_xy_mask_3d(image, shift):
     shift_3d[0], shift_3d[1], shift_3d[2] = 0, shift[0], shift[1]
     return shift_image(image, shift_3d)
 
+
 def load_params():
     # loads dicShifts with shifts for all rois and all labels
     if os.path.exists("parameters.json"):
@@ -363,6 +372,7 @@ def load_params():
     else:
         raise ValueError("[ERROR] 'parameters.json' file not found.")
 
+
 def get_dict_shifts():
     params = load_params()
     dict_shifts_path = (
@@ -375,12 +385,13 @@ def get_dict_shifts():
     )
     return load_json(dict_shifts_path)
 
+
 def shift_3d_mask(mask_3d_path):
-    
+
     roi_name = find_roi_name_in_path(mask_3d_path)
     label = find_label_in_path(mask_3d_path)
     dict_shifts = get_dict_shifts()
-    
+
     # uses existing shift calculated by align_images
     try:
         shift = dict_shifts[f"ROI:{roi_name}"][label]
@@ -394,11 +405,11 @@ def shift_3d_mask(mask_3d_path):
     mask_3d = imread(mask_3d_path).squeeze()
     print(f"> image read: {mask_3d_path}")
     print(f"> Now registering image: {mask_3d_path}")
-    
+
     # applies XY shift to 3D stack
     print(f"> Applies shift = [{shift[0]:.2f} ,{shift[1]:.2f}]")
     mask_3d_registered = _shift_xy_mask_3d(mask_3d, shift)
-    
+
     # writes registered image to file
     mask_3d_registered_path = mask_3d_path.split(".")[0] + "_3d_registered.tif"
     imwrite(mask_3d_registered_path, mask_3d_registered)

@@ -43,4 +43,3 @@ outputs images:
 *Alignment accuracy*
 
 This provides a map of all barcode localizations in an ROI, colorcoded by the accuracy of localization. Colorbar scale is in pixels.
-

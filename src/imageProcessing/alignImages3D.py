@@ -193,7 +193,7 @@ class Drift3D:
         files_folder = glob.glob(data_path + os.sep + "*.tif")
         self.current_param.find_files_to_process(files_folder)
 
-        # loads dictinary of shifts
+        # loads dictionary of shifts
         self.load_dict_shifts(dict_shifts_path)
 
         # creates Table that will hold results
@@ -283,7 +283,7 @@ class Drift3D:
             overwrite=True,
         )
 
-        print_log(f"$ register_local procesing time: {datetime.now() - now}")
+        print_log(f"$ register_local processing time: {datetime.now() - now}")
         print_log(f"$ register_local output Table saved in: {local_shifts_path}")
 
         return local_shifts_path
@@ -381,7 +381,7 @@ def _align_fiducials_3d_file(
         parallel_execution=inner_parallel_loop,
     )
 
-    # shows original images and background substracted
+    # shows original images and background subtracted
     image_3d_0 = np.sum(image_3d_0, axis=0)  # replaces by a 2D projection
     images = [image_ref, image_3d]
     images_2d = [np.sum(x, axis=0) for x in images]
@@ -418,7 +418,7 @@ def _align_fiducials_3d_file(
     # ----------------------------
     print_log(f"$ shifts XY = {shift}")
 
-    # reinterpolate second file in XY using dictionnary to get rough alignment
+    # reinterpolate second file in XY using dictionary to get rough alignment
     images.append(
         apply_xy_shift_3d_images(
             image_3d, shift, parallel_execution=inner_parallel_loop

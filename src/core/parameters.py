@@ -308,7 +308,7 @@ class Parameters:
                     "operation": "2D,3D",  # options: 2D or 3D
                     "outputFile": "segmentedObjects",
                     "background_method": "inhomogeneous",  # flat or inhomogeneous or stardist
-                    "tesselation": True,  # tesselates masks
+                    "tessellation": True,  # tessellates masks
                     "background_sigma": 3.0,  # used to remove inhom background
                     "threshold_over_std": 1.0,  # threshold used to detect sources
                     "fwhm": 3.0,  # source size in px
@@ -513,7 +513,7 @@ class SegmentationParams:
     stardist_network: str = set_default("stardist_network", "None")
     # network for 3D mask or barcode segmentation
     stardist_network3D: str = set_default("stardist_network3D", "None")
-    tesselation: bool = set_default("tesselation", True)  # tesselates masks
+    tessellation: bool = set_default("tessellation", True)  # tessellates masks
     background_sigma: float = set_default(
         "background_sigma", 3.0
     )  # used to remove inhom background

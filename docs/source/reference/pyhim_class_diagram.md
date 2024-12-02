@@ -26,4 +26,3 @@
 ## Visualization
 
 ![diagram of visualization](../_static/diagrams/diag_visualization.png)
-

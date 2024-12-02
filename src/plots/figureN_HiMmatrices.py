@@ -10,13 +10,9 @@ plots N Hi-M matrices in a subplot
 
 import argparse
 import json
-
-# %% imports and plotting settings
 import os
 
 import matplotlib.gridspec as gridspec
-
-# import matplotlib as plt
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -26,11 +22,6 @@ from matrixOperations.HIMmatrixOperations import (
     list_sc_to_keep,
     shuffle_matrix,
 )
-
-# import scaleogram as scg
-
-
-# %% define and loads datasets
 
 
 def parse_arguments():
@@ -96,9 +87,7 @@ def parse_arguments():
     if args.rootFolder:
         root_folder = args.rootFolder
     else:
-        # root_folder = "."
-        # root_folder='/home/marcnol/data'+os.sep+'Experiment_18'
-        root_folder = "/mnt/PALM_dataserv/DATA/gurgo/Quarantaine/Analysis_embryos_cycle_14_16_2020/mixed_embryos_data/26_06_2020_analysis_T=2µm/plotSegments"
+        root_folder = "/mnt/PALM_dataserv/DATA/gurgo/Quarantine/Analysis_embryos_cycle_14_16_2020/mixed_embryos_data/26_06_2020_analysis_T=2µm/plotSegments"
 
     if args.outputFolder:
         output_folder = args.outputFolder
@@ -194,13 +183,14 @@ def parse_arguments():
 # =============================================================================
 # FUNCTIONS
 # =============================================================================
+
+
 def plotTADs(list_data, run_parameters, data_sets):
     if len(run_parameters["cAxis"]) == 2:
         c_scale = run_parameters["cAxis"][1]
     else:
         c_scale = run_parameters["cAxis"][0]
     print("--------\nClim used: {}\n--------------\n".format(c_scale))
-    fontsize = run_parameters["fontsize"]
 
     for idata_set in data_sets:
         if (
@@ -208,8 +198,6 @@ def plotTADs(list_data, run_parameters, data_sets):
             and "TAD2plot" in list_data[idata_set].keys()
         ):
             Samples = list_data[idata_set]["Folders"]
-            c_m = list_data[idata_set]["ContactProbability_cm"]
-
             TAD2plot = list_data[idata_set]["TAD2plot"]
             segmentLabels = list_data[idata_set]["segmentLabels"]
             segment2plot = list_data[idata_set]["segment2plot"]
@@ -227,12 +215,6 @@ def plotTADs(list_data, run_parameters, data_sets):
             submatrixReference = m1[
                 TAD2plot[0] : TAD2plot[1], TAD2plot[0] : TAD2plot[1]
             ]
-
-            number_barcodes = him_data.data["ensembleContactProbability"].shape[0]
-            numberSegments = len(Samples)
-
-            matrixSegmentAnchor = np.zeros((number_barcodes, numberSegments))
-
             fig3 = plt.figure(
                 constrained_layout=False,
                 figsize=(5 * Nplots, 5),
@@ -276,12 +258,10 @@ def plotTADs(list_data, run_parameters, data_sets):
                 if "ContactProbability_cm" in list_data[idata_set].keys():
                     colormap = list_data[idata_set]["ContactProbability_cm"]
 
-                if run_parameters["ratio"] == True:
+                if run_parameters["ratio"]:
                     subMatrixNormalized = np.log(submatrixReference / subMatrix)
-                    cmtitle = "log(ratio)"
                 else:
                     subMatrixNormalized = submatrixReference - subMatrix
-                    cmtitle = "difference"
 
                 print(
                     "scalingParameters, scale={}, {}".format(
@@ -352,7 +332,6 @@ def makesplotHiMLineProfile(
     f_1.set_yticks(np.arange(len(unique_barcodes)))
     f_1.set_yticklabels(unique_barcodes, fontsize=fontsize)
 
-    colorbar = True
     cbar = fig1.colorbar(pos, ax=f_1, fraction=0.046, pad=0.04)
     cbar.minorticks_on()
     # cbar.set_label("difference",fontsize=float(fontsize)*0.85)
@@ -418,16 +397,14 @@ def plotHiMLineProfile(list_data, run_parameters, data_sets):
                 if run_parameters["normalizeMatrix"]:
                     matrix = matrix / matrix.max()
 
-                if run_parameters["ratio"] == True:
+                if run_parameters["ratio"]:
                     matrixSegmentAnchor[:, iSample] = np.log(
                         contactsAnchor / matrix[plotSegment_anchor, :]
                     )
-                    cmtitle = "log(ratio)"
                 else:
                     matrixSegmentAnchor[:, iSample] = (
                         contactsAnchor - matrix[plotSegment_anchor, :]
                     )
-                    cmtitle = "difference"
 
             unique_barcodes = list(him_data.data["uniqueBarcodes"])
 

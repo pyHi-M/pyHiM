@@ -405,7 +405,7 @@ def apply_registrations_to_filename(
     ----------
     filename_to_process : string
         file to apply registration to
-    dict_shifts : Dictionnary
+    dict_shifts : Dictionary
         contains the shifts to be applied to all rois
 
     Returns
@@ -547,9 +547,14 @@ def apply_xy_shift_3d_images(image, shift, parallel_execution=True):
 
     if client is None:
         print_log(f"> Shifting {number_planes} planes with 1 thread...")
-        shift_3d = np.zeros((3))
-        shift_3d[0], shift_3d[1], shift_3d[2] = 0, shift[0], shift[1]
-        output = shift_image(image, shift_3d)
+        if len(image.shape) == 2:
+            output = shift_image(image, shift)
+        elif len(image.shape) == 3:
+            shift_3d = np.zeros((3))
+            shift_3d[0], shift_3d[1], shift_3d[2] = 0, shift[0], shift[1]
+            output = shift_image(image, shift_3d)
+        else:
+            raise ValueError
     else:
         print_log(
             f"> Shifting {number_planes} planes using {len(client.scheduler_info()['workers'])} workers..."
@@ -694,9 +699,9 @@ def combine_blocks_image_by_reprojection(
 
             rgb = np.dstack(imgs)  # makes block rgb image
 
-            output[
-                i_slice[0] : i_slice[-1] + 1, j_slice[0] : j_slice[-1] + 1, :
-            ] = rgb  # inserts block into final rgb stack
+            output[i_slice[0] : i_slice[-1] + 1, j_slice[0] : j_slice[-1] + 1, :] = (
+                rgb  # inserts block into final rgb stack
+            )
 
     return output, ssim_as_blocks, mse_as_blocks, nrmse_as_blocks
 

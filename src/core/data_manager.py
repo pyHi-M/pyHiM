@@ -22,7 +22,7 @@ from core.pyhim_logging import (
 
 
 def extract_files(root: str):
-    """Extract recursively file informations of all files into a given directory.
+    """Extract recursively file information of all files into a given directory.
     Note:
     * filepath is directory path with filename and extension
     * filename is the name without extension
@@ -35,7 +35,7 @@ def extract_files(root: str):
     Returns
     -------
     List[Tuple(str,str,str)]
-        List of file informations: (filepath, filename, extension)
+        List of file information: (filepath, filename, extension)
     """
     files = []
     # Iterate into dirname and each subdirectories dirpath, dirnames, filenames

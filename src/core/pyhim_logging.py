@@ -4,7 +4,6 @@
 Classes and functions for pyHiM logging
 """
 
-import json
 import logging
 import os
 from datetime import datetime

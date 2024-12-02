@@ -70,7 +70,7 @@ def compare_ecsv_files(
     is_same = True
     if shuffled_lines:
         for line in first_npy:
-            if not line in second_npy:
+            if line not in second_npy:
                 print(f"SHUFFLE: At line {line}\n from {first_file}\n\n")
                 is_same = False
                 break

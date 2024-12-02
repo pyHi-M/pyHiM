@@ -4,13 +4,13 @@
 
 ## Installation
 
- First, download the [`mask_cellpose.py` script](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/marcnol/pyHiM/blob/development/src/postProcessing/mask_cellpose.py). 
+ First, download the [`mask_cellpose.py` script](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/marcnol/pyHiM/blob/development/src/postProcessing/mask_cellpose.py).
 
 full instructions: [GitHub page of cellpose](https://github.com/mouseland/cellpose)
 
 ```sh
-conda create --name cellpose python=3.8  
-conda activate cellpose  
+conda create --name cellpose python=3.8
+conda activate cellpose
 python -m pip install cellpose
 python -m pip install cellpose[gui]
 ```
@@ -73,7 +73,7 @@ mask_cellpose.py --input scan_001_DAPI_006_ROI_converted_decon_ch00.tif --cellpr
 
 The default mode use the CPU (slower but does not need a GPU!).
 The GPU mode can be call by the API or the CLI.
-The API works faster but sometimes crashes in small computers with not much memory. 
+The API works faster but sometimes crashes in small computers with not much memory.
 The CLI is more robust to memory requirements.
 
 ### CPU

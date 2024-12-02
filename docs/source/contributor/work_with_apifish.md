@@ -7,7 +7,7 @@
 - Find a remote name to call big-fish repository with an alias.
 - Execute this command into your local apifish repository:
     `git remote add <remote-name> <big-fish git URL>`
-    
+
 ### 2. Upload the required data from big-fish
 - Find the branch name where you want to collect some commits
 - Execute this command:
@@ -17,7 +17,7 @@
 - Find the commit identifier on Big-FISH repository or with `git log`
 - Execute this command from your apifish branch:
 	`git cherry-pick <commit-ID>`
-	
+
 - Fix potential conflicts
 - Run `git cherry-pick --continue`
 - You can push and continue developments

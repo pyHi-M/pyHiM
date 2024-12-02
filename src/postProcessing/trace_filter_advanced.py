@@ -582,9 +582,9 @@ class FilterTraces:
         # ---------------------------------------------------------------------------------------
         for spot_id in tqdm(in_spot_id):
             new_trace_id = str(uuid.uuid4())
-            new_dataframe.loc[
-                new_dataframe["Spot_ID"].isin(spot_id), "Trace_ID"
-            ] = new_trace_id
+            new_dataframe.loc[new_dataframe["Spot_ID"].isin(spot_id), "Trace_ID"] = (
+                new_trace_id
+            )
 
         # remove all the detections that were left-out
         # --------------------------------------------

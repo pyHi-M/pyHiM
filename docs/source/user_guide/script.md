@@ -4,7 +4,7 @@
 
 ### cleanHiM_run.py
 
-*Cleans the directories and log files created by pyHiM in previous runs.* 
+*Cleans the directories and log files created by pyHiM in previous runs.*
 
 ```
 Usage: clean_him_run [-F ROOTFOLDER] [-P PARAMETERS] [-A ALL]
@@ -22,7 +22,7 @@ optional arguments:
 *Creates link for files in a second directory (useful to analyze data in a new folder without copying raw data files).*
 
 ```
-Usage: lndir "/user_home/Repositories/pyHiM/\*py" ~/Downloads/test
+Usage: lndir "/user_home/Repositories/pyHiM/*py" ~/Downloads/test
 ```
 
 Use quotation marks in the first argument if using wildcards.
@@ -59,7 +59,7 @@ optional arguments:
 
 ### runHiM_cluster.py
 
-Launches *pyHiM* on a cluster using slurm `srun`. 
+Launches *pyHiM* on a cluster using slurm `srun`.
 
 ```
 Usage: run_him_cluster
@@ -73,12 +73,12 @@ Usage: run_him_cluster
 Produces and plots a HiM matrix for a given dataset.
 
 ```
-Usage figure_him_matrix [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS] 
+Usage figure_him_matrix [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 						 [-A LABEL] [-W ACTION] [--fontsize] [--axisLabel]
 						 [--axisTicks] [--barcodes] [--scalingParameter]
 						 [--cScale] [--plottingFileExtension] [--shuffle]
 						 [--scalogram] [--inputMatrix] [--pixelSize]
-						 [--cmap] [--PWDmode]						 
+						 [--cmap] [--PWDmode]
 	 -F ROOTFOLDER, --rootFolder ROOTFOLDER
 		 Folder with datasets
 	 -O OUTPUTFOLDER, --outputFolder OUTPUTFOLDER
@@ -102,11 +102,11 @@ Usage figure_him_matrix [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 	 --cScale
 		 Colormap absolute scale
 	 --plottingFileExtension
-		 Select file extension to save images. Default: svg. 
+		 Select file extension to save images. Default: svg.
 		 Other options: pdf, png
 	 --shuffle
 		 Provide shuffle vector: 0,1,2,3,.. of the same size or
-		 smaller than the original matrix. 
+		 smaller than the original matrix.
 	 --scalogram
 		 Display scalogram image
 	 --inputMatrix
@@ -117,7 +117,7 @@ Usage figure_him_matrix [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 	 --cmap
 		 Select colormap. Default: coolwarm
 	 --PWDmode
-		 Mode used to calculate the mean distance. 
+		 Mode used to calculate the mean distance.
 		 Options are: 'median' or 'KDE'. Default: 'median'
 ```
 
@@ -131,7 +131,7 @@ Usage: figure_4_m_matrix [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2] [-O OUTPUTFOLDER]
 						 [-W2 ACTION2] [--fontsize] [--axisLabel] [--axisTicks]
 						 [--splines] [--cAxis] [--plottingFileExtension]
 						 [--legend] [--normalize]
- 
+
 
 	-F1 ROOTFOLDER1, --rootFolder1 ROOTFOLDER1
 		 Folder with dataset 1
@@ -155,12 +155,12 @@ Usage: figure_4_m_matrix [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2] [-O OUTPUTFOLDER]
 		 Select optional label in x and y axis
 	 --axisTicks
 		 Display axis ticks
-	 --splines 
+	 --splines
 		 Plots data using spline interpolations
 	 --cAxis
 		 Absolute axis value for colormap
 	 --plottingFileExtension
-		 Select file extension to save images. Default: svg. 
+		 Select file extension to save images. Default: svg.
 		 Other options: pdf, png
 	 --legend
 		 Shows legends for datasets in plot
@@ -172,14 +172,14 @@ Usage: figure_4_m_matrix [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2] [-O OUTPUTFOLDER]
 Comparison of proximity matrices. Plots either the ratio or the difference between two HiM matrices. It also plots both matrices together, with one in the upper triangle, and the other in the lower triangle.
 
 ```
-Usage: figure_compare_2_matrices [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2] 
+Usage: figure_compare_2_matrices [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2]
 								 [-O OUTPUTFOLDER] [-P PARAMETERS]
 							     [-A1 LABEL1] [-A2 LABEL2] [-W1 ACTION1]
-							     [-W2 ACTION2] [--fontsize] [--axisLabel] 
-							     [--axisTicks] [--ratio] [--cAxis] 
+							     [-W2 ACTION2] [--fontsize] [--axisLabel]
+							     [--axisTicks] [--ratio] [--cAxis]
 							     [--plottingFileExtension] [--normalize]
 							     [--inputMatrix] [--pixelSize]
- 
+
 
 	-F1 ROOTFOLDER1, --rootFolder1 ROOTFOLDER1
 		 Folder with dataset 1
@@ -203,36 +203,36 @@ Usage: figure_compare_2_matrices [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2]
 		 Select optional label in x and y axis
 	 --axisTicks
 		 Display axis ticks
-	 --ratio 
-		 Performs the ratio between matrices. Defaukt: difference
+	 --ratio
+		 Performs the ratio between matrices. Default: difference
 	 --cAxis
 		 Absolute axis value for colormap
 	 --plottingFileExtension
-		 Select file extension to save images. Default: svg. 
-		 Other options: pdf, png		
+		 Select file extension to save images. Default: svg.
+		 Other options: pdf, png
 	 --normalize
-		 Matrix normalization factor: maximum, none, single value, 
+		 Matrix normalization factor: maximum, none, single value,
 		 bin pair. Default: none
 	 --inputMatrix
-		 Source of input matrix: contact (default), PWD matrix, 
+		 Source of input matrix: contact (default), PWD matrix,
 		 iPWD matrix
 	 --pixelSize
 		 Pixel size in microns. Default: 0.1 microns
-		 
+
 ```
 
 ### figure3wayInteractions.py
 
-Plots 3-way proximity probability matrices for a given anchor (or set of anchors), as defined in the folders2Load.json configuration file. Comparative analysis can be performed for two datasets simultaneously. The calculation of 3-way proximity probability matrices needs to be previously performed using the `processHiMmatrix.py` script. 
+Plots 3-way proximity probability matrices for a given anchor (or set of anchors), as defined in the folders2Load.json configuration file. Comparative analysis can be performed for two datasets simultaneously. The calculation of 3-way proximity probability matrices needs to be previously performed using the `processHiMmatrix.py` script.
 
 ```
-Usage: figure_3_way_interactions [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2] 
+Usage: figure_3_way_interactions [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2]
 								 [-O OUTPUTFOLDER] [-P PARAMETERS]
 								 [-P2 PARAMETERS2] [-A1 LABEL1] [-A2 LABEL2]
 								 [-W1 ACTION1] [-W2 ACTION2] [--fontsize]
-								 [--scalingParameter] [--colorbar] 
+								 [--scalingParameter] [--colorbar]
 								 [--plottingFileExtension] [--normalize]
-	
+
 	-F1 ROOTFOLDER1, --rootFolder1 ROOTFOLDER1
 		 Folder with dataset 1
 	-F2 ROOTFOLDER2, --rootFolder2 ROOTFOLDER2
@@ -258,7 +258,7 @@ Usage: figure_3_way_interactions [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2]
 	 --colorbar
 		 Use if a colorbar is required
 	 --plottingFileExtension
-		 Select file extension to save images. Default: svg. 
+		 Select file extension to save images. Default: svg.
 		 Other options: pdf, png
 	 --normalize
 		 Normalizes matrices by their maximum.
@@ -273,7 +273,7 @@ Plots several (`N`) HiM matrices in the same plot, using `N` datasets specified 
 It also plots a submatrix representing the difference in contact probability for a subset of barcodes compared to a particular dataset. The subset of barcodes and the reference dataset are defined in `folders2Load.json` by the options `barcodes2plot` and `plotSegment_anchor`, respectively.
 
 ```
-Usage figure_n_him_matrices [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS] 
+Usage figure_n_him_matrices [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 							 [-A LABEL] [-W ACTION] [--fontsize] [--axisLabel]
 							 [--axisTicks] [--barcodes] [--scalingParameter]
 							 [--plottingFileExtension] [--shuffle] [--scalogram]
@@ -300,11 +300,11 @@ Usage figure_n_him_matrices [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 	 --scalingParameter
 		 Scaling parameter of colormap
 	 --plottingFileExtension
-		 Select file extension to save images. Default: svg. 
+		 Select file extension to save images. Default: svg.
 		 Other options: pdf, png
 	 --shuffle
 		 Provide shuffle vector: 0,1,2,3,.. of the same size or
-		 smaller than the original matrix. 
+		 smaller than the original matrix.
 	 --scalogram
 		 Display scalogram image
 	 --type
@@ -314,28 +314,28 @@ Usage figure_n_him_matrices [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 	 --cAxis
 		 Absolute axis value for colormap
 	 --ratio
-		 Calculates ration between matrices for submatrices plots. 
+		 Calculates ration between matrices for submatrices plots.
 		 Default: difference
 	 --normalizeMatrix
 		 Normalize matrices by maximum. Default: True
 ```
 
 ### figureSingleCell.py
-This scripts: 
-- produces movies and trajectories from single cell PWD matrices. 
+This scripts:
+- produces movies and trajectories from single cell PWD matrices.
 - calculates barcode detection efficiencies and number of barcodes per cell.
 - plots single cell matrices.
 - plots distance histograms and distributions of Rg.
 
 
 ```
-Usage: figure_single_cell [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS] 
+Usage: figure_single_cell [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 						   [-A LABEL] [-W ACTION] [--fontsize] [--axisLabel]
 						   [--axisTicks] [--barcodes] [--nRows] [--pixelSize]
 						   [--maxDistance] [--plottingFileExtension] [--shuffle]
 						   [--ensembleMatrix] [--video] [--videoAllcells]
 						   [--plotHistogramMatrix] [--minNumberPWD] [--threshold]
-	
+
 	-F ROOTFOLDER, --rootFolder ROOTFOLDER
 		 Folder with datasets
 	-O OUTPUTFOLDER, --outputFolder OUTPUTFOLDER
@@ -361,11 +361,11 @@ Usage: figure_single_cell [-F ROOTFOLDER] [-O OUTPUTFOLDER] [-P PARAMETERS]
 	--maxDistance
 		 Maximum distance for histograms in microns. Default: 4 microns
 	--plottingFileExtension
-		 Select file extension to save images. Default: svg. 
+		 Select file extension to save images. Default: svg.
 		 Other options: pdf, png
 	--shuffle
 		 Provide shuffle vector: 0,1,2,3,.. of the same size or
-		 smaller than the original matrix. 
+		 smaller than the original matrix.
 	--ensembleMatrix
 		Use if ensemble matrix should be plot alongside single cell
 		matrices
@@ -394,7 +394,7 @@ It performs the following operations:
 - Calculates and plots the inverse of the PWD matrix.
 - Calculates and plots contact probability matrix for each dataset.
 - Calculates and plots ensemble contact probability matrix.
-- Calcualtes and plots tensemble 3-way contact probability matrix for the set of anchors defined in the `folders2Load.json` file.
+- Calculates and plots tensemble 3-way contact probability matrix for the set of anchors defined in the `folders2Load.json` file.
 - Optional: Reads MATLAB single-cell PWD matrices and performs all previous operations.
 
 ```
@@ -410,7 +410,7 @@ Optional arguments:
 	-A LABEL, --labal LABEL
 			Name of label for the dataset
 	-W ACTION, --action ACTION
-			Selects: all, labeled or unlabeled for the datasets. 
+			Selects: all, labeled or unlabeled for the datasets.
 	--matlab
 			Loads MATLAB data (e.g. .mat files)
 	--saveMatrix
@@ -444,7 +444,7 @@ Usage: process_snd_channel [-F ROOTFOLDER] [-A ADDMASK] [--cleanAllMasks]
 ```
 
 ### trace_combinator.py
-This script combines trace tables from different experiments/ROIs into a single trace table. The folders containing the trace tables of the experiments to be combined are provided as a JSON file. It is possible to select only a subset of trace tables within the folders provided using the `methods` parameter. Merged trace table is outputed in the buildPWDmatrix folder. 
+This script combines trace tables from different experiments/ROIs into a single trace table. The folders containing the trace tables of the experiments to be combined are provided as a JSON file. It is possible to select only a subset of trace tables within the folders provided using the `methods` parameter. Merged trace table is outputted in the buildPWDmatrix folder.
 
 Outputs: ChromatinTraceTable() object and output .ecsv formatted file with assembled trace tables.
 
@@ -459,7 +459,7 @@ Usage: trace_combinator [-F ROOTFOLDER] [-P PARAMETERS] [-A LABEL] [-W ACTION]
 	-A LABEL, --labal LABEL
 		Name of label for the dataset
 	-W ACTION, --action ACTION
-		Selects: all, labeled or unlabeled for the datasets. 
+		Selects: all, labeled or unlabeled for the datasets.
 	--saveMatrix
 		Saves the combined PWD matrix from all datasets. Default: False
 	--ndims
@@ -470,7 +470,7 @@ Usage: trace_combinator [-F ROOTFOLDER] [-P PARAMETERS] [-A LABEL] [-W ACTION]
 
 ### trace_selector.py
 
-This scipt loads a trace file and a number of numpy masks, and assings them the labels produced by `process_snd_channel`.
+This script loads a trace file and a number of numpy masks, and assigns them the labels produced by `process_snd_channel`.
 
 ```
 Usage: trace_selector [-F ROOTFOLDER] [--pixel_size]
@@ -497,5 +497,3 @@ npy_to_tiff $(find -name "*ch0*_2d_registered.npy")
 ```sh
 ls *ch0*_2d_registered.npy | npy_to_tiff
 ```
-
-
