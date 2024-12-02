@@ -36,7 +36,7 @@ Examples:
     ```shell
     git checkout <new_branch>
     ```
-    
+
 3. Create it in origin to notify other users that you have created this branch:
     ```shell
     git push --set-upstream origin <new_branch>
@@ -50,7 +50,7 @@ Examples:
     ```shell
     git pull origin <your_branch>
     ```
-    
+
 2. Choose files you want to commit, to add all:
 
     ```shell
@@ -70,7 +70,7 @@ Examples:
 
 ### Merge with development branch
 
-The best way to validate your new features is to make a **pull request**. The code in the pull request will be reviewed by another member of the team before it can be merged into the Development branch. 
+The best way to validate your new features is to make a **pull request**. The code in the pull request will be reviewed by another member of the team before it can be merged into the Development branch.
 
 1. On your GitHub repository, navigate to `pull requests` section
 2. Button `New pull request`
@@ -157,7 +157,7 @@ git branch save/dev_branch
 
 1. Get an overview of your latest commits using `git log` or the GitHub interface.
 
-2. Identify the commit that you want to keep, and copy the hash of the previous (older) commit. 
+2. Identify the commit that you want to keep, and copy the hash of the previous (older) commit.
 ![hash selected](../_static/contributor/git-log-hash-selected-simplify.png)
 
 3. Make an interactive rebase:

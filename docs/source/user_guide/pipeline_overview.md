@@ -22,7 +22,7 @@ To use it, see [`--threads` argument](../getting_started/typical_run.md#optional
 
 To run the default pipeline, *pyHiM* needs two types of data:
 - A dictionary of initialization parameters, named `parameters.json`
-- 3D images in TIFF format (extension: `.tif` or `.tiff`). 
+- 3D images in TIFF format (extension: `.tif` or `.tiff`).
 
 Four types of images are accepted and will be processed in the following order:
 1. **Fiducial**

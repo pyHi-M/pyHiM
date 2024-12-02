@@ -7,7 +7,7 @@ Created on Fri Oct 16 23:56:27 2020
 
 make links of files in a directory to a second directory
 
-In the command line, run as 
+In the command line, run as
 
 Example:
 

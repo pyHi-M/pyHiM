@@ -1,6 +1,6 @@
 # trace_filter
 
-This script is intended to filter trace files. 
+This script is intended to filter trace files.
 
 Multiple filtering options are available:
 
@@ -23,7 +23,7 @@ How to use it:
 
   This will remove traces with less than 5 barcodes.
 
-  
+
 
 **Relevant options**
 
@@ -52,4 +52,3 @@ optional arguments:
   --label LABEL         Select traces containing this label, removes all other traces.
 
 ```
-

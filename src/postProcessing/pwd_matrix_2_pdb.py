@@ -252,11 +252,11 @@ if __name__ == "__main__":
         (coords, 'original points'),
         (rec_coords, 'reconstructed points')
     ])
-  
+
     plt.imshow( distances, cmap='Reds')
     plt.colorbar()
     plt.show()
-    
+
     rec_PWD = coord_2_distances(rec_coords)
     plt.imshow(rec_PWD, cmap='Reds')
     plt.colorbar()

@@ -1440,24 +1440,24 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
                 print(f"$ fixing key {barcode} as not found in dict")
 
     """
-        COLUMNS        DATA TYPE       CONTENTS                            
+        COLUMNS        DATA TYPE       CONTENTS
     --------------------------------------------------------------------------------
-     1 -  6        Record name     "ATOM  "                                            
-     7 - 11        Integer         Atom serial number.                   
-    13 - 16        Atom            Atom name.                            
-    17             Character       Alternate location indicator.         
-    18 - 20        Residue name    Residue name.                         
-    22             Character       Chain identifier.                     
-    23 - 26        Integer         Residue sequence number.              
-    27             AChar           Code for insertion of residues.       
-    31 - 38        Real(8.3)       Orthogonal coordinates for X in Angstroms.                       
-    39 - 46        Real(8.3)       Orthogonal coordinates for Y in Angstroms.                            
-    47 - 54        Real(8.3)       Orthogonal coordinates for Z in Angstroms.                            
-    55 - 60        Real(6.2)       Occupancy.                            
-    61 - 66        Real(6.2)       Temperature factor (Default = 0.0).                   
-    73 - 76        LString(4)      Segment identifier, left-justified.   
-    77 - 78        LString(2)      Element symbol, right-justified.      
-    79 - 80        LString(2)      Charge on the atom.   
+     1 -  6        Record name     "ATOM  "
+     7 - 11        Integer         Atom serial number.
+    13 - 16        Atom            Atom name.
+    17             Character       Alternate location indicator.
+    18 - 20        Residue name    Residue name.
+    22             Character       Chain identifier.
+    23 - 26        Integer         Residue sequence number.
+    27             AChar           Code for insertion of residues.
+    31 - 38        Real(8.3)       Orthogonal coordinates for X in Angstroms.
+    39 - 46        Real(8.3)       Orthogonal coordinates for Y in Angstroms.
+    47 - 54        Real(8.3)       Orthogonal coordinates for Z in Angstroms.
+    55 - 60        Real(6.2)       Occupancy.
+    61 - 66        Real(6.2)       Temperature factor (Default = 0.0).
+    73 - 76        LString(4)      Segment identifier, left-justified.
+    77 - 78        LString(2)      Element symbol, right-justified.
+    79 - 80        LString(2)      Charge on the atom.
     """
 
     with open(file_name, mode="w+", encoding="utf-8") as fid:

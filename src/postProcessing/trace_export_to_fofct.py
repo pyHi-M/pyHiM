@@ -61,13 +61,14 @@ python export_trace_table.py --ecsv_file /path/to/Trace_3D_barcode_KDtree_ROI-5.
 
 """
 
-from astropy.io import ascii
 import csv
-import pandas as pd
 import json
-import sys
 import os
+import sys
 from argparse import ArgumentParser
+
+import pandas as pd
+from astropy.io import ascii
 
 
 def parse_args():

@@ -55,4 +55,3 @@ set grid_mode,1
 color green,  (name C*)
 color red, (name P*)
 ```
-

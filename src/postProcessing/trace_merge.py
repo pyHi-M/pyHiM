@@ -7,7 +7,7 @@ Created on Thu June 15 2023
 
 Simpler version of trace_combinator.
 
-This just takes a list of trace files and merges them together 
+This just takes a list of trace files and merges them together
 
 $ ls Trace*.ecsv | trace_merge.py
 
@@ -121,7 +121,9 @@ def run(p):
     output_file = p["output_file"]
 
     traces.save(
-        output_file, traces.data, comments="appended_trace_files=" + str(traces.number_traces),
+        output_file,
+        traces.data,
+        comments="appended_trace_files=" + str(traces.number_traces),
     )
 
     print("Finished execution")

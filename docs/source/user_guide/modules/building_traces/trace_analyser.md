@@ -17,7 +17,7 @@ To analyze all trace files in `buildPWDmatrix`:
 $  trace_analyzer
 ```
 
-Example: 
+Example:
 
 ```
 $ trace_analyzer --input Trace_3D_barcode_mask:DAPI_ROI:1_filtered.ecsv

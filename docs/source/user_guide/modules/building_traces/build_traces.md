@@ -1,7 +1,7 @@
 # build_traces
 
 ## Invoke
-Inside the folder with your input data, run: 
+Inside the folder with your input data, run:
 ```shell
 pyhim -C build_traces
 ```

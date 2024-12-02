@@ -18,7 +18,7 @@ from tqdm import trange
 
 from core.pyhim_logging import print_log, write_string_to_file
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2" #ignore tensorflow logging
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # ignore tensorflow logging
 np.seterr(divide="ignore", invalid="ignore")
 
 

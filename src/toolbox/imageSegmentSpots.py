@@ -12,7 +12,7 @@ Created on Mon Mar  8 16:54:49 2021
 
 Steps:
     - defines run_parameters
-    - loads iteratively images and segments volumes 
+    - loads iteratively images and segments volumes
     - saves output
 
 """

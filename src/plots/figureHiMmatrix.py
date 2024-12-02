@@ -17,12 +17,12 @@ Options:
     - cScale: value of the max of the cScale used to plot the matrix
     - cmap: name of cmap
     - scalingParameter: Normalizing scaling parameter of colormap. Max will matrix.max()/scalingParameter. Default is 1.
-    - mode: indicated the plotting mode, either ["proximity"] or ["KDE", "median"] for PWD matrix. 
+    - mode: indicated the plotting mode, either ["proximity"] or ["KDE", "median"] for PWD matrix.
     - outputFolder: name of outputfolder. 'plots' is the default
-    
+
 Left to do:
     - need to implement a way to select a subset of chromatin traces...
-    
+
 @author: marcnol
 """
 
@@ -159,17 +159,17 @@ def parse_arguments():
     else:
         run_parameters["dist_calc_mode"] = "KDE"
 
-    if run_parameters["dist_calc_mode"]=="proximity":
-        run_parameters["cmtitle"] = 'proximity frequency' 
+    if run_parameters["dist_calc_mode"] == "proximity":
+        run_parameters["cmtitle"] = "proximity frequency"
     else:
-        run_parameters["cmtitle"] = 'distance, um' 
-    
+        run_parameters["cmtitle"] = "distance, um"
+
     if args.matrix_norm_mode:
         run_parameters["matrix_norm_mode"] = args.matrix_norm_mode
     else:
-        run_parameters[
-            "matrix_norm_mode"
-        ] = "n_cells"  # norm: n_cells (default), nonNANs
+        run_parameters["matrix_norm_mode"] = (
+            "n_cells"  # norm: n_cells (default), nonNANs
+        )
 
     if args.scalingParameter:
         run_parameters["scalingParameter"] = args.scalingParameter

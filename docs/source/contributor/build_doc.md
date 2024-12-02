@@ -69,7 +69,7 @@ personalise_run
 
 ## Document features
 
-When you develop a new feature, please explain what it does and how use it in the user guide. 
+When you develop a new feature, please explain what it does and how use it in the user guide.
 
 ## Comment the code
 
@@ -154,7 +154,7 @@ def extract_header(file_loc, print_cols=False):
 
 ### Type hinting
 
-For python 3.5+ user, we can use type hinting. 
+For python 3.5+ user, we can use type hinting.
 It's a simple way to describe input and output, this is an example:
 
 > ```python

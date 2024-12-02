@@ -56,6 +56,7 @@ def _shift_xy_mask_3d(image, shift):
     shift_3d[0], shift_3d[1], shift_3d[2] = 0, shift[0], shift[1]
     return shift_image(image, shift_3d)
 
+
 def load_params():
     # loads dicShifts with shifts for all rois and all labels
     if os.path.exists("parameters.json"):
@@ -70,6 +71,7 @@ def load_params():
     else:
         raise ValueError("[ERROR] 'parameters.json' file not found.")
 
+
 def get_dict_shifts():
     params = load_params()
     dict_shifts_path = (
@@ -81,6 +83,7 @@ def get_dict_shifts():
         + ".json"
     )
     return load_json(dict_shifts_path)
+
 
 def shift_3d_mask(mask_3d_path):
     roi_name = find_roi_name_in_path(mask_3d_path)
@@ -122,19 +125,19 @@ def show_image(data_2d, normalization="simple", size=(10, 10)):
     return fig, axes
 
 
-def creates_user_mask(file_name,label):
+def creates_user_mask(file_name, label):
     # loads image
 
     # displays image
     data = io.imread(file_name).squeeze()
-    print(f'$ Image size: {data.shape}')
-    data_2d = np.max(data,axis=0)
-    
+    print(f"$ Image size: {data.shape}")
+    data_2d = np.max(data, axis=0)
+
     fig = plt.figure()
-    fig.set_size_inches((10,10))
+    fig.set_size_inches((10, 10))
     ax = plt.Axes(fig, [0.0, 0.0, 1.0, 1.0])
     fig.add_axes(ax)
-    ax.set_axis_off()    
+    ax.set_axis_off()
     norm = simple_norm(data_2d, "sqrt", percent=99.9)
     ax.imshow(data_2d, origin="lower", cmap="Greys_r", norm=norm)
 
@@ -163,17 +166,18 @@ def creates_user_mask(file_name,label):
     # plt.show()
 
     print("Saving and closing image with rois...")
-    fig.savefig(file_name.split('.')[0] + '_'+label+ ".png")
+    fig.savefig(file_name.split(".")[0] + "_" + label + ".png")
     plt.close(fig)
 
     # saves result
-    output = os.path.basename(file_name).split('.')[0]+'_'+label+'.npy'
+    output = os.path.basename(file_name).split(".")[0] + "_" + label + ".npy"
     np.save(output, masks)
     print(f"$ saved output image mask as {output}")
-    
+
+
 def main():
 
-    print("="*10+"Started execution"+"="*10)
+    print("=" * 10 + "Started execution" + "=" * 10)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="Input file name (TIF assumed)")
@@ -186,27 +190,23 @@ def main():
     if args.input:
         input_file = args.input
     else:
-        print(
-            ">> ERROR: you must provide a filename with the image file"
-        )
+        print(">> ERROR: you must provide a filename with the image file")
         sys.exit(-1)
 
     if args.label:
         label = args.label
     else:
-        label = ''
-        
+        label = ""
+
     print(f"parameters> input_file: {input_file}\n")
 
-
     file_registered = shift_3d_mask(input_file)
-    creates_user_mask(file_registered,label)
+    creates_user_mask(file_registered, label)
     # Delete tempo registered file
     os.unlink(file_registered)
-    
-    print("="*9+"Finished execution"+"="*9)
+
+    print("=" * 9 + "Finished execution" + "=" * 9)
 
 
 if __name__ == "__main__":
     main()
-    

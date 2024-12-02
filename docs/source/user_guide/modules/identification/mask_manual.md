@@ -11,7 +11,7 @@ If no graphical interface is displayed, try to install:
 
 
 ## Invoke
-To process 
+To process
 ```shell
 $ mask_manual --input my_image.tif --label mylabel
 ```
@@ -30,4 +30,3 @@ $ mask_manual --input my_image.tif --label mylabel
 |Name shape|Quantity|Description|
 |---|---|---|
 |NUMPY 2D array|1|The output labeled image|
-

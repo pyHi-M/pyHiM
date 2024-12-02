@@ -1,5 +1,5 @@
 # mask_3d
-*Segments masks in 3D* 
+*Segments masks in 3D*
 
 ## Invoke
 Inside the folder with your input data, run:
@@ -41,4 +41,4 @@ Most of the parameters are shared with ```mask_2d```, except for the following:
 |Name|Option|Description|
 |:-:|:-:|:-:|
 |stardist_basename| | Folder containing 2D and 3D AI models|
-|stardist_network3D| | Name of the 3D network| 
+|stardist_network3D| | Name of the 3D network|

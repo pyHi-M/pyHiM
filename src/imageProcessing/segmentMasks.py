@@ -69,7 +69,7 @@ from core.saving import save_image_2d_cmd
 from imageProcessing.imageProcessing import Image, reassemble_3d_image, scatter_3d_image
 
 np.seterr(divide="ignore", invalid="ignore")
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2" #ignore tensorflow logging
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # ignore tensorflow logging
 matplotlib.rcParams["image.interpolation"] = "none"
 
 

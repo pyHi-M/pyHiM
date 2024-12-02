@@ -64,4 +64,3 @@ OR
 ### Set up your git pull
 *This command will make automatically `git submodule update --recursive` after your `git pull`.*
 * `git config --global submodule.recurse true`
-

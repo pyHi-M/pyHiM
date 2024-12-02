@@ -113,5 +113,3 @@ Each section in `common` represents a step of pyHiM processing. Parameters are d
 |mask_expansion|Set number of pixels masks will be expanded to assign localizations|
 |toleranceDrift|Set tolerance used for block drift correction (in pixels)|
 |tracing_method|Set list of methods it will use|
-
-

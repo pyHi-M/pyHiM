@@ -7,8 +7,8 @@ Created on Wed May  5 13:50:54 2021
 
 unzips HiM_run.tar.gz recursively
 
-In the command line, run as 
-$ unzipHiM_run.py 
+In the command line, run as
+$ unzipHiM_run.py
 
 to unzip all the directories recursively
 

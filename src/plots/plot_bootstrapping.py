@@ -7,7 +7,7 @@ Created on Tue Oct 10 15:42:39 2023
 
 This script will perform bootstrapping analysis on PWD distance matrices
 
-INPUTS: 
+INPUTS:
     - PWD single cell maps in npy
     - uniquebarcode list
 
@@ -21,7 +21,7 @@ Options:
     - cmap: name of cmap
     - scalingParameter: Normalizing scaling parameter of colormap. Max will matrix.max()/scalingParameter. Default is 1.
     - outputFolder: name of outputfolder. 'plots' is the default
-    
+
 """
 
 

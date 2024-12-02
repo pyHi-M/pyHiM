@@ -3,11 +3,11 @@
 We use the coding style of PEP8. For additional information, please refer to [PEP8](https://www.python.org/dev/peps/pep-0008/).
 We apply an auto format for PEP8 using the [`black`](https://pypi.org/project/black/) linter.
 
-## Typical [PEP8](https://www.python.org/dev/peps/pep-0008/) conventions 
+## Typical [PEP8](https://www.python.org/dev/peps/pep-0008/) conventions
 
 ### Names
 
-Never use these characters as single character variable names: 
+Never use these characters as single character variable names:
 
 - 'l' (lowercase letter 'L' [el])
 - 'O' (uppercase letter 'o' [oh])

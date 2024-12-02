@@ -16,10 +16,10 @@ output:
 
 trace_stats.csv
 
-trace_ID, number of barcodes, number of duplications, Rg, 
+trace_ID, number of barcodes, number of duplications, Rg,
 
-    
-    
+
+
 """
 
 # =============================================================================

@@ -13,17 +13,17 @@ Takes a trace file and either:
     - ranks traces and plots a selection
     - plots a user-selected trace in .ecsv (barcode, xyz) and PDF formats. The output files contain the trace name.
     - saves output coordinates for selected traces in pdb format so they can be loaded by other means including https://www.rcsb.org/3d-view, pymol, or nglviewer.
-    
+
 future:
     - output PDBs for all the traces in a trace file
-    
---------    
+
+--------
 installs:
     pip install nglview, pdbparser
 
---------    
+--------
 example usage:
-    
+
 ls Trace_3D_barcode_KDtree_ROI:1.ecsv | trace_plot.py --pipe --selected_trace 5b1e6f89-0362-4312-a7ed-fc55ae98a0a5
 
 >> this pipes the file 'Trace_3D_barcode_KDtree_ROI:1.ecsv' into trace_plot and then selects a trace for conversion.
@@ -39,7 +39,7 @@ keys provide barcode names in the trace file, these should be attributed to 3 ch
 
 --------
 some useful pymol commands:
-    
+
 set grid_mode,1
 color green,  (name C*)
 color red, (name P*)

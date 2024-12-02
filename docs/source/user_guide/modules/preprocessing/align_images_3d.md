@@ -39,7 +39,7 @@ None of the methods above take into account the drift of the sample in the z-pla
 The following steps are implemented:
 - Iterates over reference fiducials available for each ROI
 - Iterates over all cycles for a given ROI
-- Loads 3D reference fiducial image on the current imaging cycle  
+- Loads 3D reference fiducial image on the current imaging cycle
 - Re-aligns 3D fiducial image using XY alignment resulting from running `register_global`. If this is not available, it will XY project the 3D stack of reference and cycle fiducial to get an XY realignment. Beware, this will be global and will not use blockAlignment.
 - Breaks 3D images for both reference and cycle _fiducials in blocks (defined by `blockSizeXY`)
 - Cross-correlates each block to get an XYZ shift. This provides a 3D local drift correction for each block

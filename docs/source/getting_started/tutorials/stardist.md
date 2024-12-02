@@ -27,10 +27,10 @@ To run pyHiM with your models, you need to add `model_folder` path and the netwo
 ```json
 {
     "common": {
-                
+
     },
     "labels": {
-        "barcode": {          
+        "barcode": {
             "segmentedObjects": {
 
                 "stardist_basename": "/home/user/model_folder",

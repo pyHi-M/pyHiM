@@ -12,9 +12,9 @@ $ analyze_localizations.py
 
 Planned features:
     export: localization_table_stats.csv
-    
+
     provide the possibility to merge several input localization files and produce joint statistics
-    
+
 """
 
 # =============================================================================

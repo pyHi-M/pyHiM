@@ -181,9 +181,9 @@ def parse_arguments():
     if args.matrix_norm_mode:
         run_parameters["matrix_norm_mode"] = args.matrix_norm_mode
     else:
-        run_parameters[
-            "matrix_norm_mode"
-        ] = "n_cells"  # norm: n_cells (default), nonNANs
+        run_parameters["matrix_norm_mode"] = (
+            "n_cells"  # norm: n_cells (default), nonNANs
+        )
 
     if args.cMax:
         run_parameters["cMax"] = float(args.cMax)

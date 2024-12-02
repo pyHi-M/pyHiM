@@ -41,6 +41,3 @@ optional arguments:
   --pipe                inputs Trace file list from stdin (pipe)
 
 ```
-
-
-

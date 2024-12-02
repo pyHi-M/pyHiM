@@ -30,11 +30,13 @@ If the `--output_file` argument is not provided, the script will save the ECSV f
 marcnol, Aug 8 2024
 """
 
-import pandas as pd
-from astropy.table import Table
-from astropy.io import ascii
 import os
 from argparse import ArgumentParser
+
+import pandas as pd
+from astropy.io import ascii
+from astropy.table import Table
+
 
 def parse_args():
     parser = ArgumentParser(
@@ -47,22 +49,27 @@ def parse_args():
     )
     return parser.parse_args()
 
+
 def read_column_names_from_csv(csv_file):
     # Read the file line by line until finding the `##columns` line
-    with open(csv_file, 'r') as file:
+    with open(csv_file, "r") as file:
         for line in file:
-            if line.startswith('##columns'):
+            if line.startswith("##columns"):
                 # Extract column names, strip leading spaces and return them
-                column_names = line.split('=')[1].strip().strip('()').split(', ')
+                column_names = line.split("=")[1].strip().strip("()").split(", ")
                 return [col.strip() for col in column_names]
     raise ValueError("No `##columns` line found in the FOFCT file.")
 
+
 def load_csv_file(csv_file, column_names):
     # Load the CSV file using pandas, assigning the correct column names
-    data = pd.read_csv(csv_file, comment='#', header=None, names=column_names)
+    data = pd.read_csv(csv_file, comment="#", header=None, names=column_names)
     print(f"FOFCT file loaded from '{csv_file}'")
-    print(f"Columns in FOFCT file: {list(data.columns)}")  # Print out the columns for debugging
+    print(
+        f"Columns in FOFCT file: {list(data.columns)}"
+    )  # Print out the columns for debugging
     return data
+
 
 def load_barcode_bed_file(bed_file):
     # Load the BED file
@@ -71,21 +78,30 @@ def load_barcode_bed_file(bed_file):
     print(f"BED file loaded from '{bed_file}'")
     return bed_data
 
+
 def validate_columns(data):
     required_columns = ["Chrom", "Chrom_Start", "Chrom_End"]
     for col in required_columns:
         if col not in data.columns:
-            raise KeyError(f"Required column '{col}' not found in FOFCT file. Please check the input file.")
+            raise KeyError(
+                f"Required column '{col}' not found in FOFCT file. Please check the input file."
+            )
     print("All required columns are present in the FOFCT file.")
+
 
 def find_barcode_id(bed_data, chrom, chrom_start, chrom_end):
     # Match the chromosome and start/end positions to find the Barcode ID
-    barcode_row = bed_data[(bed_data["chrName"] == chrom) & 
-                           (bed_data["startSeq"] == chrom_start) & 
-                           (bed_data["endSeq"] == chrom_end)]
+    barcode_row = bed_data[
+        (bed_data["chrName"] == chrom)
+        & (bed_data["startSeq"] == chrom_start)
+        & (bed_data["endSeq"] == chrom_end)
+    ]
     if len(barcode_row) == 0:
-        raise ValueError(f"Chromosome information not found in the BED file for {chrom}:{chrom_start}-{chrom_end}")
+        raise ValueError(
+            f"Chromosome information not found in the BED file for {chrom}:{chrom_start}-{chrom_end}"
+        )
     return barcode_row["Barcode_ID"].values[0]
+
 
 def add_missing_columns(data, bed_data):
     # Validate that all necessary columns are present in the data
@@ -95,27 +111,29 @@ def add_missing_columns(data, bed_data):
     barcode_ids = []
     for index, row in data.iterrows():
         try:
-            barcode_id = find_barcode_id(bed_data, row["Chrom"], row["Chrom_Start"], row["Chrom_End"])
+            barcode_id = find_barcode_id(
+                bed_data, row["Chrom"], row["Chrom_Start"], row["Chrom_End"]
+            )
             barcode_ids.append(barcode_id)
         except ValueError as e:
             print(f"Error processing row {index}: {e}")
             barcode_ids.append(None)  # Append None if not found
-    
+
     data["Barcode #"] = barcode_ids
     data["Mask_id"] = -1  # Placeholder for Mask_id (customize as needed)
     data["label"] = "None"  # Placeholder for label (customize as needed)
 
     return data
 
+
 def rename_columns_for_ecsv(data):
     # Rename columns back to their original names
-    data.rename(columns={
-        "X": "x",
-        "Y": "y",
-        "Z": "z",
-        "Extra_Cell_ROI_ID": "ROI #"
-    }, inplace=True)
+    data.rename(
+        columns={"X": "x", "Y": "y", "Z": "z", "Extra_Cell_ROI_ID": "ROI #"},
+        inplace=True,
+    )
     return data
+
 
 def convert_csv_to_ecsv(csv_data, output_file):
     # Convert the DataFrame to an astropy Table
@@ -124,12 +142,13 @@ def convert_csv_to_ecsv(csv_data, output_file):
     ascii.write(table, output_file, format="ecsv", overwrite=True)
     print(f"ECSV file written to '{output_file}'")
 
+
 def main():
     args = parse_args()
 
     # Read column names from the CSV file
     column_names = read_column_names_from_csv(args.fofct_file)
-    
+
     # Load the files
     csv_data = load_csv_file(args.fofct_file, column_names)
     bed_data = load_barcode_bed_file(args.bed_file)
@@ -141,10 +160,15 @@ def main():
     csv_data = rename_columns_for_ecsv(csv_data)
 
     # Define the output ECSV file path
-    output_file = args.output_file if args.output_file else args.fofct_file.replace(".csv", ".ecsv")
+    output_file = (
+        args.output_file
+        if args.output_file
+        else args.fofct_file.replace(".csv", ".ecsv")
+    )
 
     # Convert to ECSV format and save
     convert_csv_to_ecsv(csv_data, output_file)
+
 
 if __name__ == "__main__":
     main()
