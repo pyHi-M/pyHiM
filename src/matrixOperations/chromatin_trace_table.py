@@ -100,9 +100,9 @@ class ChromatinTraceTable:
         """
         if os.path.exists(file):
             trace_table = read_table_from_ecsv(file)
-            print_log(f"$ Successfully loaded chromatin trace table: {file}")
+            print(f"$ Successfully loaded chromatin trace table: {file}")
         else:
-            print_log(f"\n\n# ERROR: could not find chromatin trace table: {file}")
+            print(f"\n\n# ERROR: could not find chromatin trace table: {file}")
             sys.exit()
 
         self.data = trace_table
@@ -127,7 +127,7 @@ class ChromatinTraceTable:
         None.
 
         """
-        print_log(f"$ Saving output table as {file_name} ...")
+        print(f"$ Saving output table as {file_name} ...")
 
         try:
             table.meta["comments"].append(comments)
@@ -186,10 +186,8 @@ class ChromatinTraceTable:
             trace_table_indexed = trace_table.group_by("Trace_ID")
 
             # iterates over traces
-            print_log(
-                f"\n$ Will keep localizations with {coor_min} < {coor} < {coor_max}."
-            )
-            print_log(
+            print(f"\n$ Will keep localizations with {coor_min} < {coor} < {coor_max}.")
+            print(
                 f"$ Number of original spots / traces: {len(trace_table)} / {len(trace_table_indexed.groups)}"
             )
 
@@ -202,7 +200,7 @@ class ChromatinTraceTable:
                     rows_to_remove.append(idx)
                     # coordinates.append(coordinate)
 
-            print_log(f"$ Number of spots to remove: {len(rows_to_remove)}")
+            print(f"$ Number of spots to remove: {len(rows_to_remove)}")
 
             trace_table.remove_rows(rows_to_remove)
 
@@ -212,12 +210,12 @@ class ChromatinTraceTable:
             else:
                 number_traces_left = 0
 
-            print_log(
+            print(
                 f"$ Number of spots / traces left: {len(trace_table)} / {number_traces_left}"
             )
 
         else:
-            print_log("! Error: you are trying to filter an empty trace table!")
+            print("! Error: you are trying to filter an empty trace table!")
         self.data = trace_table
 
     def barcode_statistics(self, trace_table):
@@ -240,7 +238,7 @@ class ChromatinTraceTable:
         trace_table_indexed = trace_table.group_by("Trace_ID")
 
         # iterates over traces
-        print_log("$ Calculating barcode stats...")
+        print("$ Calculating barcode stats...")
 
         for trace in tqdm(trace_table_indexed.groups):
             unique_barcodes = list(set(trace["Barcode #"].data))
@@ -403,13 +401,13 @@ class ChromatinTraceTable:
         """
         trace_table = self.data
         trace_table_new = trace_table.copy()
-        print_log("\n$ Removing spots with repeated barcodes...")
+        print("\n$ Removing spots with repeated barcodes...")
         if len(trace_table) > 0:
             # indexes trace file
             trace_table_indexed = trace_table.group_by("Trace_ID")
 
             # iterates over traces
-            print_log(
+            print(
                 f"\n$ Number of original \n spots: {len(trace_table)} \n traces: {len(trace_table_indexed.groups)}"
             )
 
@@ -443,8 +441,8 @@ class ChromatinTraceTable:
                         if barcode_rep > 1:
                             spots_to_remove.append(row["Spot_ID"])
 
-            print_log(f"$ Number of spots to remove: {len(spots_to_remove)}")
-            print_log("$ Removing repeated spots...")
+            print(f"$ Number of spots to remove: {len(spots_to_remove)}")
+            print("$ Removing repeated spots...")
 
             rows_to_remove = []
             for idx, row in enumerate(trace_table):
@@ -455,7 +453,7 @@ class ChromatinTraceTable:
 
             trace_table_new.remove_rows(rows_to_remove)
 
-            print_log(f"$ Number of rows to remove: {len(rows_to_remove)}")
+            print(f"$ Number of rows to remove: {len(rows_to_remove)}")
 
             if len(trace_table_new) > 0:
                 trace_table_indexed = trace_table_new.group_by("Trace_ID")
@@ -463,7 +461,7 @@ class ChromatinTraceTable:
             else:
                 number_traces_left = 0
 
-            print_log(
+            print(
                 f"$ After filtering, I see \n spots: {len(trace_table_new)} \n traces: {len(trace_table_indexed.groups)}"
             )
 
@@ -479,7 +477,7 @@ class ChromatinTraceTable:
             )
 
         else:
-            print_log("! Error: you are trying to filter an empty trace table!")
+            print("! Error: you are trying to filter an empty trace table!")
         self.data = trace_table_new
 
     def remove_duplicates(
@@ -499,7 +497,7 @@ class ChromatinTraceTable:
         """
         trace_table = self.data
         trace_table_new = trace_table.copy()
-        print_log("\n$ Removing duplicated barcodes...")
+        print("\n$ Removing duplicated barcodes...")
         if len(trace_table) > 0:
             # indexes trace file
             trace_table_indexed = trace_table.group_by("Spot_ID")
@@ -523,7 +521,7 @@ class ChromatinTraceTable:
             # removes from table
             trace_table_new.remove_rows(rows_to_remove)
 
-            print_log(f"$ Number of rows to remove: {len(rows_to_remove)}")
+            print(f"$ Number of rows to remove: {len(rows_to_remove)}")
 
             if len(trace_table_new) > 0:
                 trace_table_indexed = trace_table_new.group_by("Trace_ID")
@@ -531,12 +529,12 @@ class ChromatinTraceTable:
             else:
                 number_traces_left = 0
 
-            print_log(
+            print(
                 f"$ After filtering, I see \n spots: {len(trace_table_new)} \n traces: {number_traces_left}"
             )
 
         else:
-            print_log("! Error: you are trying to filter an empty trace table!")
+            print("! Error: you are trying to filter an empty trace table!")
 
         self.data = trace_table_new
 
@@ -551,7 +549,7 @@ class ChromatinTraceTable:
         """
 
         if remove_barcode is not None:
-            print_log(f"\n$ Removing barcode <{remove_barcode}>")
+            print(f"\n$ Removing barcode <{remove_barcode}>")
 
             trace_table = self.data
             trace_table_new = trace_table.copy()
@@ -564,10 +562,10 @@ class ChromatinTraceTable:
             spots_to_remove = []
             for sub_table_barcode in tqdm(trace_table_indexed.groups):
                 barcode_name = list(set(sub_table_barcode["Barcode #"]))
-                if int(remove_barcode) == barcode_name:
-                    print_log(f"$ Found barcode: {barcode_name}")
+                if int(remove_barcode) in barcode_name:
+                    print(f"$ Found barcode: {barcode_name}")
                     spots_to_remove.extend(row["Spot_ID"] for row in sub_table_barcode)
-            print_log(f"$ Number of spots to remove: {len(spots_to_remove)}")
+            print(f"$ Number of spots to remove: {len(spots_to_remove)}")
 
             # builds the list with the rows to remove
             rows_to_remove = []
@@ -583,7 +581,7 @@ class ChromatinTraceTable:
             # provides statistics
             trace_table_indexed_new = trace_table_new.group_by("Barcode #")
             number_barcodes_left = len(trace_table_indexed_new.groups)
-            print_log(
+            print(
                 f"\n$ Number of barcodes \n\t original: {number_barcodes_before} \n\t after: {number_barcodes_left}"
             )
 
@@ -613,8 +611,8 @@ class ChromatinTraceTable:
         trace_table_indexed = trace_table.group_by("Trace_ID")
 
         # iterates over traces
-        print_log(f"\n$ Will keep traces with {minimum_number_barcodes } spots")
-        print_log(
+        print(f"\n$ Will keep traces with {minimum_number_barcodes } spots")
+        print(
             f"$ Number of original spots / traces: {len(trace_table)} / {len(trace_table_indexed.groups)}"
         )
 
@@ -626,7 +624,7 @@ class ChromatinTraceTable:
             if number_unique_barcodes < minimum_number_barcodes:
                 barcodes_to_remove.append(list(trace["Spot_ID"].data))
 
-        print_log(f"$ Number of traces to remove: {len(barcodes_to_remove)}")
+        print(f"$ Number of traces to remove: {len(barcodes_to_remove)}")
 
         list_barcode_to_remove = []
         for barcodes in barcodes_to_remove:
@@ -646,7 +644,7 @@ class ChromatinTraceTable:
         else:
             number_traces_left = 0
 
-        print_log(
+        print(
             f"$ Number of spots / traces left: {len(trace_table)} / {number_traces_left}"
         )
 
@@ -678,7 +676,7 @@ class ChromatinTraceTable:
             # creates sub Table for this ROI
             data_roi = data_indexed.groups[i_roi]
             n_roi = data_roi["ROI #"][0]
-            print_log(f"> Plotting barcode localization map for ROI: {n_roi}")
+            print(f"> Plotting barcode localization map for ROI: {n_roi}")
             color_dict = build_color_dict(data_roi, key="Barcode #")
             n_barcodes = np.unique(data_roi["Barcode #"]).shape[0]
 
@@ -705,7 +703,7 @@ class ChromatinTraceTable:
                 masks = np.max(masks, axis=0)
             ax[0].imshow(masks, cmap=lbl_cmap, alpha=0.3)
 
-            print_log(f"$ Pixel_size = {pixel_size}")
+            print(f"$ Pixel_size = {pixel_size}")
             # makes plot
             plots_localization_projection(
                 x / pixel_size[0], y / pixel_size[1], ax[0], colors, titles[0]
@@ -766,6 +764,4 @@ class ChromatinTraceTable:
             try:
                 fig.savefig(traces)
             except ValueError:
-                print_log(
-                    f"\nValue error while saving output figure with traces:{traces}"
-                )
+                print(f"\nValue error while saving output figure with traces:{traces}")
