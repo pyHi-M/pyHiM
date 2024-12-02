@@ -26,7 +26,6 @@ from matplotlib.patches import Polygon
 from stardist import random_label_cmap
 from tqdm import tqdm
 
-from core.pyhim_logging import print_log
 from imageProcessing.localization_table import (
     build_color_dict,
     decode_rois,
