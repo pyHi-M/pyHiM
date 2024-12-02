@@ -194,7 +194,6 @@ def main():
     him_data_1.run_parameters["action"] = him_data_1.run_parameters["action1"]
     him_data_1.run_parameters["label"] = him_data_1.run_parameters["label1"]
     him_data_1.load_data()
-    n_cells = him_data_1.n_cells_loaded()
 
     if output_folder == "none":
         output_folder = him_data_1.data_folder
@@ -216,7 +215,6 @@ def main():
         him_data_2.run_parameters["action"] = him_data_2.run_parameters["action2"]
         him_data_2.run_parameters["label"] = him_data_2.run_parameters["label2"]
         him_data_2.load_data()
-        n_cells_2 = him_data_2.n_cells_loaded()
 
         run2Datasets = True
         output_filename = (

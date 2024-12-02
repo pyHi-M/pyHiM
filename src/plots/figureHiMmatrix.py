@@ -28,21 +28,13 @@ Left to do:
 
 
 import argparse
-
-# %% imports and plotting settings
 import os
 import sys
 
 import numpy as np
 from plotting_functions import gets_matrix
 
-from matrixOperations.HIMmatrixOperations import (
-    calculate_contact_probability_matrix,
-    plot_matrix,
-    shuffle_matrix,
-)
-
-# %% define and loads datasets
+from matrixOperations.HIMmatrixOperations import plot_matrix
 
 
 def parse_arguments():

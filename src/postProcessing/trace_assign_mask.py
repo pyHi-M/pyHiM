@@ -21,11 +21,9 @@ ChromatinTraceTable() object and output .ecsv trace table file .
 # =============================================================================q
 
 import argparse
-import glob
 import os
 import select
 import sys
-from datetime import datetime
 
 import numpy as np
 

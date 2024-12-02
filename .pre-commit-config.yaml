@@ -23,12 +23,12 @@ repos:
       - id: isort
         args: ["--profile", "black"] # Ensures compatibility with Black
 
-  # # Flake8 for Linting
-  # - repo: https://github.com/PyCQA/flake8
-  #   rev: 7.1.1
-  #   hooks:
-  #     - id: flake8
-  #       args: ["--max-line-length=88", "--ignore=E501,W503,E203"]  # Match Black's line length
+  # Flake8 for Linting
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: ["--max-line-length=88", "--ignore=E501,W503,E203"]  # Match Black's line length
 
 
   # Codespell for Spell Checking

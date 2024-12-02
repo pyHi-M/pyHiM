@@ -14,27 +14,20 @@ script to compare PWD matrices from two experiments
 
 """
 
-
-# =============================================================================
-# IMPORTS
-# =============================================================================q
-
 import argparse
-import select
 import sys
-
-import seaborn as sns
-
-sns.set(font_scale=2)
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
+import seaborn as sns
 
 from matrixOperations.HIMmatrixOperations import (
     calculate_contact_probability_matrix,
     calculate_ensemble_pwd_matrix,
 )
+
+sns.set(font_scale=2)
 
 # =============================================================================
 # FUNCTIONS
@@ -211,11 +204,11 @@ def plots_distributions(x, y, output_filename="violin_plot.png", y_axis_label="c
     X = [remove_zeros(x0) for x0 in X]
 
     # starts figure
-    fig = plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 10))
 
     # plots datasets
 
-    ax = sns.violinplot(data=X).set(
+    sns.violinplot(data=X).set(
         title=y_axis_label + f" distributions. WX P-value = {p_value:.2e}"
     )
     plt.xlabel("datasets")

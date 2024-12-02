@@ -55,7 +55,6 @@ import argparse
 import os
 import select
 import sys
-from datetime import datetime
 
 from core.data_manager import create_folder
 from core.parameters import loads_barcode_dict
@@ -183,9 +182,6 @@ def runtime(
             # filters trace
             trace.filter_traces_by_n(minimum_number_barcodes=N_barcodes)
 
-            # saves output trace
-            outputfile = trace_file.rstrip(".ecsv") + "_selected_traces" + ".xyz"
-
             # indexes traces by Trace_ID
             trace_table = trace.data
             trace_table_indexed = trace_table.group_by("Trace_ID")
@@ -226,7 +222,6 @@ def runtime(
 
 
 def main():
-    begin_time = datetime.now()
 
     # [parsing arguments]
     p = parse_arguments()

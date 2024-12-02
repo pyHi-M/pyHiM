@@ -607,7 +607,7 @@ class BuildTraces:
         print_log(f"> Creating KDTree for {self.ndims} dimensions")
         x_tree = KDTree(coordinates)
 
-        ## set distance threshold
+        # set distance threshold
         r = matrix_params.KDtree_distance_threshold_mum
         # Groups points when they're less than r away
         points = [x_tree.query_ball_point(element, r, p=2.0) for element in coordinates]

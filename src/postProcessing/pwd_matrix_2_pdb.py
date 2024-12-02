@@ -87,7 +87,7 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
                 print("$ fixing key {} as not found in dict".format(barcode))
 
     with open(file_name, mode="w+", encoding="utf-8") as fid:
-        ## atom coordinates
+        # atom coordinates
         field_record = "HETATM"
         field_atom_number = " {: 4d} "
         field_atom_name = " C{:02d}"
@@ -132,7 +132,7 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
                 )
             )
 
-        ## connectivity
+        # connectivity
         txt1 = "CONNECT  {: 3d}  {: 3d}\n"
         txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 

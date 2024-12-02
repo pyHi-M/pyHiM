@@ -8,8 +8,6 @@ Created on Wed Oct 11 17:47:13 2023
 import argparse
 import json
 import os
-import select
-import subprocess
 import sys
 
 import numpy as np
@@ -17,7 +15,7 @@ from astropy.visualization import simple_norm
 from matplotlib import pyplot as plt
 from roipoly import MultiRoi
 from scipy.ndimage import shift as shift_image
-from skimage import exposure, io
+from skimage import io
 from tifffile import imread, imwrite
 
 
@@ -182,10 +180,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="Input file name (TIF assumed)")
     parser.add_argument("--label", help="Label to add to image file name. Default=none")
-
     args = parser.parse_args()
-
-    processing_list = {}
 
     if args.input:
         input_file = args.input

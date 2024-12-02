@@ -11,18 +11,15 @@ import sys
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import ranksums
+from scipy.stats import bootstrap, ranksums
+from tqdm import trange
 
 from matrixOperations.HIMmatrixOperations import (
     calculate_contact_probability_matrix,
-    plot_matrix,
     shuffle_matrix,
 )
 
 rng = np.random.default_rng()
-
-from scipy.stats import bootstrap
-from tqdm import trange
 
 
 def bootstrapping(x, N_bootstrap=9999):
@@ -197,7 +194,7 @@ def plot_Wilcoxon_matrix(
 
     result = np.log10(result)
 
-    f1_ax1_im = plot_2d_matrix_simple(
+    plot_2d_matrix_simple(
         f_1,
         result,
         uniqueBarcodes,
@@ -354,20 +351,20 @@ def plot_matrix_difference(
     _m1, _m2, _ = normalize_matrix(_m1, _m2, mode)
 
     print(f"$ max_m1 = {np.nanmax(_m1)} \t max_m2 = {np.nanmax(_m2)}")
-    if ratio == True:
+    if ratio:
         matrix = np.log2(_m1 / _m2)
         cmtitle = "log(ratio)"
         fig_title = "log2(Dataset1/Dataset2)"
-        print(f"$ calculating ratio")
+        print("$ calculating ratio")
     else:
         matrix = _m1 - _m2
         cmtitle = "difference"
         fig_title = "Dataset1-Dataset2"
-        print(f"$ calculating difference")
+        print("$ calculating difference")
 
     print("$ Clim used: {}\n".format(c_scale))
 
-    f1_ax1_im = plot_2d_matrix_simple(
+    plot_2d_matrix_simple(
         f_1,
         matrix,
         uniqueBarcodes,

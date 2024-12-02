@@ -64,7 +64,6 @@ python export_trace_table.py --ecsv_file /path/to/Trace_3D_barcode_KDtree_ROI-5.
 import csv
 import json
 import os
-import sys
 from argparse import ArgumentParser
 
 import pandas as pd

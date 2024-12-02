@@ -10,11 +10,6 @@ contains functions and classes needed for the analysis and plotting of HiM matri
 """
 
 
-# =============================================================================
-# IMPORTS
-# =============================================================================
-
-
 import csv
 import glob
 import itertools
@@ -203,7 +198,7 @@ class AnalysisHiMMatrix:
         prop_cycle = plt.rcParams["axes.prop_cycle"]
         colors = prop_cycle.by_key()["color"]
         lwbase = plt.rcParams["lines.linewidth"]
-        thin, thick = lwbase / 2, lwbase * 3
+        thick = lwbase / 2
 
         profile = self.data["ensembleContactProbability"][:, anchor - 1]
         x = np.linspace(0, profile.shape[0], num=profile.shape[0], endpoint=True)
@@ -306,13 +301,11 @@ def normalize_profile(profile1, profile2, run_parameters):
         profile1 = profile1 / profile1.max() / 2
         profile2 = profile2 / profile2.max() / 2
     elif "none" in mode:  # no normalization
-        m1_norm = 1
-        m2_norm = 1
+        pass
     else:  # normalizes by given factor
         norm_factor = float(mode)
         profile1 = profile1 / 1
         profile2 = profile2 / norm_factor
-
     return profile1, profile2
 
 
@@ -330,7 +323,7 @@ def plot_1d_profile2datasets(
     prop_cycle = plt.rcParams["axes.prop_cycle"]
     colors = prop_cycle.by_key()["color"]
     lwbase = plt.rcParams["lines.linewidth"]
-    thin, thick = lwbase / 2, lwbase * 3
+    thick = lwbase / 2
 
     profile1 = him_data_1.data["ensembleContactProbability"][:, anchor - 1]
     profile2 = him_data_2.data["ensembleContactProbability"][:, anchor - 1]
@@ -1178,7 +1171,7 @@ def fuses_sc_matrix_collated_from_datasets(
         )
 
     if p["getStructure"]:
-        ## multi-dimensional scaling to get coordinates from PWDs
+        # multi-dimensional scaling to get coordinates from PWDs
         # make sure mean_sc_matrix is symmetric
         mean_sc_matrix = 0.5 * (mean_sc_matrix + np.transpose(mean_sc_matrix))
         # run metric mds
@@ -1461,7 +1454,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
     """
 
     with open(file_name, mode="w+", encoding="utf-8") as fid:
-        ## atom coordinates
+        # atom coordinates
         # txt = "HETATM  {: 3d}  C{:02d} {} P   1      {: 5.3f}  {: 5.3f}  {: 5.3f}  0.00  0.00      PSDO C  \n"
         # txt = "HETATM  {: 3d}  {} {} P{: 3d}      {: 5.3f}  {: 5.3f}  {: 5.3f}  0.00  0.00      PSDO C  \n"
         # for i in range(n_atoms):
@@ -1469,7 +1462,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
         # fid.write(txt.format(i + 1, i + 1, trace_name, int(barcodes[i]), xyz[i, 0], xyz[i, 1], xyz[i, 2]))
         #    fid.write(txt.format(i + 1, atom_name, trace_name, int(barcodes[i]), xyz[i, 0], xyz[i, 1], xyz[i, 2]))
 
-        ## fills fields with correct spacing
+        # fills fields with correct spacing
         field_record = "HETATM"
         field_atom_number = " {:4d}"
         field_atom_name = "  {}"
@@ -1520,7 +1513,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
                 )
             )
 
-        ## connectivity
+        # connectivity
         txt1 = "CONNECT  {: 3d}  {: 3d}\n"
         txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 
@@ -1748,7 +1741,6 @@ def plot_matrix(
         else:
             mean_sc_matrix = pixel_size * sc_matrix_collated
         keep_plotting = True
-    n_barcodes = sc_matrix_collated.shape[0]
     if keep_plotting:
         # no errors occurred
 
@@ -1757,7 +1749,7 @@ def plot_matrix(
             mean_sc_matrix = np.reciprocal(mean_sc_matrix)
 
         # plots figure
-        fig = plt.figure(figsize=(15, 15))
+        plt.figure(figsize=(15, 15))
         pos = plt.imshow(mean_sc_matrix, cmap=c_m)  # colormaps RdBu seismic
         plt.xlabel("barcode #", fontsize=float(font_size) * 1.2)
         plt.ylabel("barcode #", fontsize=float(font_size) * 1.2)
@@ -2012,7 +2004,6 @@ def get_rg_from_pwd(pwd_matrix_0, min_number_pwd=4, threshold=6):
     pwd_matrix[pwd_matrix > threshold] = np.nan
 
     # get the number of PWDs that are not NaN
-    num_pwds = pwd_matrix.shape[0] * (pwd_matrix.shape[0] - 1) / 2
     num_not_nan = (
         np.sum(~np.isnan(pwd_matrix)) / 2
     )  # default is to compute the sum of the flattened array
@@ -2083,7 +2074,7 @@ def get_barcodes_per_cell(sc_matrix_collated):
 
 
 def get_coordinates_from_pwd_matrix(matrix):
-    ## multi-dimensional scaling to get coordinates from PWDs
+    # multi-dimensional scaling to get coordinates from PWDs
     # make sure mean_sc_matrix is symmetric
     matrix = 0.5 * (matrix + np.transpose(matrix))
     # run metric mds

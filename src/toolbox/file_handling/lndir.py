@@ -11,7 +11,7 @@ In the command line, run as
 
 Example:
 
-$ lndir.py "/home/marcnol/Repositories/pyHiM/\*py" ~/Downloads/test
+$ lndir.py "/home/marcnol/Repositories/pyHiM/*py" ~/Downloads/test
 
 Make sure that the first argument has quotation marks if you use wildcards!
 

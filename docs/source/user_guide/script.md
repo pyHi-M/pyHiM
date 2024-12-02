@@ -22,7 +22,7 @@ optional arguments:
 *Creates link for files in a second directory (useful to analyze data in a new folder without copying raw data files).*
 
 ```
-Usage: lndir "/user_home/Repositories/pyHiM/\*py" ~/Downloads/test
+Usage: lndir "/user_home/Repositories/pyHiM/*py" ~/Downloads/test
 ```
 
 Use quotation marks in the first argument if using wildcards.

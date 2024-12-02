@@ -27,7 +27,7 @@ def import_parameters(script_dir, current_dir=None):
     """
 
     parameters_script_path = script_dir + os.sep + "parameters.json"
-    if current_dir != None:
+    if current_dir is not None:
         parameters_current_path = current_dir + os.sep + "parameters.json"
         if os.path.exists(parameters_current_path):
             with open(parameters_current_path, mode="r") as file:
@@ -93,7 +93,7 @@ def is_integer(num):
     """Return True if num is an integer, else return False"""
     try:
         convert_num = float(num)
-    except:
+    except Exception:
         return False
     else:
         if convert_num % 1 == 0:
@@ -106,7 +106,7 @@ def is_float(num):
     """Return True if num is an integer or float, else return False if string"""
     try:
         float(num)
-    except:
+    except Exception:
         return False
     return True
 
@@ -120,7 +120,7 @@ def check_blocksize(entry_value):
 def match_name(reg_expression, string_name):
     """Test string_name with regular expression, return True if the string_name is in the form 'RT+integer'"""
     regex = re.fullmatch(reg_expression, string_name)
-    if regex == None:
+    if regex is None:
         return False
     else:
         return True
@@ -131,7 +131,7 @@ def check_brightest(entry_value):
     (=no limit in the number of spot detection)"""
     try:
         output = int(entry_value)
-    except:
+    except Exception:
         output = "None"
     return output
 
@@ -151,7 +151,7 @@ def check_dict(string: str):
     try:
         convert_string_to_dictionnary(string)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -272,7 +272,7 @@ def check_settings(entries_dic):
             if not match_name("^RT[0-9][0-9]*", entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f'The name of Reference Fiducial is not correct.\nPlease enter a name starting with "RT" and followed only by numbers.',
+                    'The name of Reference Fiducial is not correct.\nPlease enter a name starting with "RT" and followed only by numbers.',
                 )
                 is_ok = False
         elif list_values[2] is int:

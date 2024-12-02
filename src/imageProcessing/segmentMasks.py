@@ -28,7 +28,8 @@ import uuid
 
 # ---- stardist
 import matplotlib
-import matplotlib.pylab as plt
+
+# import matplotlib.pylab as plt
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.convolution import Gaussian2DKernel, convolve
@@ -425,10 +426,10 @@ def get_tessellation(xy, img_shape):
     #    ridge_points ndarray of ints, shape (nridges, 2)
     #        Indices of the points between which each Voronoi ridge lies.
     #
-    #    ridge_vertices list of list of ints, shape (nridges, \*)
+    #    ridge_vertices list of list of ints, shape (nridges, *)
     #        Indices of the Voronoi vertices forming each Voronoi ridge.
     #
-    #    regions list of list of ints, shape (nregions, \*)
+    #    regions list of list of ints, shape (nregions, *)
     #        Indices of the Voronoi vertices forming each Voronoi region. -1 indicates vertex outside the Voronoi diagram.
     #
     #    point_region list of ints, shape (npoints)

@@ -13,7 +13,7 @@ Created on Sun Feb 28 13:44:47 2021
 
 Steps:
     - defines run_parameters
-    - gets list of images in folder using wildcard, \*tif by default
+    - gets list of images in folder using wildcard, *tif by default
     - loads iteratively images and applies operations described above
     - saves output
 
@@ -187,9 +187,6 @@ def main():
     img = io.imread(files_to_process[0]).squeeze()
     imgSize = img.shape
     print("Expected image sizes: {}".format(imgSize))
-
-    # creates output image
-    outputImage = np.zeros(imgSize)
 
     if run_parameters["parallel"]:
         client, cluster = lauch_dask_scheduler(6)

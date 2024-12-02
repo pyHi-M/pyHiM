@@ -30,7 +30,6 @@ If the `--output_file` argument is not provided, the script will save the ECSV f
 marcnol, Aug 8 2024
 """
 
-import os
 from argparse import ArgumentParser
 
 import pandas as pd

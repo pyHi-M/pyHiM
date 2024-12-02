@@ -30,7 +30,6 @@ import argparse
 import collections
 import select
 import sys
-from datetime import datetime
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -285,8 +284,6 @@ def process_traces(trace_files=list()):
 
 
 def main():
-    begin_time = datetime.now()
-
     # [parsing arguments]
     p = parseArguments()
 

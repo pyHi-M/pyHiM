@@ -162,10 +162,8 @@ def run_cellpose(
     gpu=[False, None],
     pretrained_model="cyto",
 ):
-    save_folder = os.path.dirname(image_path)
-
     command = (
-        f"cellpose --verbose "
+        "cellpose --verbose "
         + f"--image_path {image_path} --no_npy --save_tif "
         + f"--chan 0 --diameter {diam} "
         + f"--stitch_threshold {stitch} "

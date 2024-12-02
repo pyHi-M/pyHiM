@@ -60,17 +60,23 @@ class Project(Feature):
     def run(self, img, reference):
         mode = self.params.mode
         if mode == "laplacian":
-            img_projected, (
-                focal_plane_matrix,
-                focus_plane,
-            ) = self._projection_laplacian(img)
-            return [
-                NpyFile(img_projected, "_2d"),
-                Png2DFile(img_projected),
-                FocalPlaneMatrixFile(
-                    focal_plane_matrix, f"focal plane = {focus_plane:.2f}"
+            (
+                img_projected,
+                (
+                    focal_plane_matrix,
+                    focus_plane,
                 ),
-            ], {}
+            ) = self._projection_laplacian(img)
+            return (
+                [
+                    NpyFile(img_projected, "_2d"),
+                    Png2DFile(img_projected),
+                    FocalPlaneMatrixFile(
+                        focal_plane_matrix, f"focal plane = {focus_plane:.2f}"
+                    ),
+                ],
+                {},
+            )
         # find the correct range for the projection
         img_reduce = self.precise_z_planes(img, mode)
         img_projected = self.projection_2d(img_reduce)

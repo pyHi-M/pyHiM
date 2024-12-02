@@ -126,10 +126,9 @@ class LocalizationTable:
         peak = barcode_map["peak"]
         zcentroid = barcode_map["zcentroid"]
         flux = barcode_map["flux"]
-        mag = barcode_map["mag"]
 
         # plots data
-        p_1 = ax[0].scatter(peak, zcentroid, c=peak, cmap="Reds", alpha=0.5)
+        ax[0].scatter(peak, zcentroid, c=peak, cmap="Reds", alpha=0.5)
         ax[0].set_title("color: peak intensity")
         ax[0].set_ylabel("zcentroid")
         ax[0].set_xlabel("peak intensity")
@@ -301,7 +300,7 @@ def plots_localization_projection(coord1, coord2, axis, colors, title="" * 3):
     colors : 1D Numpy array, float
         colorcode used in scatter plot.
     title : string, optional
-        title of subpanel. The default is ''\*3.
+        title of subpanel. The default is ''*3.
 
     Returns
     -------

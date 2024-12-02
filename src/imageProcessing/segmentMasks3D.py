@@ -428,7 +428,7 @@ class Mask3D:
             print_log("> Applying existing XY shift...")
             # Round shift value because we align a mask file
             shift = [round(value) for value in shift]
-        except KeyError as e:
+        except KeyError:
             shift = None
             """
             raise SystemExit(

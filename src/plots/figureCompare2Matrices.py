@@ -8,31 +8,18 @@ Created on Fri Jun  5 09:24:51 2020
 
 
 import argparse
-
-# %% imports and plotting settings
 import os
 import sys
 
-# import matplotlib as plt
-import numpy as np
 from plotting_functions import (
     gets_matrix,
     normalize_matrix,
-    plot_2d_matrix_simple,
     plot_matrix_difference,
     plot_mixed_matrix,
     plot_Wilcoxon_matrix,
 )
 
-# import scaleogram as scg
-from matrixOperations.HIMmatrixOperations import (
-    AnalysisHiMMatrix,
-    calculate_ensemble_pwd_matrix,
-    list_sc_to_keep,
-    plot_matrix,
-)
-
-# %% define and loads datasets
+from matrixOperations.HIMmatrixOperations import plot_matrix
 
 
 def parse_arguments():
