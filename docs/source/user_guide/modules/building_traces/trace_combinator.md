@@ -4,7 +4,7 @@
 
 - This script takes JSON file with folders where datasets are stored.
 - It searches for Trace files with the expected methods, loads them, and
-- combines them into a single table that is outputed to the buildPWDmatrix folder.
+- combines them into a single table that is outputted to the buildPWDmatrix folder.
 
 ## Invoke
 

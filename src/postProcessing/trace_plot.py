@@ -78,7 +78,7 @@ def parse_arguments():
     parser.add_argument("--selected_trace", help="Selected trace for analysis")
     parser.add_argument(
         "--barcode_type_dict",
-        help="Json dictionnary linking barcodes and atom types (MUST BE 3 characters long!). ",
+        help="Json dictionary linking barcodes and atom types (MUST BE 3 characters long!). ",
     )
     parser.add_argument(
         "--all", help="plots all traces in trace file", action="store_true"

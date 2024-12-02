@@ -289,7 +289,7 @@ class Mask3D:
                 reference_fiducial,
             )
 
-        print_log(f"$ mask_3d procesing time: {datetime.now() - now}")
+        print_log(f"$ mask_3d processing time: {datetime.now() - now}")
 
     def segment_masks_3d(
         self,

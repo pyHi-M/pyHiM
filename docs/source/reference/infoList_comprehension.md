@@ -19,8 +19,8 @@ Each section in `common` represents a step of pyHiM processing. Parameters are d
 |fiducialMask_channel|List the files to process; label of fiducial channel for mask cycles|
 |fileNameRegExp|Extraction information from filename|
 |label|Know which label is currently being processed (added in `convertsParameterFile` method)|
-|label_channel|in future this field will contain the ch for the label. This parameter will supersed the individual channel fields above.|
-|label_channel_fiducial|in future this field will contain the ch for the label fiducial. This parameter will supersed the individual channel fields above.|
+|label_channel|in future this field will contain the ch for the label. This parameter will superseded the individual channel fields above.|
+|label_channel_fiducial|in future this field will contain the ch for the label fiducial. This parameter will superseded the individual channel fields above.|
 |mask_channel|List the files to process, label of mask channel|
 |pixelSizeXY|Get lateral pixel size in nm; compute voxel size for 3D gaussian fitting|
 |pixelSizeZ|Get axial pixel size in nm; compute voxel size for 3D gaussian fitting|
@@ -46,7 +46,7 @@ Each section in `common` represents a step of pyHiM processing. Parameters are d
 
 |Parameter name|Used to|
 |---|---|
-|alignByBlock|True will perform block alignment. False will do global alignement.|
+|alignByBlock|True will perform block alignment. False will do global alignment.|
 |background_sigma|Remove inhomogeneous background; set the number of standard deviations to use for both the lower and upper clipping limit ([astropy.stats.SigmaClip](https://docs.astropy.org/en/stable/api/astropy.stats.SigmaClip.html))|
 |blockSize|Define size in (X,Y) of block for 3D local alignment; value needs to be a power of 2|
 |folder|Give a name of output folder to save output data of register_global features|
@@ -80,7 +80,7 @@ Each section in `common` represents a step of pyHiM processing. Parameters are d
 |stardist_basename|Set path name of AI models for 2D segmentation with StarDist|
 |stardist_network|Set network name for 2D `DAPI` and `mask` segmentation with StarDist|
 |stardist_network3D|Set network name for 3D `barcode`, `DAPI` and `mask` segmentation with StarDist|
-|tesselation|Allow tesselation to segment `DAPI` and `mask` if value is `True`|
+|tessellation|Allow tessellation to segment `DAPI` and `mask` if value is `True`|
 |threshold_over_std|Set threshold used to detect sources|
 |3D_area_max|Set max area to keep 3D segmented object (in pixels)|
 |3D_area_min|Set min area to keep 3D segmented object (in pixels)|

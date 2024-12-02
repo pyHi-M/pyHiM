@@ -439,7 +439,7 @@ def attributes_labels2cells(snd_table, results_table, label="doc"):
             ]
             cells_with_label = list(snd_table_with_label_roi["CellID #"].data)
 
-            # finds which cell indeces in Table have label
+            # finds which cell indices in Table have label
             list_of_selected_cells = [
                 index
                 for i_cell, index in zip(cells_to_process, range(len(cells_to_process)))
@@ -501,7 +501,7 @@ def load_sc_data(list_data, dataset_name, p):
     Returns
     -------
     sc_matrix_collated : list of np arrays n_barcodes x n_barcodes x n_cells
-        Cummulative SC PWD matrix.
+        Cumulative SC PWD matrix.
     unique_barcodes : list of np arrays
         containing the barcode identities for each matrix.
     build_pwd_matrix_collated : list of Tables
@@ -587,7 +587,7 @@ def load_sc_data(list_data, dataset_name, p):
                     f"[{i_filename}:{file_order[i_filename]}:{file_time_stamp[file_order[i_filename]]}] \
                         From {os.path.basename(file_name)}, \
                             Read: {len(new_build_pwd_matrix)} cells, \
-                                Cummulative: {len(build_pwd_matrix)} cells"
+                                Cumulative: {len(build_pwd_matrix)} cells"
                 )
 
             # [loads snd_assigned_cells.ecsv files if available]
@@ -1406,7 +1406,7 @@ def decodes_trace(single_trace):
 
 
 def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
-    # writes xyz coordinates to a PDB file wth pseudoatoms
+    # writes xyz coordinates to a PDB file with pseudoatoms
     # file_name : string of output file path, e.g. '/foo/bar/test2.pdb'
     # xyz      : n-by-3 numpy array with atom coordinates
 
@@ -1429,7 +1429,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
     # defines atom names from barcode properties
     if len(barcode_type) < 1:
         # all atoms have the same identity
-        print("did not find barcode_type dictionnary")
+        print("did not find barcode_type dictionary")
         for i, barcode in enumerate(barcodes):
             barcode_type[str(barcode)] = default_atom_name
     else:
@@ -1521,8 +1521,8 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
             )
 
         ## connectivity
-        txt1 = "CONECT  {: 3d}  {: 3d}\n"
-        txt2 = "CONECT  {: 3d}  {: 3d}  {: 3d}\n"
+        txt1 = "CONNECT  {: 3d}  {: 3d}\n"
+        txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 
         # first line of connectivity
         fid.write(txt1.format(1, 2))
@@ -1644,7 +1644,7 @@ def plot_distance_histograms(
     else:
         n_plots_x = n_plots_y = min(
             [limit_n_plots, sc_matrix_collated.shape[0]]
-        )  # sets a max of subplots if you are outputing to screen!
+        )  # sets a max of subplots if you are outputting to screen!
 
     bins = np.arange(0, max_distance, 0.25)
 
@@ -1955,7 +1955,7 @@ def distribution_maximum_kernel_density_estimation(
     ]  # removes nans
 
     if bin1 == bin2:
-        # protection agains bins in the diagonal
+        # protection against bins in the diagonal
         distance_distribution_0 = distance_distribution_unlimited
     else:
         # removes values larger than max_distance

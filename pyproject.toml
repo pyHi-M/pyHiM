@@ -84,7 +84,7 @@ mask_manual = "postProcessing.mask_manual:main"
 include-package-data = true
 
 # [tool.setuptools.packages.find]
-# where = ["ressources"]
+# where = ["resources"]
 
 [tool.setuptools.package-data]
 "toolbox.parameter_file" = ["*.png", "*.json"]

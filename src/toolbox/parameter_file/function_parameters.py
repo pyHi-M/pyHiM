@@ -7,14 +7,14 @@ from core.data_file import save_json
 
 
 def convert_dic_to_string(dic: dict):
-    """Convert a dictionnary {'nuclei':'DAPI','mask1':'mask0'} to a simple
+    """Convert a dictionary {'nuclei':'DAPI','mask1':'mask0'} to a simple
     string: 'nuclei: DAPI, mask1: mask0'."""
     string = str(dic).replace("'", "").replace("{", "").replace("}", "")
     return string
 
 
 def convert_list_to_string(liste: list):
-    """Convert a list of type ['masking','clustering'] to a sting of type ''."""
+    """Convert a list of type ['masking','clustering'] to a string of type ''."""
     string = str(liste).replace("'", "").replace("[", "").replace("]", "")
     return string
 
@@ -138,12 +138,12 @@ def check_brightest(entry_value):
 
 def convert_string_to_dictionnary(string: str) -> dict:
     """Convert a string to a dictionary"""
-    dictionnary = {}
+    dictionary = {}
     temp = string.replace(" ", "").split(",")
     for item in temp:
         list_temp = item.split(":")
-        dictionnary[list_temp[0]] = list_temp[1]
-    return dictionnary
+        dictionary[list_temp[0]] = list_temp[1]
+    return dictionary
 
 
 def check_dict(string: str):
@@ -264,7 +264,7 @@ def check_settings(entries_dic):
             if not check_blocksize(int(entered_value)) or not is_integer(entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f"The type of {key} input is not correct.\nPlease enter an interger that is a power of 2.",
+                    f"The type of {key} input is not correct.\nPlease enter an integer that is a power of 2.",
                 )
                 is_ok = False
         # test if name of RT/Barcode is in the form 'RT' + integer
@@ -279,7 +279,7 @@ def check_settings(entries_dic):
             if not is_integer(entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f"The type of {key} input is not correct.\nPlease enter interger value.",
+                    f"The type of {key} input is not correct.\nPlease enter integer value.",
                 )
                 is_ok = False
         # test for values that would be normally float (not string)

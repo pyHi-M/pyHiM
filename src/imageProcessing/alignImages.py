@@ -405,7 +405,7 @@ def apply_registrations_to_filename(
     ----------
     filename_to_process : string
         file to apply registration to
-    dict_shifts : Dictionnary
+    dict_shifts : Dictionary
         contains the shifts to be applied to all rois
 
     Returns

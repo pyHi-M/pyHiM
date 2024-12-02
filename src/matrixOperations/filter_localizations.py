@@ -40,7 +40,7 @@ class FilterLocalizations:
 
     def filter_localizations_quality(self, barcode_map, i):
         """
-        [filters barcode localizations either by brigthness or 3D localization accuracy]
+        [filters barcode localizations either by brightness or 3D localization accuracy]
 
         Parameters
         ----------

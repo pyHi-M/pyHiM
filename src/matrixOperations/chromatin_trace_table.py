@@ -577,7 +577,7 @@ class ChromatinTraceTable:
                 if spot_id in spots_to_remove:
                     rows_to_remove.append(idx)
 
-            # removes targetted spots
+            # removes targeted spots
             trace_table_new.remove_rows(rows_to_remove)
 
             # provides statistics

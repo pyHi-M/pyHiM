@@ -31,11 +31,12 @@ repos:
   #       args: ["--max-line-length=88", "--ignore=E501,W503,E203"]  # Match Black's line length
 
 
-  # # Codespell for Spell Checking
-  # - repo: https://github.com/codespell-project/codespell
-  #   rev: v2.3.0
-  #   hooks:
-  #     - id: codespell  # Corrects common typos in code and documentation
+  # Codespell for Spell Checking
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell  # Corrects common typos in code and documentation
+        args: ["--skip", "docs/source/getting_started/tutorials/notebooks/full_pyHiM_run.ipynb", "-L", "nd,buid"]
 
   # Pip-audit for Dependency Security
   - repo: https://github.com/pypa/pip-audit

@@ -41,7 +41,7 @@ def plot_zprojection(input_folder, rt_references, titles, datatype):
     # Figure size in inches optional
     rcParams["figure.figsize"] = 15, 15
 
-    # Enter in the folder contaning the zProjected output images
+    # Enter in the folder containing the zProjected output images
     os.chdir(os.path.join(input_folder, "project"))
 
     if datatype == "DAPI":

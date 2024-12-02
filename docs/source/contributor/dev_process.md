@@ -6,7 +6,7 @@ The following branches will always exist in *pyHiM*:
 * The `master` branch: reference branch of stable versions. We use the tag [versioning](https://semver.org/) systems.
 * The `development` branch: features stable but pre-release features. Use at your own risk.
 * Features branches are used for development of single features
-* Bug branches are use to fix specific bugs repported as `issues`. Once the bug is fixed, the branch is merged into the `development` branch using a pull request and subsequentially deleted.
+* Bug branches are use to fix specific bugs reported as `issues`. Once the bug is fixed, the branch is merged into the `development` branch using a pull request and subsequentially deleted.
 
 Template for branch naming scheme:
 
@@ -46,7 +46,7 @@ Examples:
 
 ### Share new feature
 
-1. Ensure that there isn't conflit on your branch
+1. Ensure that there isn't conflict on your branch
     ```shell
     git pull origin <your_branch>
     ```
@@ -104,7 +104,7 @@ git log --graph --oneline
 
 After you merge your pull request, please delete your branch. This will signal to other developers that the work on the branch is complete and prevents you or others from accidentally using old branches. For more information, see "[Deleting and restoring branches in a pull request](https://docs.github.com/en/github/administering-a-repository/deleting-and-restoring-branches-in-a-pull-request)."
 
-When you delete a branch, the commit history will be transfered to the development branch. You can always restore your deleted branch or revert your pull request if needed.
+When you delete a branch, the commit history will be transferred to the development branch. You can always restore your deleted branch or revert your pull request if needed.
 
 ```shell
 // delete branch locally

@@ -82,7 +82,7 @@ def parse_arguments():
     parser.add_argument("--cMax", help="Colormap max scale. Default: automatic")
     parser.add_argument(
         "--scalingParameter",
-        help="Scaling parameter. Dafault: 1",
+        help="Scaling parameter. Default: 1",
     )
     parser.add_argument(
         "--shuffle",

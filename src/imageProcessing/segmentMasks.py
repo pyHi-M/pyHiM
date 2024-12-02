@@ -178,7 +178,7 @@ def _segment_source_inhomog_background(
 
     `None` is returned if no stars are found.
 
-    img_bkc_substracted: 2D NPY array with background substracted image
+    img_bkc_substracted: 2D NPY array with background subtracted image
     """
 
     # estimates and removes inhomogeneous background
@@ -238,7 +238,7 @@ def segment_source_inhomog_background(im, seg_params: SegmentationParams):
 
     `None` is returned if no stars are found.
 
-    img_bkc_substracted: 2D NPY array with background substracted image
+    img_bkc_substracted: 2D NPY array with background subtracted image
     """
 
     threshold_over_std = seg_params.threshold_over_std
@@ -286,7 +286,7 @@ def segment_source_flat_background(im, seg_params: SegmentationParams):
 
     `None` is returned if no stars are found.
 
-    img_bkc_substracted: 2D NPY array with background substracted image
+    img_bkc_substracted: 2D NPY array with background subtracted image
     """
 
     threshold_over_std = seg_params.threshold_over_std
@@ -309,7 +309,7 @@ def tessellate_masks(segm_deblend):
     """
     * takes a labeled mask (background 0, nuclei labeled 1, 2, ...)
     * calls get_tessellation(xy, img_shape)
-    * returns the tesselated mask and the voronoi data structure
+    * returns the tessellated mask and the voronoi data structure
 
     Parameters
     ----------
@@ -341,7 +341,7 @@ def tessellate_masks(segm_deblend):
         label = props.label
         centroid[label, :] = x_0, y_0
 
-    # tesselation
+    # tessellation
     # remove first centroid (this is the background label)
     xy = centroid[1:, :]
     voronoi_data = get_tessellation(xy, mask_labeled.shape)
@@ -403,7 +403,7 @@ def tessellate_masks(segm_deblend):
 
 def get_tessellation(xy, img_shape):
     """
-    * runs the actual tesselation based on the xy position of the markers in an image of given shape
+    * runs the actual tessellation based on the xy position of the markers in an image of given shape
 
     # follow this tutorial
     # https://hpaulkeeler.com/voronoi-dirichlet-tessellations/
@@ -706,7 +706,7 @@ def make_segmentations(
                 output = np.zeros(1)
                 return output
 
-            if seg_params.tesselation:
+            if seg_params.tessellation:
                 _, output = tessellate_masks(output)
 
             # show results

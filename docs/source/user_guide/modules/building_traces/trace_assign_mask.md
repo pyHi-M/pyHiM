@@ -2,7 +2,7 @@
 
 Use `trace_assign_mask` to assign specific *labels* to chromatin traces in a trace table.
 
-`trace_assign_mask` will load a trace file and a number of NUMPY-formatted mask files and assign labels. If a trace falls within a mask, then the mask label will be assigned to the corresponding column of the trace table. If a trace falls *at the same time* within multiple masks, multiple labels will be appended to the corresponding column of the trace table. If a trace falls within no maks, then the label column of the trace table will be kept empty.
+`trace_assign_mask` will load a trace file and a number of NUMPY-formatted mask files and assign labels. If a trace falls within a mask, then the mask label will be assigned to the corresponding column of the trace table. If a trace falls *at the same time* within multiple masks, multiple labels will be appended to the corresponding column of the trace table. If a trace falls within no mask, then the label column of the trace table will be kept empty.
 
 ## Invoke
 

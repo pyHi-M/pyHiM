@@ -204,7 +204,7 @@ Usage: figure_compare_2_matrices [-F1 ROOTFOLDER1] [-F2 ROOTFOLDER2]
 	 --axisTicks
 		 Display axis ticks
 	 --ratio
-		 Performs the ratio between matrices. Defaukt: difference
+		 Performs the ratio between matrices. Default: difference
 	 --cAxis
 		 Absolute axis value for colormap
 	 --plottingFileExtension
@@ -394,7 +394,7 @@ It performs the following operations:
 - Calculates and plots the inverse of the PWD matrix.
 - Calculates and plots contact probability matrix for each dataset.
 - Calculates and plots ensemble contact probability matrix.
-- Calcualtes and plots tensemble 3-way contact probability matrix for the set of anchors defined in the `folders2Load.json` file.
+- Calculates and plots tensemble 3-way contact probability matrix for the set of anchors defined in the `folders2Load.json` file.
 - Optional: Reads MATLAB single-cell PWD matrices and performs all previous operations.
 
 ```
@@ -444,7 +444,7 @@ Usage: process_snd_channel [-F ROOTFOLDER] [-A ADDMASK] [--cleanAllMasks]
 ```
 
 ### trace_combinator.py
-This script combines trace tables from different experiments/ROIs into a single trace table. The folders containing the trace tables of the experiments to be combined are provided as a JSON file. It is possible to select only a subset of trace tables within the folders provided using the `methods` parameter. Merged trace table is outputed in the buildPWDmatrix folder.
+This script combines trace tables from different experiments/ROIs into a single trace table. The folders containing the trace tables of the experiments to be combined are provided as a JSON file. It is possible to select only a subset of trace tables within the folders provided using the `methods` parameter. Merged trace table is outputted in the buildPWDmatrix folder.
 
 Outputs: ChromatinTraceTable() object and output .ecsv formatted file with assembled trace tables.
 
@@ -470,7 +470,7 @@ Usage: trace_combinator [-F ROOTFOLDER] [-P PARAMETERS] [-A LABEL] [-W ACTION]
 
 ### trace_selector.py
 
-This scipt loads a trace file and a number of numpy masks, and assings them the labels produced by `process_snd_channel`.
+This script loads a trace file and a number of numpy masks, and assigns them the labels produced by `process_snd_channel`.
 
 ```
 Usage: trace_selector [-F ROOTFOLDER] [--pixel_size]

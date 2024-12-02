@@ -57,7 +57,7 @@ extensions = [
     "myst_parser",  # parse markdown files to be understood by sphinx
     "sphinxcontrib.mermaid",  # mermaid extension for MyST
     "sphinx_panels",  # for creating panels like pandas or numpy main doc page
-    "nbsphinx",  # include jupyter notebook file, WARNING: uncompatible with mermaid on ReadTheDocs
+    "nbsphinx",  # include jupyter notebook file, WARNING: incompatible with mermaid on ReadTheDocs
     "IPython.sphinxext.ipython_console_highlighting",  # Resolve highlighting "literal_block" bug
 ]
 

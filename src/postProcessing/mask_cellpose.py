@@ -135,7 +135,7 @@ def run_cellpose_api(
 
     imgs = [imread(f) for f in files]
 
-    # define CHANNELS to run segementation on
+    # define CHANNELS to run segmentation on
     channels = [[0, 0]]
 
     # runs model

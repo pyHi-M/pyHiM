@@ -17,7 +17,7 @@
 * **tests**: Directory containing files that test the functions in the `src` folder.
 * **docs**: Main directory containing the files describing the software and those configuring compilation with the `Sphinx` tool for reading the documentation in the form of HTML web pages.
 * **dist** (local file): Generate by `build` to publish on PyPI with `twine`.
-    1. Install these 2 tools usefull for pip
+    1. Install these 2 tools useful for pip
     ```bash
     pip install build twine
     ```

@@ -98,7 +98,7 @@ def parse_arguments():
     else:
         # root_folder = "."
         # root_folder='/home/marcnol/data'+os.sep+'Experiment_18'
-        root_folder = "/mnt/PALM_dataserv/DATA/gurgo/Quarantaine/Analysis_embryos_cycle_14_16_2020/mixed_embryos_data/26_06_2020_analysis_T=2µm/plotSegments"
+        root_folder = "/mnt/PALM_dataserv/DATA/gurgo/Quarantine/Analysis_embryos_cycle_14_16_2020/mixed_embryos_data/26_06_2020_analysis_T=2µm/plotSegments"
 
     if args.outputFolder:
         output_folder = args.outputFolder

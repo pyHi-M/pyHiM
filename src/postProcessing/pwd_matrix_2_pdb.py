@@ -32,7 +32,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--barcode_type_dict",
-        help="Json dictionnary linking barcodes and atom types (MUST BE 3 characters long!). ",
+        help="Json dictionary linking barcodes and atom types (MUST BE 3 characters long!). ",
     )
     p = {}
 
@@ -76,7 +76,7 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
 
     if len(barcode_type) < 1:
         # all atoms have the same identity
-        print("did not find barcode_type dictionnary")
+        print("did not find barcode_type dictionary")
         for i, barcode in enumerate(barcodes):
             barcode_type["{}".format(barcode)] = default_atom_name
     else:
@@ -133,8 +133,8 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
             )
 
         ## connectivity
-        txt1 = "CONECT  {: 3d}  {: 3d}\n"
-        txt2 = "CONECT  {: 3d}  {: 3d}  {: 3d}\n"
+        txt1 = "CONNECT  {: 3d}  {: 3d}\n"
+        txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 
         # first line of connectivity
         fid.write(txt1.format(1, 2))

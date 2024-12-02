@@ -226,5 +226,5 @@ Documentation
    contributor/no_python_files
    contributor/issues
    contributor/work_with_apifish
-   contributor/ressources
+   contributor/resources
    contributor/license

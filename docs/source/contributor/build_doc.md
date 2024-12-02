@@ -125,7 +125,7 @@ def kos_root():
     2. Followed by a blank line
     3. Followed by a more elaborate description
 
-- On Spyder IDE and VSCode you can generate easly docstring by typing 3*`"`+`Enter`
+- On Spyder IDE and VSCode you can generate easily docstring by typing 3*`"`+`Enter`
 
 - [Python Docstring Generator](https://marketplace.visualstudio.com/items?itemName=njpwerner.autodocstring): useful vscode extension to comment easily (settings > docstring format > google/sphinx/numpy).
 
