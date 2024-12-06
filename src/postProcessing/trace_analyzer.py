@@ -268,7 +268,10 @@ def process_traces(trace_files=list()):
             print(f"> Analyzing traces for {trace_file}")
 
             print(f"> Plotting traces for {trace_file}")
-            trace.plots_traces([trace_file.split(".")[0], "_traces_XYZ", ".png"],pixel_size=[0.1,0.1,0.25])
+            trace.plots_traces(
+                [trace_file.split(".")[0], "_traces_XYZ", ".png"],
+                pixel_size=[0.1, 0.1, 0.25],
+            )
 
             analyze_trace(trace, trace_file)
 

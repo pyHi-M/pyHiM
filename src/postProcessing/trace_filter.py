@@ -46,11 +46,11 @@ def parse_arguments():
     parser.add_argument(
         "-O", "--output", help="Tag to add to the output file. Default = filtered"
     )
-    
+
     parser.add_argument(
         "--pipe", help="inputs Trace file list from stdin (pipe)", action="store_true"
     )
-    
+
     parser.add_argument(
         "--clean_spots",
         help="removes both spots with same UID and barcodes repeated in a single trace",
@@ -222,7 +222,7 @@ def runtime(
                 trace.remove_duplicates()
 
             # filters trace by minimum number of barcodes
-            if N_barcodes>1:
+            if N_barcodes > 1:
                 trace.filter_traces_by_n(minimum_number_barcodes=N_barcodes)
                 comments.append("filt:N_barcodes>" + str(N_barcodes))
 
@@ -237,11 +237,7 @@ def runtime(
                         coor_min=coor_min,
                         coor_max=coor_max,
                     )
-                    comments.append(
-                        "filt:{}<{}>{}".format(
-                            coor_min, coor, coor_max
-                        )
-                    )
+                    comments.append("filt:{}<{}>{}".format(coor_min, coor, coor_max))
             # removes barcodes in traces where they are repeated
             if remove_duplicate_spots:
                 trace.filter_repeated_barcodes(trace_file)
@@ -278,6 +274,7 @@ def runtime(
 # =============================================================================
 # MAIN
 # =============================================================================
+
 
 def main():
     print("=" * 10 + "Started execution" + "=" * 10)
