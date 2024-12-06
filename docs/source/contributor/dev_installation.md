@@ -180,3 +180,24 @@ git checkout development
 ln -s $HOME/Repositories/pyHiM/src/toolbox/file_handling/cleanHiM_run.py $HOME/bin/cleanHiM
 
 ```
+
+## Step to setup pre-commit in local
+- environment installation
+  `pip install pre-commit`
+
+- check if it's well installed
+  `pre-commit --version`
+
+- install command of the file ".pre-commit-config.yaml" inside ".git/hooks/pre-commit"
+  `pre-commit install`
+
+- fix strange issue or warning
+  `pre-commit autoupdate --repo https://github.com/pre-commit/pre-commit-hooks`
+
+- test pre-commit without any commit
+  `pre-commit run --all-files`
+
+- Update pre-commit file
+  - `pre-commit clean`
+  - `pre-commit autoupdate`
+  - `pre-commit install`
