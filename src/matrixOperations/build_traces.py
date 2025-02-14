@@ -41,6 +41,7 @@ import uuid
 import numpy as np
 from apifish.stack.io import read_array
 from scipy.spatial import KDTree
+from skimage.measure import label
 from skimage.segmentation import expand_labels
 from tqdm import trange
 from tqdm.contrib import tzip
@@ -376,10 +377,15 @@ class BuildTraces:
                 segmented_masks = read_array(full_filename_masks)
                 print_log(f"$ loaded mask file: {full_filename_masks}")
 
-                # expands mask without overlap by a maximmum of 'distance' pixels
+                # expands mask without overlap by a maximum of 'distance' pixels
                 self.masks = expand_labels(
                     segmented_masks, distance=matrix_params.mask_expansion
                 )
+
+                # Generate new labels for each connected component to ensure each label is assigned to 1 mask only.
+                self.masks = label(
+                    self.masks > 0, connectivity=1
+                )  # Relabel masks uniquely
 
                 # initializes masks
                 self.initializes_masks(self.masks)
