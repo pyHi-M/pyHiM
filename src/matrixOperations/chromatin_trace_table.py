@@ -22,7 +22,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from apifish.stack.io import read_table_from_ecsv, save_table_to_ecsv
 from astropy.table import Table, vstack
-from matplotlib.patches import Polygon
 from stardist import random_label_cmap
 from tqdm import tqdm
 
@@ -665,7 +664,7 @@ class ChromatinTraceTable:
         # indexes table by ROI
         data_indexed, number_rois = decode_rois(data)
 
-        im_size = 20
+        im_size = 60
         for i_roi in range(number_rois):
             # creates sub Table for this ROI
             data_roi = data_indexed.groups[i_roi]
@@ -696,22 +695,60 @@ class ChromatinTraceTable:
                 masks = np.max(masks, axis=0)
             ax[0].imshow(masks, cmap=lbl_cmap, alpha=0.3)
 
-            print(f"$ Pixel_size = {pixel_size}")
-            # makes plot
-            plots_localization_projection(
-                x / pixel_size[0], y / pixel_size[1], ax[0], colors, titles[0]
-            )
-            plots_localization_projection(x, z, ax[1], colors, titles[1])
-            plots_localization_projection(y, z, ax[2], colors, titles[2])
-
-            fig.tight_layout()
-
             # calculates mean trace positions and sizes by looping over traces
             data_traces = data_roi.group_by("Trace_ID")
             color_dict_traces = build_color_dict(data_traces, key="Trace_ID")
             colors_traces = [color_dict_traces[str(x)] for x in data_traces["Trace_ID"]]
             cmap_traces = plt.cm.get_cmap("hsv", np.max(colors_traces))
 
+            for trace, color, trace_id in zip(
+                data_traces.groups, colors_traces, data_traces.groups.keys
+            ):
+                # Sort by barcode number
+                sorted_trace = trace[np.argsort(trace["Barcode #"])]
+
+                # Extract coordinates
+                x_trace = sorted_trace["x"].data / pixel_size[0]
+                y_trace = sorted_trace["y"].data / pixel_size[1]
+                z_trace = (
+                    sorted_trace["z"].data / pixel_size[2]
+                )  # If needed for other plots
+
+                # Plot scatter points
+                ax[0].scatter(
+                    x_trace,
+                    y_trace,
+                    color=cmap_traces(color),
+                    s=5,
+                    label=f"Trace {trace_id}",
+                    alpha=0.1,
+                )
+
+                # Plot line connecting the points in this trace
+                ax[0].plot(x_trace, y_trace, color="k", linewidth=1, alpha=0.4)
+
+                # Repeat for the other projections
+                ax[1].scatter(x_trace, z_trace, color=cmap_traces(color), s=5)
+                ax[1].plot(x_trace, z_trace, color="k", linewidth=1, alpha=0.4)
+
+                ax[2].scatter(y_trace, z_trace, color=cmap_traces(color), s=5)
+                ax[2].plot(y_trace, z_trace, color="k", linewidth=1, alpha=0.4)
+
+            print(f"$ Pixel_size = {pixel_size}")
+            # makes plot
+            plots_localization_projection(
+                x / pixel_size[0], y / pixel_size[1], ax[0], colors, titles[0]
+            )
+            plots_localization_projection(
+                x / pixel_size[0], z / pixel_size[2], ax[1], colors, titles[1]
+            )
+            plots_localization_projection(
+                y / pixel_size[1], z / pixel_size[2], ax[2], colors, titles[2]
+            )
+
+            fig.tight_layout()
+
+            """
             for trace, color, trace_id in zip(
                 data_traces.groups, colors_traces, data_traces.groups.keys
             ):
@@ -731,7 +768,8 @@ class ChromatinTraceTable:
                     linewidth=1,
                     alpha=1,
                 )
-                ax[0].add_patch(polygon)
+                ax[0].add_patch(polygon) # this does not work so I commented it out
+            """
 
             # saves output figure
             filename_list_i = filename_list.copy()
