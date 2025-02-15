@@ -159,6 +159,7 @@ class ChromatinTraceTable:
             self.data = read_table_from_ecsv(file)
             self.original_format = "ecsv"
         elif file_ext == ".4dn":
+            print(f"$ Importing table from fof-ct format")
             self.data = self._convert_4dn_to_astropy(file)
             self.original_format = "4dn"
         else:
@@ -193,6 +194,12 @@ class ChromatinTraceTable:
             csv_data.rename(columns={"Cell_ID": "Mask_id"}, inplace=True)
         else:
             csv_data["Mask_id"] = -1  # Placeholder if Cell_ID is missing
+        
+        # Handle optional Extra_Cell_ROI_ID column
+        if "Extra_Cell_ROI_ID" in csv_data.columns:
+            csv_data.rename(columns={"Extra_Cell_ROI_ID": "ROI #"}, inplace=True)
+        else:
+            csv_data["ROI #"] = 0  # Default value if missing
         
         # Assign Barcode # by ordering and mapping unique genomic positions
         unique_barcodes = (
@@ -236,6 +243,7 @@ class ChromatinTraceTable:
                 if line.startswith("##columns"):
                     return [col.strip() for col in line.split("=")[1].strip("()").split(", ")]
         raise ValueError("No `##columns` line found in the FOFCT file.")
+    
 
     def append(self, table):
         """
@@ -761,6 +769,7 @@ class ChromatinTraceTable:
         data_indexed, number_rois = decode_rois(data)
 
         im_size = 60
+        print(f"> Will make plots for {number_rois} ROI(s)")
         for i_roi in range(number_rois):
             # creates sub Table for this ROI
             data_roi = data_indexed.groups[i_roi]
@@ -796,7 +805,9 @@ class ChromatinTraceTable:
             color_dict_traces = build_color_dict(data_traces, key="Trace_ID")
             colors_traces = [color_dict_traces[str(x)] for x in data_traces["Trace_ID"]]
             cmap_traces = plt.cm.get_cmap("hsv", np.max(colors_traces))
+            number_traces = len(colors_traces)
 
+            print(f"$ Plotting {number_traces} traces...")
             for trace, color, trace_id in zip(
                 data_traces.groups, colors_traces, data_traces.groups.keys
             ):
