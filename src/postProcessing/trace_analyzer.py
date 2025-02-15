@@ -383,14 +383,13 @@ def process_traces(trace_files=list()):
             # reads new trace
             trace.load(trace_file)
 
-            print(f"> Analyzing traces for {trace_file}")
-
             print(f"> Plotting traces for {trace_file}")
             trace.plots_traces(
                 [trace_file.split(".")[0], "_traces_XYZ", ".png"],
                 pixel_size=[0.1, 0.1, 0.25],
             )
 
+            print(f"> Analyzing traces for {trace_file}")
             analyze_trace(trace, trace_file)
 
     else:
