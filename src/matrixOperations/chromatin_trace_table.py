@@ -20,6 +20,7 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from apifish.stack.io import read_table_from_ecsv, save_table_to_ecsv
 from astropy.table import Table, vstack
 from stardist import random_label_cmap
@@ -41,6 +42,8 @@ class ChromatinTraceTable:
         self.a = 1
         self.xyz_unit = xyz_unit
         self.genome_assembly = genome_assembly
+        self.original_format = "ecsv"  # Default format
+        self.data = None
 
     def initialize(self):
         self.data = Table(
@@ -79,6 +82,7 @@ class ChromatinTraceTable:
             f"genome_assembly={self.genome_assembly}",
         ]
 
+    '''
     def load(self, file):
         """
         Loads chromatin trace table
@@ -105,7 +109,7 @@ class ChromatinTraceTable:
         self.data = trace_table
 
         return trace_table
-
+        
     def save(self, file_name, table, comments=""):
         """
         Saves output table
@@ -140,6 +144,98 @@ class ChromatinTraceTable:
             overwrite=True,
         )
         """
+    '''
+
+    def load(self, file):
+        """
+        Loads a trace table from a .ecsv or .4dn file.
+        """
+        if not os.path.exists(file):
+            print(f"# ERROR: could not find file: {file}")
+            sys.exit()
+        
+        file_ext = os.path.splitext(file)[1].lower()
+        if file_ext == ".ecsv":
+            self.data = read_table_from_ecsv(file)
+            self.original_format = "ecsv"
+        elif file_ext == ".4dn":
+            self.data = self._convert_4dn_to_astropy(file)
+            self.original_format = "4dn"
+        else:
+            raise ValueError("Unsupported file format. Use .ecsv or .4dn")
+        
+        print(f"Successfully loaded trace table: {file}")
+        return self.data
+    
+    def save(self, file_name):
+        """
+        Saves the trace table in the appropriate format (.ecsv or .4dn).
+        """
+        if self.original_format == "4dn":
+            self._convert_astropy_to_4dn(self.data, file_name)
+        else:
+            save_table_to_ecsv(self.data, file_name)
+        print(f"Saved output table as {file_name}")
+    
+    def _convert_4dn_to_astropy(self, fofct_file):
+        """
+        Converts a .4dn file to an Astropy table with appropriate formatting.
+        Also saves a BED file mapping genomic coordinates to barcode numbers.
+        """
+        column_names = self._read_column_names_from_4dn(fofct_file)
+        csv_data = pd.read_csv(fofct_file, comment="#", header=None, names=column_names)
+        
+        # Rename XYZ columns for Astropy compatibility
+        csv_data.rename(columns={"X": "x", "Y": "y", "Z": "z"}, inplace=True)
+        
+        # Handle optional Cell_ID column
+        if "Cell_ID" in csv_data.columns:
+            csv_data.rename(columns={"Cell_ID": "Mask_id"}, inplace=True)
+        else:
+            csv_data["Mask_id"] = -1  # Placeholder if Cell_ID is missing
+        
+        # Assign Barcode # by ordering and mapping unique genomic positions
+        unique_barcodes = (
+            csv_data[["Chrom", "Chrom_Start", "Chrom_End"]]
+            .drop_duplicates()
+            .sort_values(by=["Chrom", "Chrom_Start", "Chrom_End"])
+            .reset_index(drop=True)
+        )
+        unique_barcodes["Barcode #"] = range(1, len(unique_barcodes) + 1)
+        barcode_mapping = {tuple(row[:3]): row[3] for row in unique_barcodes.itertuples(index=False, name=None)}
+        
+        csv_data["Barcode #"] = csv_data.apply(lambda row: barcode_mapping[(row["Chrom"], row["Chrom_Start"], row["Chrom_End"])], axis=1)
+        csv_data["label"] = "None"  # Placeholder for label
+        
+        # Save BED file with Barcode # mapping
+        bed_file = fofct_file.replace(".4dn", ".bed")
+        unique_barcodes.to_csv(bed_file, sep="\t", header=False, index=False)
+        print(f"Saved BED file: {bed_file}")
+        
+        return Table.from_pandas(csv_data)
+    
+    def _convert_astropy_to_4dn(self, table, output_file):
+        """
+        Converts an Astropy table back to .4dn format.
+        Removes extra columns such as 'Barcode #', 'label', and 'ROI #'.
+        """
+        csv_data = table.to_pandas()
+        csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z", "Mask_id": "Cell_ID"}, inplace=True)
+        
+        # Remove extra columns
+        csv_data = csv_data.drop(columns=["Barcode #", "label", "ROI #"], errors='ignore')
+        
+        csv_data.to_csv(output_file, index=False)
+    
+    def _read_column_names_from_4dn(self, file):
+        """
+        Reads column names from the metadata of a .4dn file.
+        """
+        with open(file, "r") as f:
+            for line in f:
+                if line.startswith("##columns"):
+                    return [col.strip() for col in line.split("=")[1].strip("()").split(", ")]
+        raise ValueError("No `##columns` line found in the FOFCT file.")
 
     def append(self, table):
         """
