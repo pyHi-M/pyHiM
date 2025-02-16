@@ -38,12 +38,25 @@ matplotlib.rc("font", **font)
 
 
 class ChromatinTraceTable:
+
     def __init__(self, xyz_unit="micron", genome_assembly="mm10"):
+        """
+        Initializes the ChromatinTraceTable class.
+        """
         self.a = 1
         self.xyz_unit = xyz_unit
         self.genome_assembly = genome_assembly
-        self.original_format = "ecsv"  # Default format
+        self.experimenter_name = ""
+        self.experimenter_contact = ""
+        self.software_title = ""
+        self.software_authors = ""
+        self.lab_name = ""
+        self.software_description = ""
+        self.software_repository = ""
+        self.software_citation = ""
+        self.columns = []
         self.data = None
+        self.original_format = "ecsv"  # Default format
 
     def initialize(self):
         self.data = Table(
@@ -82,70 +95,6 @@ class ChromatinTraceTable:
             f"genome_assembly={self.genome_assembly}",
         ]
 
-    '''
-    def load(self, file):
-        """
-        Loads chromatin trace table
-
-        Parameters
-        ----------
-        filename_barcode_coordinates : string
-            filename with chromatin trace table
-
-        Returns
-        -------
-        chromatin trace table : Table()
-        unique_barcodes: list
-            lis of unique barcodes read from chromatin trace table
-
-        """
-        if os.path.exists(file):
-            trace_table = read_table_from_ecsv(file)
-            print(f"$ Successfully loaded chromatin trace table: {file}")
-        else:
-            print(f"\n\n# ERROR: could not find chromatin trace table: {file}")
-            sys.exit()
-
-        self.data = trace_table
-
-        return trace_table
-        
-    def save(self, file_name, table, comments=""):
-        """
-        Saves output table
-
-        Parameters
-        ----------
-        file_name: string
-            filename of table.
-        table: astropy Table
-            Table to be written to file.
-        comments : list of strings, optional
-            Will output as comments to the header. The default is [].
-
-        Returns
-        -------
-        None.
-
-        """
-        print(f"$ Saving output table as {file_name} ...")
-
-        try:
-            table.meta["comments"].append(comments)
-        except KeyError:
-            table.meta["comments"] = [comments]
-
-        save_table_to_ecsv(table, file_name)
-
-        """
-        table.write(
-            file_name,
-            format="ascii.ecsv",
-            overwrite=True,
-        )
-        """
-    '''
-
     def load(self, file):
         """
         Loads a trace table from a .ecsv or .4dn file.
@@ -160,6 +109,7 @@ class ChromatinTraceTable:
             self.original_format = "ecsv"
         elif file_ext == ".4dn":
             print(f"$ Importing table from fof-ct format")
+            self._read_metadata_from_4dn(file)
             self.data = self._convert_4dn_to_astropy(file)
             self.original_format = "4dn"
         else:
@@ -176,14 +126,45 @@ class ChromatinTraceTable:
             self._convert_astropy_to_4dn(self.data, file_name)
         else:
             save_table_to_ecsv(self.data, file_name)
-        print(f"Saved output table as {file_name}")
-    
+            print(f"Saved output table as {file_name}")
+
+
+    def _read_metadata_from_4dn(self, file):
+        """
+        Reads metadata fields from a .4dn file and stores them as class attributes.
+        """
+        with open(file, "r") as f:
+            for line in f:
+                if line.startswith("#experimenter_name:"):
+                    self.experimenter_name = line.split(": ")[1].strip()
+                elif line.startswith("#experimenter_contact:"):
+                    self.experimenter_contact = line.split(": ")[1].strip()
+                elif line.startswith("##genome_assembly:"):
+                    self.genome_assembly = line.split("=")[1].strip()
+                elif line.startswith("#Software_Title:"):
+                    self.software_title = line.split(": ")[1].strip()
+                elif line.startswith("#Software_Authors:"):
+                    self.software_authors = line.split(": ")[1].strip()
+                elif line.startswith("#lab_name:"):
+                    self.lab_name = line.split(": ")[1].strip()
+                elif line.startswith("#Software_Description:"):
+                    self.software_description = line.split(": ")[1].strip()
+                elif line.startswith("#Software_Repository:"):
+                    self.software_repository = line.split(": ")[1].strip()
+                elif line.startswith("#Software_PreferredCitationID:"):
+                    self.software_citation = line.split(": ")[1].strip()        
+                elif line.startswith("##columns="):
+                    self.columns = line.split("=")[1].split('(')[1].split(')')[0]
+                    self.columns = self.columns.split(', ')
+                    #self.columns = self._read_column_names_from_4dn(file)
+                    print(f'> Columns read: {self.columns}')
+
     def _convert_4dn_to_astropy(self, fofct_file):
         """
         Converts a .4dn file to an Astropy table with appropriate formatting.
         Also saves a BED file mapping genomic coordinates to barcode numbers.
         """
-        column_names = self._read_column_names_from_4dn(fofct_file)
+        column_names = self.columns #self._read_column_names_from_4dn(fofct_file)
         csv_data = pd.read_csv(fofct_file, comment="#", header=None, names=column_names)
         
         # Rename XYZ columns for Astropy compatibility
@@ -193,12 +174,14 @@ class ChromatinTraceTable:
         if "Cell_ID" in csv_data.columns:
             csv_data.rename(columns={"Cell_ID": "Mask_id"}, inplace=True)
         else:
+            print(f"> No Cell_ID column found, will use -1 for Mask_id")
             csv_data["Mask_id"] = -1  # Placeholder if Cell_ID is missing
         
         # Handle optional Extra_Cell_ROI_ID column
         if "Extra_Cell_ROI_ID" in csv_data.columns:
             csv_data.rename(columns={"Extra_Cell_ROI_ID": "ROI #"}, inplace=True)
         else:
+            print(f"> No Extra_Cell_ROI_ID column found, will use 0 for Mask_id")
             csv_data["ROI #"] = 0  # Default value if missing
         
         # Assign Barcode # by ordering and mapping unique genomic positions
@@ -221,10 +204,10 @@ class ChromatinTraceTable:
         
         return Table.from_pandas(csv_data)
     
+    '''    
     def _convert_astropy_to_4dn(self, table, output_file):
         """
-        Converts an Astropy table back to .4dn format.
-        Removes extra columns such as 'Barcode #', 'label', and 'ROI #'.
+        Converts an Astropy table back to .4dn format with appropriate headers.
         """
         csv_data = table.to_pandas()
         csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z", "Mask_id": "Cell_ID"}, inplace=True)
@@ -232,18 +215,66 @@ class ChromatinTraceTable:
         # Remove extra columns
         csv_data = csv_data.drop(columns=["Barcode #", "label", "ROI #"], errors='ignore')
         
-        csv_data.to_csv(output_file, index=False)
-    
-    def _read_column_names_from_4dn(self, file):
+        header = """##FOF-CT_version=v0.1
+                ##Table_namespace=4dn_FOF-CT_core
+                ##genome_assembly={}
+                ##XYZ_unit=micron
+                ##columns=(Spot_ID, Trace_ID, X, Y, Z, Chrom, Chrom_Start, Chrom_End, Cell_ID)
+                """.format(self.genome_assembly)
+        
+        with open(output_file, "w") as f:
+            f.write(header)
+            csv_data.to_csv(f, index=False)
+        print(f"Saved 4dn trace table with headers: {output_file}")
+        '''
+
+    def _convert_astropy_to_4dn(self, table, output_file):
         """
-        Reads column names from the metadata of a .4dn file.
+        Converts an Astropy table back to .4dn format with appropriate headers.
         """
-        with open(file, "r") as f:
-            for line in f:
-                if line.startswith("##columns"):
-                    return [col.strip() for col in line.split("=")[1].strip("()").split(", ")]
-        raise ValueError("No `##columns` line found in the FOFCT file.")
-    
+        output_file=output_file.strip('.ecsv')+'.4dn'
+
+        csv_data = table.to_pandas()
+        csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z"}, inplace=True)
+
+        # Remove extra columns
+        csv_data = csv_data.drop(columns=["Barcode #", "label"], errors='ignore')
+
+        # Rename columns
+        if "Extra_Cell_ROI_ID" in self.columns:
+            csv_data.rename(columns={"ROI #": "Extra_Cell_ROI_ID"}, inplace=True)
+        else:
+            csv_data = csv_data.drop(columns=["ROI #"], errors='ignore')
+        
+        if "Cell_ID" in self.columns:
+            csv_data.rename(columns={"Mask_id": "Cell_ID"}, inplace=True)
+        else:
+            csv_data = csv_data.drop(columns=["Mask_id"], errors='ignore')
+
+        # parses column list for header
+        column_list = ", ".join(self.columns)
+
+        header = f"""##FOF-CT_version=v0.1
+##Table_namespace=4dn_FOF-CT_core
+##genome_assembly={self.genome_assembly}
+##XYZ_unit=micron
+#Software_Title: {self.software_title}
+#Software_Type: SpotLoc+Tracing
+#Software_Authors: {self.software_authors}
+#Software_Description: {self.software_description}
+#Software_Repository: {self.software_repository}
+#Software_PreferredCitationID: {self.software_citation}
+#lab_name: {self.lab_name}
+#experimenter_name: {self.experimenter_name}
+#experimenter_contact: {self.experimenter_contact}
+#additional_tables:
+##columns=({column_list})
+"""
+        #print(f"> Columnds to export to 4dn table: {csv_data.columns}")
+        with open(output_file, "w") as f:
+            f.write(header)
+            csv_data.to_csv(f, index=False, header=False)
+        print(f"Saved 4dn trace table with headers: {output_file}")
 
     def append(self, table):
         """
