@@ -115,7 +115,7 @@ def main():
     split_large_traces(trace_table, args.std_threshold, args.num_clusters)
     
     trace_table.save(output_filename)
-    print(f"Saved modified trace table: {output_filename}")
+    #print(f"Saved modified trace table: {output_filename}")
 
 if __name__ == "__main__":
     main()
