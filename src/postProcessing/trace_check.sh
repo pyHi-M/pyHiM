@@ -28,12 +28,11 @@ fi
 
 # Check for invalid float values in x, y, z columns
 echo "Checking for non-float values..."
-awk -F'[ ,]+' -v x=$X_COL -v y=$Y_COL -v z=$Z_COL '{
-    if (NR > 1 && !/^#/) {
-        if ($x !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in x column at line " NR ": " $0;
-        if ($y !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in y column at line " NR ": " $0;
-        if ($z !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in z column at line " NR ": " $0;
-    }
+awk -F'[ ,]+' -v x=$X_COL -v y=$Y_COL -v z=$Z_COL 'NR>1 && !/^#/ {
+    if (NR == 2 && $x == "x" && $y == "y" && $z == "z") next; # Skip repeated header row
+    if ($x !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in x column at line " NR ": "$x;
+    if ($y !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in y column at line " NR ": "$y;
+    if ($z !~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/) print "Invalid value in z column at line " NR ": "$z;
 }' "$FILE"
 
 echo "Validation complete."
