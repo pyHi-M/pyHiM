@@ -12,13 +12,13 @@ repos:
 
   # Automatic code formatter
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
 
   # isort for Import Sorting
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 6.0.0
     hooks:
       - id: isort
         args: ["--profile", "black"] # Ensures compatibility with Black
@@ -33,13 +33,13 @@ repos:
 
   # Codespell for Spell Checking
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
       - id: codespell  # Corrects common typos in code and documentation
         args: ["--skip", "docs/source/getting_started/tutorials/notebooks/full_pyHiM_run.ipynb", "-L", "nd,buid"]
 
   # Pip-audit for Dependency Security
   - repo: https://github.com/pypa/pip-audit
-    rev: v2.7.3
+    rev: v2.8.0
     hooks:
       - id: pip-audit  # Checks for vulnerabilities in Python dependencies

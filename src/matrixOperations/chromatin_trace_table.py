@@ -102,22 +102,23 @@ class ChromatinTraceTable:
         if not os.path.exists(file):
             print(f"# ERROR: could not find file: {file}")
             sys.exit()
-        
+
         file_ext = os.path.splitext(file)[1].lower()
         if file_ext == ".ecsv":
+            print("$ Importing table from pyHiM format")
             self.data = read_table_from_ecsv(file)
             self.original_format = "ecsv"
         elif file_ext == ".4dn":
-            print(f"$ Importing table from fof-ct format")
+            print("$ Importing table from fof-ct format")
             self._read_metadata_from_4dn(file)
             self.data = self._convert_4dn_to_astropy(file)
             self.original_format = "4dn"
         else:
             raise ValueError("Unsupported file format. Use .ecsv or .4dn")
-        
+
         print(f"Successfully loaded trace table: {file}")
         return self.data
-    
+
     def save(self, file_name):
         """
         Saves the trace table in the appropriate format (.ecsv or .4dn).
@@ -127,7 +128,6 @@ class ChromatinTraceTable:
         else:
             save_table_to_ecsv(self.data, file_name)
             print(f"Saved output table as {file_name}")
-
 
     def _read_metadata_from_4dn(self, file):
         """
@@ -152,38 +152,38 @@ class ChromatinTraceTable:
                 elif line.startswith("#Software_Repository:"):
                     self.software_repository = line.split(": ")[1].strip()
                 elif line.startswith("#Software_PreferredCitationID:"):
-                    self.software_citation = line.split(": ")[1].strip()        
+                    self.software_citation = line.split(": ")[1].strip()
                 elif line.startswith("##columns="):
-                    self.columns = line.split("=")[1].split('(')[1].split(')')[0]
-                    self.columns = self.columns.split(', ')
-                    #self.columns = self._read_column_names_from_4dn(file)
-                    print(f'> Columns read: {self.columns}')
+                    self.columns = line.split("=")[1].split("(")[1].split(")")[0]
+                    self.columns = self.columns.split(", ")
+                    # self.columns = self._read_column_names_from_4dn(file)
+                    print(f"> Columns read: {self.columns}")
 
     def _convert_4dn_to_astropy(self, fofct_file):
         """
         Converts a .4dn file to an Astropy table with appropriate formatting.
         Also saves a BED file mapping genomic coordinates to barcode numbers.
         """
-        column_names = self.columns #self._read_column_names_from_4dn(fofct_file)
+        column_names = self.columns  # self._read_column_names_from_4dn(fofct_file)
         csv_data = pd.read_csv(fofct_file, comment="#", header=None, names=column_names)
-        
+
         # Rename XYZ columns for Astropy compatibility
         csv_data.rename(columns={"X": "x", "Y": "y", "Z": "z"}, inplace=True)
-        
+
         # Handle optional Cell_ID column
         if "Cell_ID" in csv_data.columns:
             csv_data.rename(columns={"Cell_ID": "Mask_id"}, inplace=True)
         else:
-            print(f"> No Cell_ID column found, will use -1 for Mask_id")
+            print("> No Cell_ID column found, will use -1 for Mask_id")
             csv_data["Mask_id"] = -1  # Placeholder if Cell_ID is missing
-        
+
         # Handle optional Extra_Cell_ROI_ID column
         if "Extra_Cell_ROI_ID" in csv_data.columns:
             csv_data.rename(columns={"Extra_Cell_ROI_ID": "ROI #"}, inplace=True)
         else:
-            print(f"> No Extra_Cell_ROI_ID column found, will use 0 for Mask_id")
+            print("> No Extra_Cell_ROI_ID column found, will use 0 for Mask_id")
             csv_data["ROI #"] = 0  # Default value if missing
-        
+
         # Assign Barcode # by ordering and mapping unique genomic positions
         unique_barcodes = (
             csv_data[["Chrom", "Chrom_Start", "Chrom_End"]]
@@ -192,36 +192,44 @@ class ChromatinTraceTable:
             .reset_index(drop=True)
         )
         unique_barcodes["Barcode #"] = range(1, len(unique_barcodes) + 1)
-        barcode_mapping = {tuple(row[:3]): row[3] for row in unique_barcodes.itertuples(index=False, name=None)}
-        
-        csv_data["Barcode #"] = csv_data.apply(lambda row: barcode_mapping[(row["Chrom"], row["Chrom_Start"], row["Chrom_End"])], axis=1)
+        barcode_mapping = {
+            tuple(row[:3]): row[3]
+            for row in unique_barcodes.itertuples(index=False, name=None)
+        }
+
+        csv_data["Barcode #"] = csv_data.apply(
+            lambda row: barcode_mapping[
+                (row["Chrom"], row["Chrom_Start"], row["Chrom_End"])
+            ],
+            axis=1,
+        )
         csv_data["label"] = "None"  # Placeholder for label
-        
+
         # Save BED file with Barcode # mapping
         bed_file = fofct_file.replace(".4dn", ".bed")
         unique_barcodes.to_csv(bed_file, sep="\t", header=False, index=False)
         print(f"Saved BED file: {bed_file}")
-        
+
         return Table.from_pandas(csv_data)
-    
-    '''    
+
+    '''
     def _convert_astropy_to_4dn(self, table, output_file):
         """
         Converts an Astropy table back to .4dn format with appropriate headers.
         """
         csv_data = table.to_pandas()
         csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z", "Mask_id": "Cell_ID"}, inplace=True)
-        
+
         # Remove extra columns
         csv_data = csv_data.drop(columns=["Barcode #", "label", "ROI #"], errors='ignore')
-        
+
         header = """##FOF-CT_version=v0.1
                 ##Table_namespace=4dn_FOF-CT_core
                 ##genome_assembly={}
                 ##XYZ_unit=micron
                 ##columns=(Spot_ID, Trace_ID, X, Y, Z, Chrom, Chrom_Start, Chrom_End, Cell_ID)
                 """.format(self.genome_assembly)
-        
+
         with open(output_file, "w") as f:
             f.write(header)
             csv_data.to_csv(f, index=False)
@@ -232,24 +240,24 @@ class ChromatinTraceTable:
         """
         Converts an Astropy table back to .4dn format with appropriate headers.
         """
-        output_file=output_file.strip('.ecsv')+'.4dn'
+        output_file = output_file.strip(".ecsv") + ".4dn"
 
         csv_data = table.to_pandas()
         csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z"}, inplace=True)
 
         # Remove extra columns
-        csv_data = csv_data.drop(columns=["Barcode #", "label"], errors='ignore')
+        csv_data = csv_data.drop(columns=["Barcode #", "label"], errors="ignore")
 
         # Rename columns
         if "Extra_Cell_ROI_ID" in self.columns:
             csv_data.rename(columns={"ROI #": "Extra_Cell_ROI_ID"}, inplace=True)
         else:
-            csv_data = csv_data.drop(columns=["ROI #"], errors='ignore')
-        
+            csv_data = csv_data.drop(columns=["ROI #"], errors="ignore")
+
         if "Cell_ID" in self.columns:
             csv_data.rename(columns={"Mask_id": "Cell_ID"}, inplace=True)
         else:
-            csv_data = csv_data.drop(columns=["Mask_id"], errors='ignore')
+            csv_data = csv_data.drop(columns=["Mask_id"], errors="ignore")
 
         # parses column list for header
         column_list = ", ".join(self.columns)
@@ -270,7 +278,7 @@ class ChromatinTraceTable:
 #additional_tables:
 ##columns=({column_list})
 """
-        #print(f"> Columnds to export to 4dn table: {csv_data.columns}")
+        # print(f"> Columnds to export to 4dn table: {csv_data.columns}")
         with open(output_file, "w") as f:
             f.write(header)
             csv_data.to_csv(f, index=False, header=False)
