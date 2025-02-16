@@ -105,6 +105,7 @@ class ChromatinTraceTable:
         
         file_ext = os.path.splitext(file)[1].lower()
         if file_ext == ".ecsv":
+            print(f"$ Importing table from pyHiM format")
             self.data = read_table_from_ecsv(file)
             self.original_format = "ecsv"
         elif file_ext == ".4dn":
@@ -917,3 +918,7 @@ class ChromatinTraceTable:
                 fig.savefig(traces)
             except ValueError:
                 print(f"\nValue error while saving output figure with traces:{traces}")
+
+
+
+
