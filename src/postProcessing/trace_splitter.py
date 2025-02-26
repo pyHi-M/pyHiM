@@ -22,9 +22,8 @@ Arguments:
 
 Dependencies:
     - numpy
-    - scipy.spatial (KDTree)
-    - astropy.table (for trace table manipulation)
     - sklearn.cluster (KMeans)
+    - matrixOperations.chromatin_trace_table (for trace table management)
     - uuid (for unique Trace_ID generation)
 """
 
@@ -33,17 +32,19 @@ import os
 import uuid
 
 import numpy as np
-from astropy.table import Table
 from sklearn.cluster import KMeans
+
+from matrixOperations.chromatin_trace_table import (  # Import the class
+    ChromatinTraceTable,
+)
 
 
 def parse_arguments():
+    """Parses command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Split chromatin traces using K-means clustering."
     )
-    parser.add_argument(
-        "--input", required=True, help="Path to the input trace file (ECSV format)."
-    )
+    parser.add_argument("--input", required=True, help="Path to the input trace file.")
     parser.add_argument(
         "--output",
         help="Path to save the modified trace file. Default: appends '_split'.",
@@ -69,22 +70,9 @@ def generate_unique_id():
 
 
 def compute_radius_of_gyration(coords):
-    """
-    Computes the radius of gyration (Rg) for a given trace.
-
-    Parameters:
-    ----------
-    coords : numpy.ndarray
-        Array of shape (N, 3) with X, Y, Z coordinates.
-
-    Returns:
-    -------
-    float
-        Radius of gyration.
-    """
+    """Computes the radius of gyration (Rg) for a given trace."""
     center_of_mass = np.mean(coords, axis=0)
-    rg = np.sqrt(np.mean(np.sum((coords - center_of_mass) ** 2, axis=1)))
-    return rg
+    return np.sqrt(np.mean(np.sum((coords - center_of_mass) ** 2, axis=1)))
 
 
 def split_large_traces(trace_table, std_threshold, num_clusters):
@@ -93,7 +81,7 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
 
     Parameters:
     ----------
-    trace_table : astropy.table.Table
+    trace_table : ChromatinTraceTable
         Input chromatin trace table.
     std_threshold : float
         Number of standard deviations above mean Rg to classify as large.
@@ -102,18 +90,13 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
 
     Returns:
     -------
-    astropy.table.Table
-        Modified trace table with updated Trace_IDs where necessary.
+    None (modifies trace_table in place)
     """
-
-    trace_table_by_id = trace_table.group_by("Trace_ID")
-    rg_values = []
-
-    for sub_trace_table in trace_table_by_id.groups:
-        coords = np.vstack(
-            (sub_trace_table["x"], sub_trace_table["y"], sub_trace_table["z"])
-        ).T
-        rg_values.append(compute_radius_of_gyration(coords))
+    trace_table_by_id = trace_table.data.group_by("Trace_ID")
+    rg_values = [
+        compute_radius_of_gyration(np.vstack((trace["x"], trace["y"], trace["z"])).T)
+        for trace in trace_table_by_id.groups
+    ]
 
     mean_rg, std_rg = np.mean(rg_values), np.std(rg_values)
     rg_threshold = mean_rg + std_threshold * std_rg
@@ -122,7 +105,7 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
         f"$ Mean Rg: {mean_rg:.3f}, Std Rg: {std_rg:.3f}, Threshold: {rg_threshold:.3f}"
     )
 
-    new_trace_table = Table(trace_table)  # Copy input table for modification
+    new_trace_table = trace_table.data.copy()
     num_splits = 0
 
     for sub_trace_table in trace_table_by_id.groups:
@@ -136,14 +119,13 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
             print(
                 f"$ Splitting trace {original_trace_id} (Rg={rg:.3f}) into {num_clusters} clusters."
             )
-
             kmeans = KMeans(n_clusters=num_clusters, random_state=42, n_init=10)
             labels = kmeans.fit_predict(coords)
 
             for cluster_label in np.unique(labels):
                 new_trace_id = generate_unique_id()
                 original_indices = np.where(
-                    trace_table["Trace_ID"] == original_trace_id
+                    trace_table.data["Trace_ID"] == original_trace_id
                 )[0]
                 cluster_indices = original_indices[np.where(labels == cluster_label)[0]]
                 new_trace_table["Trace_ID"][cluster_indices] = new_trace_id
@@ -151,34 +133,26 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
             num_splits += 1
 
     print(f"$ Number of traces split: {num_splits}/{len(trace_table_by_id.groups)}")
-    return new_trace_table
+    trace_table.data = new_trace_table
 
 
 def main():
+    """Main function to handle input, processing, and output."""
     args = parse_arguments()
+    output_filename = (
+        args.output if args.output else f"{os.path.splitext(args.input)[0]}_split.ecsv"
+    )
 
-    # Determine output filename
-    if args.output:
-        output_filename = args.output
-    else:
-        base, ext = os.path.splitext(args.input)
-        output_filename = f"{base}_split{ext}"
+    trace_table = ChromatinTraceTable()
+    trace_table.load(args.input)
 
-    # Load the trace table
-    print(f"Loading trace table: {args.input}")
-    trace_table = Table.read(args.input, format="ascii.ecsv")
-
-    # Apply K-means clustering to split large traces
     print(
         f"Applying K-means clustering with {args.num_clusters} clusters on traces with Rg > mean + {args.std_threshold} * std_dev..."
     )
-    modified_trace_table = split_large_traces(
-        trace_table, args.std_threshold, args.num_clusters
-    )
+    split_large_traces(trace_table, args.std_threshold, args.num_clusters)
 
-    # Save the modified trace table
-    modified_trace_table.write(output_filename, format="ascii.ecsv", overwrite=True)
-    print(f"Saved modified trace table: {output_filename}")
+    trace_table.save(output_filename)
+    # print(f"Saved modified trace table: {output_filename}")
 
 
 if __name__ == "__main__":
