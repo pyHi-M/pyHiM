@@ -56,6 +56,10 @@ def parse_arguments():
     )
     parser.add_argument("--cMin", help="Colormap min scale. Default: 0")
     parser.add_argument("--cMax", help="Colormap max scale. Default: automatic")
+    parser.add_argument("--cMin_std", help="Colormap min scale for std map. Default: 0")
+    parser.add_argument(
+        "--cMax_std", help="Colormap max scale for std map. Default: automatic"
+    )
     parser.add_argument(
         "--plottingFileExtension", help="By default: png. Other options: svg, pdf, png"
     )
@@ -64,6 +68,7 @@ def parse_arguments():
         help="Provide shuffle vector: 0,1,2,3... of the same size or smaller than the original matrix. No spaces! comma-separated!",
     )
     parser.add_argument("--cmap", help="Colormap. Default: coolwarm")
+    parser.add_argument("--cmap_std", help="Colormap for std map. Default: coolwarm")
 
     parser.add_argument(
         "--N_bootstrap", help="Number of bootstrapping cycles. Default=9999"
@@ -112,6 +117,16 @@ def parse_arguments():
     else:
         run_parameters["cMin"] = -1
 
+    if args.cMax_std:
+        run_parameters["cMax_std"] = float(args.cMax_std)
+    else:
+        run_parameters["cMax_std"] = 0.0
+
+    if args.cMin_std:
+        run_parameters["cMin_std"] = float(args.cMin_std)
+    else:
+        run_parameters["cMin_std"] = -1
+
     if args.plottingFileExtension:
         run_parameters["plottingFileExtension"] = "." + args.plottingFileExtension
     else:
@@ -132,7 +147,12 @@ def parse_arguments():
     if args.cmap:
         run_parameters["cmap"] = args.cmap
     else:
-        run_parameters["cmap"] = "coolwarm"
+        run_parameters["cmap"] = "RdBu"
+
+    if args.cmap_std:
+        run_parameters["cmap_std"] = args.cmap_std
+    else:
+        run_parameters["cmap_std"] = "Reds"
 
     run_parameters["dist_calc_mode"] = "median"
     run_parameters["scalingParameter"] = 1
@@ -151,6 +171,7 @@ def plot_results(
     c_max=0,
     c_min=-1,
     fig_title="bootstrapping_PWD_median",
+    cmap="RdBu",
 ):
     fig1 = plt.figure(constrained_layout=True, figsize=(6, 6))
     spec1 = gridspec.GridSpec(ncols=1, nrows=1, figure=fig1)
@@ -160,7 +181,7 @@ def plot_results(
     cmtitle = "distance, um"
     fontsize = run_parameters["fontsize"]
     axis_ticks = True
-    cmap = run_parameters["cmap"]
+
     if c_min == -1:
         c_min = np.nanmin(matrix)
     if c_max == 0:
@@ -221,6 +242,8 @@ def main():
         scPWDMatrix_filename=run_parameters["scPWDMatrix_filename"],
         uniqueBarcodes=run_parameters["uniqueBarcodes"],
     )
+    print(f"$ cmap scales:\nmean:{run_parameters['cMin']}-{run_parameters['cMax']}")
+    print(f"std:{run_parameters['cMin_std']}-{run_parameters['cMax_std']}\n")
 
     mean_bs, mean_error = bootstraps_matrix(
         sc_matrix, N_bootstrap=run_parameters["N_bootstrap"]
@@ -237,6 +260,7 @@ def main():
         c_min=run_parameters["cMin"],
         fileNameEnding=run_parameters["plottingFileExtension"],
         fig_title="bootstrapping_median",
+        cmap=run_parameters["cmap"],
     )
 
     plot_results(
@@ -245,10 +269,11 @@ def main():
         uniqueBarcodes,
         n_cells,
         outputFileName,
-        c_max=run_parameters["cMax"],
-        c_min=run_parameters["cMin"],
+        c_max=run_parameters["cMax_std"],
+        c_min=run_parameters["cMin_std"],
         fileNameEnding=run_parameters["plottingFileExtension"],
         fig_title="bootstrapping_std_median",
+        cmap=run_parameters["cmap_std"],
     )
 
     print("\nDone\n\n")
