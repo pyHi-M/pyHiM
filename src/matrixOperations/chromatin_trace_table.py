@@ -119,15 +119,21 @@ class ChromatinTraceTable:
         print(f"Successfully loaded trace table: {file}")
         return self.data
 
-    def save(self, file_name):
+    def save(self, file_name, table, comments=""):
         """
         Saves the trace table in the appropriate format (.ecsv or .4dn).
         """
         if self.original_format == "4dn":
             self._convert_astropy_to_4dn(self.data, file_name)
         else:
-            save_table_to_ecsv(self.data, file_name)
-            print(f"Saved output table as {file_name}")
+            print(f"$ Saving output table as {file_name} ...")
+
+            try:
+                table.meta["comments"].append(comments)
+            except KeyError:
+                table.meta["comments"] = [comments]
+
+            save_table_to_ecsv(table, file_name)
 
     def _read_metadata_from_4dn(self, file):
         """
@@ -211,30 +217,6 @@ class ChromatinTraceTable:
         print(f"Saved BED file: {bed_file}")
 
         return Table.from_pandas(csv_data)
-
-    '''
-    def _convert_astropy_to_4dn(self, table, output_file):
-        """
-        Converts an Astropy table back to .4dn format with appropriate headers.
-        """
-        csv_data = table.to_pandas()
-        csv_data.rename(columns={"x": "X", "y": "Y", "z": "Z", "Mask_id": "Cell_ID"}, inplace=True)
-
-        # Remove extra columns
-        csv_data = csv_data.drop(columns=["Barcode #", "label", "ROI #"], errors='ignore')
-
-        header = """##FOF-CT_version=v0.1
-                ##Table_namespace=4dn_FOF-CT_core
-                ##genome_assembly={}
-                ##XYZ_unit=micron
-                ##columns=(Spot_ID, Trace_ID, X, Y, Z, Chrom, Chrom_Start, Chrom_End, Cell_ID)
-                """.format(self.genome_assembly)
-
-        with open(output_file, "w") as f:
-            f.write(header)
-            csv_data.to_csv(f, index=False)
-        print(f"Saved 4dn trace table with headers: {output_file}")
-        '''
 
     def _convert_astropy_to_4dn(self, table, output_file):
         """
