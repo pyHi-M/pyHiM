@@ -25,6 +25,7 @@ rng = np.random.default_rng()
 def bootstrapping(x, N_bootstrap=9999):
     data = (x,)  # samples must be in a sequence
 
+    print(f" \n data: {data}")
     res = bootstrap(
         data,
         np.mean,
