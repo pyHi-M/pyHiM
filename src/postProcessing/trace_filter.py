@@ -65,9 +65,7 @@ def parse_arguments():
 
     parser.add_argument("--input", help="Name of input trace file.")
     parser.add_argument("--N_barcodes", help="minimum_number_barcodes. Default = 2")
-    parser.add_argument(
-        "--dist_max", help="Maximum distance threshold. Default = np.inf"
-    )
+
     parser.add_argument("--z_min", help="Z minimum for a localization. Default = 0")
     parser.add_argument(
         "--z_max", help="Z maximum for a localization. Default = np.inf"
@@ -113,11 +111,6 @@ def parse_arguments():
         p["N_barcodes"] = int(args.N_barcodes)
     else:
         p["N_barcodes"] = 2
-
-    if args.dist_max:
-        p["dist_max"] = float(args.dist_max)
-    else:
-        p["dist_max"] = np.inf
 
     if args.z_min:
         p["z_min"] = float(args.z_min)
@@ -187,7 +180,6 @@ def runtime(
     tag="filtered",
     remove_duplicate_spots=False,
     remove_barcode=None,
-    dist_max=np.inf,
     label="",
     keep=True,
 ):
@@ -288,7 +280,6 @@ def main():
         tag=p["output"],
         remove_duplicate_spots=p["clean_spots"],
         remove_barcode=p["remove_barcode"],
-        dist_max=p["dist_max"],
         label=p["label"],
         keep=p["keep"],
     )
