@@ -87,21 +87,6 @@ cd apiFISH && git checkout development
 export PYTHONPATH="$PYTHONPATH:$HOME/Repositories/apiFISH"
 ```
 
-## Additional installation to generate documentation
-
-```sh
-conda install sphinx
-conda install -c conda-forge myst-parser
-conda install -c conda-forge sphinxcontrib-mermaid
-conda install -c conda-forge sphinx-panels
-conda install -c conda-forge sphinx_rtd_theme
-```
-Update `PYTHONPATH` env variable, for fileProcessing scripts documentation, by adding the following line to your local ~/.bashrc
-
-```sh
-export PYTHONPATH="$PYTHONPATH:$HOME/Repositories/pyHiM/src/fileProcessing"
-```
-
 ## Test pyHiM
 
 - The tests use the `pytest` module.
