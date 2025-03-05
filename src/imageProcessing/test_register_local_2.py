@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Reads fiducial for reference and a given cycle
+
+Applies global 3D registration
+
+Applies local deformation function using B-spline reinterpolation.
+"""
 
 import multiprocessing
 import os
