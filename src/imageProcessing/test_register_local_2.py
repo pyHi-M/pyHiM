@@ -33,13 +33,12 @@ try:
     import cupy as cp
 
     GPU_AVAILABLE = True
+    a = cp.ones(1)
+    print(a)
 except ImportError:
     GPU_AVAILABLE = False
 
 from typing import Any, Dict, Optional, Tuple
-
-a = cp.ones(1)
-print(a)
 
 
 def load_tiff_image(filepath: str) -> np.ndarray:
