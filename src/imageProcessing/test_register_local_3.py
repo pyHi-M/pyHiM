@@ -22,26 +22,26 @@ from skimage import io
 from skimage.registration import phase_cross_correlation
 from tqdm import tqdm
 
+# Try importing GPU acceleration libraries
 try:
     import cupy as cp
     from cupyx.scipy import ndimage as cp_ndimage
     from cupyx.scipy.ndimage import shift as cp_shift
 
+    # Test GPU functionality
+    a = cp.ones(1)
     GPU_AVAILABLE = True
     print("GPU acceleration enabled")
-except ImportError:
+    del a
+    cp.get_default_memory_pool().free_all_blocks()
+except (ImportError, Exception) as e:
     GPU_AVAILABLE = False
-    print("GPU acceleration not available")
+    print(f"GPU acceleration not available: {e}")
 
-
-"""
-import SimpleITK as sitk
-
-SITK_AVAILABLE = True
-
-
+"""# Try importing SimpleITK for additional registration methods
 try:
     import SimpleITK as sitk
+
     SITK_AVAILABLE = True
 except ImportError:
     SITK_AVAILABLE = False
@@ -51,16 +51,37 @@ except ImportError:
 """
 
 
-def load_tiff_image(filepath: str) -> np.ndarray:
-    """Load a 3D TIFF image."""
+def load_image(filepath: str) -> np.ndarray:
+    """
+    Load an image from file. Supports TIFF and NumPy (.npy) formats.
+
+    Parameters:
+    -----------
+    filepath : str
+        Path to the image file
+
+    Returns:
+    --------
+    ndarray : The loaded image
+    """
     try:
-        image = io.imread(filepath)
+        # Check file extension to determine loading method
+        if filepath.lower().endswith((".npy")):
+            print(f"Loading NumPy file: {filepath}")
+            image = np.load(filepath)
+        else:
+            # Assume TIFF or other format supported by skimage
+            print(f"Loading TIFF image: {filepath}")
+            image = io.imread(filepath)
+
         # Ensure 3D format
         if image.ndim == 2:
             image = image[np.newaxis, :, :]
         elif image.ndim == 4:
             # Handle potential RGB/RGBA images
             image = image[:, :, :, 0] if image.shape[3] in [3, 4] else image.squeeze()
+
+        print(f"Loaded image shape: {image.shape}")
         return image
     except Exception as e:
         print(f"Error loading image {filepath}: {e}")
@@ -70,8 +91,23 @@ def load_tiff_image(filepath: str) -> np.ndarray:
 def save_tiff_image(image: np.ndarray, filepath: str):
     """Save a 3D image as TIFF."""
     try:
+        # Ensure directory exists
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        io.imsave(filepath, image.astype(np.float32))
+
+        # Convert to appropriate data type for TIFF
+        # Float32 is commonly used for scientific images
+        image_to_save = image.astype(np.float32)
+
+        # Save the image using skimage's io.imsave
+        # This maintains the 3D structure properly
+        # The check_contrast parameter was added in newer versions of skimage
+        try:
+            io.imsave(filepath, image_to_save, check_contrast=False)
+        except TypeError:
+            # For older versions of skimage that don't have check_contrast
+            io.imsave(filepath, image_to_save)
+
+        print(f"Successfully saved image to {filepath}")
     except Exception as e:
         print(f"Error saving image {filepath}: {e}")
         raise
@@ -648,10 +684,9 @@ def mask_based_registration(
     # Load images
     print("Loading images...")
     load_start_time = time.time()
-    reference_image = load_tiff_image(reference_filepath)
-    target_image = load_tiff_image(target_filepath)
-    # mask_image = load_tiff_image(mask_filepath).astype(np.int32)
-    mask_image = np.load(mask_filepath).astype(np.int32)
+    reference_image = load_image(reference_filepath)
+    target_image = load_image(target_filepath)
+    mask_image = load_image(mask_filepath).astype(np.int32)
     load_time = time.time() - load_start_time
     print(f"Image loading time: {load_time:.2f} seconds")
     print(
@@ -700,7 +735,42 @@ def mask_based_registration(
     if output_filepath:
         print("\nSaving registered image...")
         save_start_time = time.time()
-        save_tiff_image(fully_registered, output_filepath)
+
+        try:
+            # Ensure the image has proper dimensions and data type for TIFF
+            output_image = fully_registered.astype(np.float32)
+
+            # Make sure the file extension is .tif or .tiff
+            if not (
+                output_filepath.lower().endswith(".tif")
+                or output_filepath.lower().endswith(".tiff")
+            ):
+                output_filepath = output_filepath + ".tif"
+                print(f"Added .tif extension to output path: {output_filepath}")
+
+            # Create directory if it doesn't exist
+            os.makedirs(
+                os.path.dirname(os.path.abspath(output_filepath)), exist_ok=True
+            )
+
+            # Save the image
+            save_tiff_image(output_image, output_filepath)
+
+            # Verify the file was created
+            if os.path.exists(output_filepath):
+                file_size = os.path.getsize(output_filepath) / (
+                    1024 * 1024
+                )  # Convert to MB
+                print(f"Verified: File saved successfully ({file_size:.2f} MB)")
+            else:
+                print("Warning: Output file not found after save operation")
+
+        except Exception as e:
+            print(f"Error saving registered image: {e}")
+            import traceback
+
+            traceback.print_exc()
+
         save_time = time.time() - save_start_time
         print(f"Image saving time: {save_time:.2f} seconds")
 
