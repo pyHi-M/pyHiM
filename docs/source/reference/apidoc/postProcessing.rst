@@ -84,14 +84,6 @@ postProcessing.trace\_combinator module
    :undoc-members:
    :show-inheritance:
 
-postProcessing.trace\_filter module
------------------------------------
-
-.. automodule:: postProcessing.trace_filter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 postProcessing.trace\_filter\_advanced module
 ---------------------------------------------
 
