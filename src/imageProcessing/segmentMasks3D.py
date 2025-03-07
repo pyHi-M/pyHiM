@@ -168,8 +168,8 @@ class Mask3D:
             print_log(f"\t3D:{npy_labeled_image_filename_3d}")
 
             # relabels masks with a unique ID
-            npy_labeled_image_filename_3d = relabel_masks(
-                npy_labeled_image_filename_3d, connectivity=3, distance=3
+            segmented_image_3d = relabel_masks(
+                segmented_image_3d, connectivity=3, distance=3
             )
             # saves 3D image
             np.save(npy_labeled_image_filename_3d, segmented_image_3d)
