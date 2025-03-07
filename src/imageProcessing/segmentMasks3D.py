@@ -20,6 +20,7 @@ import os
 from datetime import datetime
 
 import numpy as np
+from scipy.ndimage import label
 from skimage import io
 
 from core.data_manager import create_folder
@@ -166,6 +167,10 @@ class Mask3D:
             print_log(f"\t2D:{npy_labeled_image_filename_2d}")
             print_log(f"\t3D:{npy_labeled_image_filename_3d}")
 
+            # relabels masks with a unique ID
+            npy_labeled_image_filename_3d = relabel_masks(
+                npy_labeled_image_filename_3d, connectivity=3, distance=3
+            )
             # saves 3D image
             np.save(npy_labeled_image_filename_3d, segmented_image_3d)
 
@@ -550,3 +555,35 @@ def plot_image_3d(image_3d, masks):
     """
 
     return plot_raw_images_and_labels(image_3d, masks)
+
+
+def relabel_masks(labeled_img, connectivity=3, distance=3):
+    """
+    Corrects a labeled mask image by applying watershed segmentation to separate fused masks
+    and relabeling connected components to ensure consistency.
+
+    Parameters:
+    -----------
+    labeled_img : ndarray
+        The input labeled image where each object has a unique label.
+    connectivity : int, optional
+        The connectivity for defining connected components (1=4-connectivity, 2=8-connectivity).
+
+    Returns:
+    --------
+    corrected_labels : ndarray
+        The relabeled mask image where touching masks are separated.
+    """
+    # Count original labels
+    original_labels = np.max(labeled_img)
+
+    # rename labels
+    corrected_labels, _ = label(
+        labeled_img, structure=np.ones((3, 3, 3)), output=np.int32
+    )
+
+    # Count new labels
+    new_labels = np.max(corrected_labels)
+
+    print(f"Original masks: {original_labels}\nNew labels: {new_labels}")
+    return corrected_labels
