@@ -29,6 +29,8 @@ Dependencies:
 
 import argparse
 import os
+import select
+import sys
 import uuid
 
 import numpy as np
@@ -44,7 +46,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Split chromatin traces using K-means clustering."
     )
-    parser.add_argument("--input", required=True, help="Path to the input trace file.")
+    parser.add_argument("--input", help="Path to the input trace file.")
     parser.add_argument(
         "--output",
         help="Path to save the modified trace file. Default: appends '_split'.",
@@ -61,7 +63,33 @@ def parse_arguments():
         default=2,
         help="Number of clusters for K-means (default: 2).",
     )
-    return parser.parse_args()
+
+    parser.add_argument(
+        "--pipe", help="inputs Trace file list from stdin (pipe)", action="store_true"
+    )
+    args = parser.parse_args()
+
+    p = dict()
+
+    p["trace_files"] = []
+    if args.pipe:
+        p["pipe"] = True
+        if select.select(
+            [
+                sys.stdin,
+            ],
+            [],
+            [],
+            0.0,
+        )[0]:
+            p["trace_files"] = [line.rstrip("\n") for line in sys.stdin]
+        else:
+            print("Nothing in stdin")
+    else:
+        p["pipe"] = False
+        p["trace_files"] = [parser.input]
+
+    return args, p
 
 
 def generate_unique_id():
@@ -138,21 +166,40 @@ def split_large_traces(trace_table, std_threshold, num_clusters):
 
 def main():
     """Main function to handle input, processing, and output."""
-    args = parse_arguments()
-    output_filename = (
-        args.output if args.output else f"{os.path.splitext(args.input)[0]}_split.ecsv"
-    )
+    args, p = parse_arguments()
 
-    trace_table = ChromatinTraceTable()
-    trace_table.load(args.input)
+    trace_files = p["trace_files"]
+    if len(trace_files) > 0:
+        print(
+            "\n{} trace files to process= {}".format(
+                len(trace_files), "\n".join(map(str, trace_files))
+            )
+        )
 
-    print(
-        f"Applying K-means clustering with {args.num_clusters} clusters on traces with Rg > mean + {args.std_threshold} * std_dev..."
-    )
-    split_large_traces(trace_table, args.std_threshold, args.num_clusters)
+        # iterates over traces in folder
+        for trace_file in trace_files:
 
-    trace_table.save(output_filename)
-    # print(f"Saved modified trace table: {output_filename}")
+            output_filename = (
+                args.output
+                if args.output
+                else f"{os.path.splitext(trace_file)[0]}_split.ecsv"
+            )
+
+            trace_table = ChromatinTraceTable()
+            trace_table.load(trace_file)
+
+            print(
+                f"Applying K-means clustering with {args.num_clusters} clusters on traces with Rg > mean + {args.std_threshold} * std_dev..."
+            )
+            split_large_traces(trace_table, args.std_threshold, args.num_clusters)
+
+            trace_table.save(output_filename, trace_table.data)
+            # print(f"Saved modified trace table: {output_filename}")
+
+    else:
+        print(
+            "! Error: did not find any trace file to analyze. Please provide one using --input or --pipe."
+        )
 
 
 if __name__ == "__main__":
