@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+""" "
 
+This code performs block registration in 3D using similar approach than register_local but interpolating the results to avoid a hard breaking in blocks
+
+This script seems to work well at first glance. Still to see if it works better and faster than register_local .
+
+"""
 import os
 from typing import List, Optional, Tuple
 
