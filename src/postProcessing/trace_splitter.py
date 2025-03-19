@@ -87,7 +87,7 @@ def parse_arguments():
             print("Nothing in stdin")
     else:
         p["pipe"] = False
-        p["trace_files"] = [parser.input]
+        p["trace_files"] = [args.input]
 
     return args, p
 
