@@ -266,6 +266,101 @@ class ChromatinTraceTable:
             csv_data.to_csv(f, index=False, header=False)
         print(f"Saved 4dn trace table with headers: {output_file}")
 
+    def load_bed_file(self, bed_file):
+        """Loads the BED file into a dictionary mapping barcode numbers to genomic coordinates.
+        Handles files with inconsistent tab spacing by using regex splitting."""
+        bed_dict = {}
+
+        with open(bed_file, "r") as f:
+            for line in f:
+                # Skip empty lines
+                if not line.strip():
+                    continue
+
+                # Split on any number of whitespace characters
+                # This handles inconsistent tabs/spaces more robustly
+                fields = line.strip().split()
+
+                # Ensure we have exactly 4 fields
+                if len(fields) != 4:
+                    print(f"Warning: Skipping malformed line: {line.strip()}")
+                    continue
+
+                try:
+                    chrom = fields[0]
+                    chrom_start = int(fields[1])
+                    chrom_end = int(fields[2])
+                    barcode = int(fields[3])
+
+                    bed_dict[barcode] = {
+                        "Chrom": chrom,
+                        "Chrom_Start": chrom_start,
+                        "Chrom_End": chrom_end,
+                    }
+                except ValueError as e:
+                    print(
+                        f"Warning: Skipping line with invalid data types: {line.strip()}"
+                    )
+                    print(f"Error: {e}")
+
+        if not bed_dict:
+            raise ValueError("No valid entries found in the BED file.")
+
+        print(f"Successfully loaded {len(bed_dict)} barcode mappings from BED file.")
+
+        return bed_dict
+
+    def impute_genomic_coordinates(self, bed_dict, auto_continue=False):
+        """Updates the Chrom, Chrom_Start, and Chrom_End columns in the trace file based on the BED file."""
+
+        unmatched_barcodes = set()
+        matched_count = 0
+        total_count = 0
+
+        for row in self.data:
+            barcode = row["Barcode #"]
+            total_count += 1
+
+            if barcode in bed_dict:
+                row["Chrom"] = bed_dict[barcode]["Chrom"]
+                row["Chrom_Start"] = bed_dict[barcode]["Chrom_Start"]
+                row["Chrom_End"] = bed_dict[barcode]["Chrom_End"]
+                matched_count += 1
+            else:
+                unmatched_barcodes.add(barcode)
+
+        if unmatched_barcodes:
+            missing_percent = (len(unmatched_barcodes) / total_count) * 100
+            print(
+                f"Warning: {len(unmatched_barcodes)} unique barcodes ({missing_percent:.1f}% of rows) couldn't be matched:"
+            )
+
+            # Only show up to 10 unmatched barcodes to avoid cluttering the output
+            if len(unmatched_barcodes) <= 10:
+                print(
+                    f"  Unmatched barcodes: {', '.join(map(str, sorted(unmatched_barcodes)))}"
+                )
+            else:
+                print(
+                    f"  First 10 unmatched barcodes: {', '.join(map(str, sorted(list(unmatched_barcodes))[:10]))}"
+                )
+                print(f"  ... and {len(unmatched_barcodes) - 10} more")
+
+            # Ask the user if they want to continue if more than 10% of barcodes are unmatched
+            if missing_percent > 10 and ~auto_continue:
+                response = input(
+                    "More than 10% of barcodes couldn't be matched. Continue anyway? (y/n): "
+                )
+                if response.lower() != "y":
+                    print("Operation aborted by user.")
+                    return
+
+        print(
+            f"Successfully matched {matched_count}/{total_count} rows ({(matched_count/total_count)*100:.1f}%)"
+        )
+
+        return matched_count, total_count
+
     def append(self, table):
         """
         appends <table> to self.data
