@@ -5,22 +5,76 @@ Created on Sun Apr  3 09:57:36 2022
 
 @author: marcnol
 
-This script will load a trace file and a filter traces based on a series of user arguments
+trace_filter.py - Chromatin Trace Filtering Utility
+==================================================
 
---> Usage
+Description:
+------------
+This script processes and filters chromatin trace files based on various criteria:
+- Spatial coordinates (x, y, z)
+- Minimum number of barcodes per trace
+- Duplicate spot removal
+- Barcode-specific filtering
+- Label-based filtering
+- Localization intensity thresholding
 
-$ trace_filter.py --input Trace.ecsv --z_min 4 --z_max 5 --y_max 175 --output 'zy_filtered' --N_barcodes 3 --clean_spots
+The script can process single files or multiple files via pipe input.
 
-will analyze 'Trace.ecsv' and remove spots with 4>z>5 amd z>175 and less than 3 barcodes
+Arguments:
+----------
+Basic Arguments:
+    --input             Path to input trace file (.ecsv format)
+    --output            Tag to add to the output filename (default: "filtered")
+    --pipe              Read trace file list from stdin (for batch processing)
 
---clean_spots will remove barcode spots that are repeated within a trace
+Filtering Options:
+    --N_barcodes        Minimum number of barcodes per trace (default: 2)
+    --clean_spots       Remove spots with same UID and repeated barcodes within traces
+    --remove_barcode    Comma-separated list of barcode IDs to remove (e.g., "1,2,3")
 
---remove_barcode will remove the barcode name provided. This needs to be an integer or a comma-separated integer
+Coordinate Filtering:
+    --x_min, --x_max    X-coordinate limits (default: 0 to infinity)
+    --y_min, --y_max    Y-coordinate limits (default: 0 to infinity)
+    --z_min, --z_max    Z-coordinate limits (default: 0 to infinity)
 
---> outputs
+Label Filtering:
+    --label             Keep only traces with this label
+    --remove_label      When used with --label, removes traces with the label instead of keeping them
 
-.ecsv trace table file.
-.png files with stats of number of spots for the same barcode per trace [only if --clean_spots was used]
+Intensity Filtering:
+    --localization_file Path to localization table (.ecsv format)
+    --intensity_min     Minimum intensity threshold for localizations
+
+Outputs:
+--------
+1. Filtered trace file (.ecsv) with naming convention:
+    [original_filename]_[output_tag]_[label_tag].ecsv
+
+2. For intensity filtering:
+    - Histogram plots of localization intensities (before and after filtering)
+
+3. For duplicate barcode cleaning:
+    - Statistics plots (.png) showing number of spots with same barcode per trace
+
+Examples:
+---------
+# Basic filtering with spatial constraints and minimum barcode requirement
+$ python trace_filter.py --input Trace.ecsv --z_min 4 --z_max 5 --y_max 175 --output 'zy_filtered' --N_barcodes 3
+
+# Remove duplicate spots and specific barcodes
+$ python trace_filter.py --input Trace.ecsv --clean_spots --remove_barcode 1,3,5
+
+# Keep only traces with a specific label
+$ python trace_filter.py --input Trace.ecsv --label "region1"
+
+# Remove traces with a specific label
+$ python trace_filter.py --input Trace.ecsv --label "region1" --remove_label
+
+# Filter by localization intensity
+$ python trace_filter.py --input Trace.ecsv --localization_file Localizations.ecsv --intensity_min 1000
+
+# Process multiple files via pipe
+$ ls *Trace.ecsv | python trace_filter.py --pipe --N_barcodes 3
 
 """
 
@@ -34,6 +88,7 @@ import sys
 
 import numpy as np
 
+from imageProcessing.localization_table import LocalizationTable
 from matrixOperations.chromatin_trace_table import ChromatinTraceTable
 
 # =============================================================================
@@ -84,9 +139,17 @@ def parse_arguments():
         "--label", help="Select traces containing this label, removes all other traces."
     )
 
+    parser.add_argument("--localization_file", help="Name of input localizations file.")
+    parser.add_argument(
+        "--intensity_min",
+        type=float,
+        help="Minimum intensity threshold for localizations.",
+    )
+
     p = {}
 
     args = parser.parse_args()
+
     if args.output:
         p["output"] = args.output
     else:
@@ -152,6 +215,12 @@ def parse_arguments():
     else:
         p["label"] = None
 
+    if args.localization_file:
+        p["localization_file"] = args.localization_file
+
+    if args.intensity_min:
+        p["intensity_min"] = args.intensity_min
+
     p["trace_files"] = []
     if args.pipe:
         p["pipe"] = True
@@ -182,6 +251,8 @@ def runtime(
     remove_barcode=None,
     label="",
     keep=True,
+    localizations_file=None,
+    intensity_min=0,
 ):
     # checks number of trace files
     if len(trace_files) < 1:
@@ -196,6 +267,18 @@ def runtime(
             "\n{} trace files to process= {}".format(
                 len(trace_files), "\n".join(map(str, trace_files))
             )
+        )
+
+    if intensity_min and localizations_file:
+        localization_table = LocalizationTable()
+        localizations_data, _ = localization_table.load(localizations_file)
+        print(f"$ Loaded localizations table with: {len(localizations_data)} rows")
+
+        # Plot intensity distribution to help user choose a threshold
+        intensities = [row["peak"] for row in localizations_data]
+        output_file = localizations_file.split(".")[0]
+        localization_table.plot_intensity_distribution(
+            intensities, output_file=output_file + "_localization_intensities.png"
         )
 
     coors = ["x", "y", "z"]
@@ -230,16 +313,29 @@ def runtime(
                         coor_max=coor_max,
                     )
                     comments.append("filt:{}<{}>{}".format(coor_min, coor, coor_max))
+
             # removes barcodes in traces where they are repeated
             if remove_duplicate_spots:
                 trace.filter_repeated_barcodes(trace_file)
 
+            # removes barcodes from a list provided by user
             if remove_barcode is not None:
                 bc_list = remove_barcode.split(",")
                 print(f"\n$ Removing barcodes: {bc_list}")
                 for bc in bc_list:
                     trace.remove_barcode(bc)
 
+            # removes localizations with low intensity
+            if intensity_min and localizations_file:
+                intensities_kept = trace.filter_by_intensity(
+                    trace, localizations_data, intensity_min
+                )
+                output_file = trace_file.split(".")[0]
+                localization_table.plot_intensity_distribution(
+                    intensities_kept, output_file=f"{output_file}_filtered_intensities"
+                )
+
+            # defines output file name
             if label is not None:
                 if keep:
                     trace.trace_keep_label(label)
@@ -253,10 +349,10 @@ def runtime(
                     trace_file.split(".")[0] + "_" + tag + "_" + file_tag + ".ecsv"
                 )
             else:
-
                 outputfile = trace_file.split(".")[0] + "_" + tag + ".ecsv"
+
             trace.save(outputfile, trace.data, comments=", ".join(comments))
-            print(f"$ Saved output trace file at: {outputfile}")
+
     else:
         print("No trace file found to process!")
 
@@ -270,8 +366,10 @@ def runtime(
 
 def main():
     print("=" * 10 + "Started execution" + "=" * 10)
+
     # [parsing arguments]
     p = parse_arguments()
+
     # [loops over lists of datafolders]
     n_traces_processed = runtime(
         trace_files=p["trace_files"],
@@ -282,6 +380,8 @@ def main():
         remove_barcode=p["remove_barcode"],
         label=p["label"],
         keep=p["keep"],
+        localizations_file=p["localization_file"],
+        intensity_min=p["intensity_min"],
     )
 
     print(f"Processed <{n_traces_processed}> trace file(s)\n")

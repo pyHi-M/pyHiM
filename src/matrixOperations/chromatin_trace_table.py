@@ -433,6 +433,34 @@ class ChromatinTraceTable:
             print("! Error: you are trying to filter an empty trace table!")
         self.data = trace_table
 
+    def filter_by_intensity(self, trace, localizations, intensity_min):
+        """
+        Filters localizations in the trace file based on intensity from the localization table.
+        """
+        localizations.add_index("Buid")  # Add an index for fast lookup
+
+        rows_to_remove = []
+        number_spots = len(trace.data)
+        intensities_kept = list()
+        for idx, row in enumerate(trace.data):
+            spot_id = row["Spot_ID"]
+            try:
+                intensity = localizations.loc[spot_id]["peak"]
+                if intensity < intensity_min:
+                    rows_to_remove.append(idx)
+                else:
+                    intensities_kept.append(intensity)
+            except KeyError:
+                continue  # If Spot_ID is not found, keep the entry
+
+        trace.data.remove_rows(rows_to_remove)
+        print(
+            f"> Removed {len(rows_to_remove)}/{number_spots} localizations below intensity threshold ({intensity_min})."
+        )
+        print(f"> Number of rows in filtered trace table: {len(trace.data)}")
+
+        return intensities_kept
+
     def barcode_statistics(self, trace_table):
         """
         calculates the number of times a barcode is repeated in a trace for all traces in a trace table
