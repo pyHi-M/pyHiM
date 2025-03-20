@@ -69,7 +69,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--matrix_norm_mode",
-        help="Matrix normalization mode. Can be n_cells (default) or nonNANs",
+        help="Matrix normalization mode. Can be n_cells or nonNANs (default)",
     )
     parser.add_argument(
         "--scalingParameter",
@@ -160,7 +160,7 @@ def parse_arguments():
         run_parameters["matrix_norm_mode"] = args.matrix_norm_mode
     else:
         run_parameters["matrix_norm_mode"] = (
-            "n_cells"  # norm: n_cells (default), nonNANs
+            "nonNANs"  # norm: n_cells (default), nonNANs
         )
 
     if args.scalingParameter:
