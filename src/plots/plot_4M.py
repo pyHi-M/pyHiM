@@ -79,6 +79,12 @@ from matrixOperations.chromatin_trace_table import ChromatinTraceTable
 
 def compute_colocalization(trace_table, anchor_barcode, distance_cutoff):
     """Computes the frequency of colocalization between the anchor barcode and all other barcodes."""
+    # Make sure we're dealing with a single anchor barcode
+    if isinstance(anchor_barcode, list):
+        raise TypeError(
+            "compute_colocalization expects a single anchor_barcode, not a list"
+        )
+
     barcode_interactions = {}
     trace_groups = trace_table.group_by("Trace_ID").groups
 
@@ -129,58 +135,108 @@ def compute_colocalization(trace_table, anchor_barcode, distance_cutoff):
 
 
 def bootstrap_colocalization(
-    trace_table, anchor_barcode, distance_cutoff, n_bootstrap=100
+    trace_table, anchor_barcodes, distance_cutoff, n_bootstrap=100
 ):
-    """Performs bootstrapping to estimate mean and SEM of colocalization frequencies."""
-    barcode_samples = {}
+    """Performs bootstrapping to estimate mean and SEM of colocalization frequencies for multiple anchors."""
+    # If a single anchor is provided, convert to a list for consistent processing
+    if not isinstance(anchor_barcodes, list):
+        anchor_barcodes = [anchor_barcodes]
+
+    barcode_samples = {anchor: {} for anchor in anchor_barcodes}
     trace_ids = np.unique(trace_table["Trace_ID"])
 
     for _ in tqdm(range(n_bootstrap), desc="Bootstrapping"):
         sampled_traces = np.random.choice(trace_ids, size=len(trace_ids), replace=True)
         sampled_table = trace_table[np.isin(trace_table["Trace_ID"], sampled_traces)]
 
-        colocalization = compute_colocalization(
-            sampled_table, anchor_barcode, distance_cutoff
-        )
+        # Process each anchor barcode separately
+        for anchor in anchor_barcodes:
+            colocalization = compute_colocalization(
+                sampled_table, anchor, distance_cutoff
+            )
 
-        for barcode, frequency in colocalization.items():
-            if barcode not in barcode_samples:
-                barcode_samples[barcode] = []
-            barcode_samples[barcode].append(frequency)
+            for barcode, frequency in colocalization.items():
+                if barcode not in barcode_samples[anchor]:
+                    barcode_samples[anchor][barcode] = []
+                barcode_samples[anchor][barcode].append(frequency)
 
+    # Calculate means and SEMs for each anchor-barcode pair
     barcode_means = {
-        barcode: np.mean(values) for barcode, values in barcode_samples.items()
+        anchor: {
+            barcode: np.mean(values)
+            for barcode, values in barcode_samples[anchor].items()
+        }
+        for anchor in anchor_barcodes
     }
     barcode_sems = {
-        barcode: np.std(values) / np.sqrt(n_bootstrap)
-        for barcode, values in barcode_samples.items()
+        anchor: {
+            barcode: np.std(values) / np.sqrt(n_bootstrap)
+            for barcode, values in barcode_samples[anchor].items()
+        }
+        for anchor in anchor_barcodes
     }
+
+    # Get unique barcodes for each anchor
+    unique_barcodes = {}
+    for anchor in anchor_barcodes:
+        # Make sure all anchors have the same set of barcodes for consistent plotting
+        unique_barcodes[anchor] = sorted(barcode_samples[anchor].keys())
+
+    # Create consistent vectors for plotting (with same length for all anchors)
+    mean_frequencies = {}
+    sem_frequencies = {}
+
+    for anchor in anchor_barcodes:
+        mean_frequencies[anchor] = [
+            barcode_means[anchor].get(b, 0) for b in unique_barcodes[anchor]
+        ]
+        sem_frequencies[anchor] = [
+            barcode_sems[anchor].get(b, 0) for b in unique_barcodes[anchor]
+        ]
+
     return barcode_means, barcode_sems
 
 
-def plot_colocalization(barcode_means, barcode_sems, anchor, output_file):
-    """Plots the colocalization frequencies with error bars."""
-    barcodes = sorted(barcode_means.keys())
-    print(barcodes)
+def plot_frequencies(mean_frequencies, sem_frequencies, anchor_barcodes, output_file):
+    """Plots colocalization frequencies for multiple anchors separately."""
 
-    means = [barcode_means[b] for b in barcodes]
-    errors = [barcode_sems[b] for b in barcodes]
+    # Make sure anchor_barcodes is a list for consistent processing
+    if not isinstance(anchor_barcodes, list):
+        anchor_barcodes = [anchor_barcodes]
 
-    plt.figure(figsize=(10, 5))
-    plt.errorbar(barcodes, means, yerr=errors, fmt="o-", capsize=5)
-    plt.axvline(
-        anchor, color="red", linestyle="--", label="Anchor Barcode"
-    )  # Highlight anchor
-    plt.xlabel("Barcode #", fontsize=13)
-    plt.ylabel("Colocalization frequency", fontsize=13)
-    plt.title(f"4M plot for anchor: {str(anchor)}", fontsize=15)
-    plt.xticks(rotation=90, fontsize=10)
-    plt.yticks(fontsize=10)
+    print(f"\n$ Processing anchors: {anchor_barcodes}")
 
-    plt.grid(True)
+    for anchor in anchor_barcodes:
+        plt.figure(figsize=(8, 4))  # Reduce figure size
 
-    output_file = f"{output_file.split('.')[0]}_anchor_{str(anchor)}.png"
-    plt.savefig(output_file)
+        # Get the barcodes for this anchor
+        barcodes = sorted(mean_frequencies[anchor].keys())
+        mean_values = [mean_frequencies[anchor][b] for b in barcodes]
+        sem_values = [sem_frequencies[anchor][b] for b in barcodes]
+
+        plt.errorbar(
+            barcodes,
+            mean_values,
+            yerr=sem_values,
+            fmt="o-",
+            capsize=5,
+            label=f"Anchor {anchor}",
+        )
+        plt.axvline(
+            anchor, color="red", linestyle="--", label=f"Anchor {anchor}"
+        )  # Highlight anchor
+        plt.xlabel("Barcode #", fontsize=13)
+        plt.ylabel("Colocalization frequency", fontsize=13)
+        plt.title(f"4M plot for anchor: {str(anchor)}", fontsize=15)
+        plt.xticks(fontsize=10, rotation=90)
+        plt.yticks(fontsize=10)
+        plt.legend(fontsize=8)
+        # plt.tight_layout()
+        plt.grid(True)
+
+        output_filename = f"{output_file.split('.')[0]}_anchor_{anchor}.png"
+        plt.savefig(output_filename)
+        plt.close()  # Close the figure to avoid memory issues with many anchors
 
 
 def main():
@@ -191,8 +247,13 @@ def main():
         "--input", required=True, help="Path to input trace table (ECSV format)."
     )
     parser.add_argument(
-        "--anchor", type=int, required=True, help="Anchor barcode number."
+        "--anchors",
+        type=int,
+        nargs="+",
+        required=True,
+        help="List of anchor barcode numbers.",
     )
+
     parser.add_argument(
         "--cutoff",
         type=float,
@@ -233,15 +294,16 @@ def main():
     if len(trace_files) > 0:
 
         for trace_file in trace_files:
+            print(f"\n$ Processing trace file: {trace_file}")
 
             trace = ChromatinTraceTable()
             trace.initialize()
-            trace.load(trace_file)
 
+            trace.load(trace_file)
             barcode_means, barcode_sems = bootstrap_colocalization(
-                trace.data, args.anchor, args.cutoff, args.bootstrapping_cycles
+                trace.data, args.anchors, args.cutoff, args.bootstrapping_cycles
             )
-            plot_colocalization(barcode_means, barcode_sems, args.anchor, args.output)
+            plot_frequencies(barcode_means, barcode_sems, args.anchors, args.output)
 
     else:
         print("\nNo trace files were detected")
