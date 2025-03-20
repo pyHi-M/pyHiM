@@ -1,7 +1,71 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
 
+"""
+Created on Mar 20 2025
+
+@author: marcnol
+
+plot_4M.py
+==========
+
+Description:
+-----------
+A script for performing 4M (Multi-way Measurement of Molecular interactions in space) analysis
+on chromatin trace data. This tool analyzes spatial colocalization between a specified anchor
+barcode and all other barcodes in 3D chromatin trace data.
+
+The script calculates colocalization frequencies based on a distance cutoff and performs
+bootstrapping to estimate statistical confidence (mean and standard error). It generates
+a plot showing the frequency of interaction between the anchor barcode and all others.
+
+This is particularly useful for analyzing chromatin organization, DNA-DNA interactions,
+and spatial proximity relationships in microscopy data.
+
+Usage:
+-----
+    $ python plot_4M.py --input TRACE_FILE.ecsv --anchor BARCODE_NUMBER [options]
+    $ cat file_list.txt | python plot_4M.py --pipe --anchor BARCODE_NUMBER [options]
+    $ find . -name "*.ecsv" | python plot_4M.py --pipe --anchor BARCODE_NUMBER [options]
+
+Arguments:
+---------
+    --input TRACE_FILE          Path to input trace table in ECSV format
+    --anchor BARCODE_NUMBER     Anchor barcode number for colocalization analysis
+    --cutoff DISTANCE           Distance cutoff for colocalization (default: 0.2 µm)
+    --bootstrapping_cycles N    Number of bootstrap iterations (default: 10)
+    --output FILENAME           Output file name for the plot (default: colocalization_plot.png)
+    --pipe                      Read trace file list from stdin (for batch processing)
+
+Examples:
+--------
+1. Analyze a single trace file with default parameters:
+   $ python plot_4M.py --input traces.ecsv --anchor 42
+
+2. Analyze with custom distance cutoff and more bootstrap cycles:
+   $ python plot_4M.py --input traces.ecsv --anchor 42 --cutoff 0.25 --bootstrapping_cycles 100
+
+3. Process multiple trace files in batch mode:
+   $ cat trace_files.txt | python plot_4M.py --pipe --anchor 42 --output batch_results.png
+
+4. Process all ECSV files in a directory:
+   $ find ./data -name "*.ecsv" | python plot_4M.py --pipe --anchor 42
+
+Output:
+------
+- A PNG image with a plot showing colocalization frequencies between the anchor barcode
+  and all other barcodes, including error bars derived from bootstrapping
+- The output filename will be modified to include the anchor barcode number
+  (e.g., "colocalization_plot_anchor_42.png")
+
+Notes:
+-----
+- The script requires the ChromatinTraceTable class from the matrixOperations module
+- Input files must be in ECSV format compatible with ChromatinTraceTable.load()
+- Bootstrapping is used to estimate mean and standard error of colocalization frequencies
+- The distance cutoff is in micrometers (µm)
+- Higher numbers of bootstrapping cycles increase statistical confidence but require more computation time
+"""
 import argparse
 import select
 import sys
@@ -60,6 +124,7 @@ def compute_colocalization(trace_table, anchor_barcode, distance_cutoff):
         barcode: (count[0] / count[1] if count[1] > 0 else 0)
         for barcode, count in barcode_interactions.items()
     }
+    barcode_frequencies[anchor_barcode] = 0.0
     return barcode_frequencies
 
 
