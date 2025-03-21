@@ -287,7 +287,7 @@ def filters_zero_values(x, y):
 
     non_zero_consensous = common_member(non_zero_indices_x, non_zero_indices_y)
 
-    print(non_zero_consensous)
+    # print(non_zero_consensous)
 
     x = x[non_zero_consensous]
     y = y[non_zero_consensous]
