@@ -1,24 +1,45 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
-Compares multiple chromatin trace tables by computing the pairwise median distances
-between all barcode combinations and quantifying similarity via Pearson correlation.
+# trace_pearsons.py
 
-Usage:
-    python compare_trace_tables.py Trace1.ecsv Trace2.ecsv Trace3.ecsv
+## Description
+A script for comparing multiple chromatin trace tables by computing pairwise distances
+between barcode combinations and quantifying similarity via Pearson correlation.
 
-Output:
-    - A Pearson correlation matrix comparing all input trace tables.
-    - (Optionally) a heatmap or CSV file of the matrix.
+This tool is useful for analyzing the structural similarity between different chromatin
+trace datasets, helping to identify patterns and relationships in chromatin organization
+across multiple samples or conditions.
+
+## Usage
+```bash
+$ ls *ecsv | python trace_pearsons.py [options]
+$ find . -name "*.ecsv" | python trace_pearsons.py [options]
+```
+
+## Arguments
+- `--output` - Output filename for the correlation matrix plot (default: trace_correlation_matrix.png)
+
+## Output
+- A Pearson correlation matrix plot comparing all input trace tables
+- Terminal output showing the numerical correlation values
+
+## Notes
+- Input files must be in ECSV format compatible with ChromatinTraceTable
+- The script identifies unique parts of filenames to create readable labels in the plot
+- Correlation is calculated based on the spatial distances between barcode pairs
 """
 
 import argparse
 import itertools
+import os
 import select
 import sys
 from collections import defaultdict
 from itertools import combinations
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr
 
@@ -26,24 +47,31 @@ from matrixOperations.chromatin_trace_table import ChromatinTraceTable
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
+    """
+    Parse command line arguments for the script.
+
+    Returns:
+    -------
+    tuple
+        (args, trace_files) where args is the parsed arguments and
+        trace_files is a list of input files from stdin
+    """
+    parser = argparse.ArgumentParser(
+        description="Compare chromatin trace tables using Pearson correlation."
+    )
+
     parser.add_argument(
-        "--method", default="median", help="Select: median, proximity, mean"
+        "--output",
+        default="trace_correlation_matrix.png",
+        help="Output filename for the correlation matrix plot (default: trace_correlation_matrix.png)",
     )
 
     trace_files = []
-    if select.select(
-        [
-            sys.stdin,
-        ],
-        [],
-        [],
-        0.0,
-    )[0]:
+    if select.select([sys.stdin], [], [], 0.0)[0]:
         trace_files = [line.rstrip("\n") for line in sys.stdin]
     else:
         print(
-            "Nothing in stdin!. Please provide list of tracefiles as in \n$ ls *ecsv | trace_pearsons.py"
+            "Nothing in stdin! Please provide list of tracefiles as in:\n$ ls *ecsv | python trace_pearsons.py"
         )
 
     args = parser.parse_args()
@@ -163,6 +191,19 @@ def find_unique_substrings(filenames):
 
 
 def accumulate_distances(trace_data):
+    """
+    Calculate pairwise distances between barcodes across all traces.
+
+    Parameters:
+    ----------
+    trace_data : ChromatinTraceTable
+        Table containing trace data with barcode positions
+
+    Returns:
+    -------
+    dict
+        Dictionary mapping barcode pairs to their median distances
+    """
     distances = defaultdict(list)
     trace_groups = trace_data.group_by("Trace_ID").groups
 
@@ -183,6 +224,20 @@ def accumulate_distances(trace_data):
 
 
 def compare_distance_maps(distance_maps):
+    """
+    Calculate Pearson correlation between distance maps from different trace files.
+
+    Parameters:
+    ----------
+    distance_maps : dict
+        Dictionary mapping filenames to their distance maps
+
+    Returns:
+    -------
+    tuple
+        (files, corr_matrix) where files is a list of filenames and
+        corr_matrix is the correlation matrix
+    """
     files = list(distance_maps.keys())
     all_keys = set(
         itertools.chain.from_iterable([dm.keys() for dm in distance_maps.values()])
@@ -213,7 +268,9 @@ def compare_distance_maps(distance_maps):
     return files, corr_matrix
 
 
-def plot_correlation_matrix(files, matrix):
+def plot_correlation_matrix(
+    files, matrix, output_filename="trace_correlation_matrix.png"
+):
     """
     Plot a correlation matrix between files with unique identifiers as labels.
 
@@ -223,16 +280,14 @@ def plot_correlation_matrix(files, matrix):
         List of filenames to use
     matrix : numpy.ndarray
         Square correlation matrix of the files
+    output_filename : str
+        Name of the output file (default: trace_correlation_matrix.png)
 
     Returns:
     -------
     None
         Saves the plot as a PNG file
     """
-    import os
-
-    import matplotlib.pyplot as plt
-
     # Get unique identifiers for each file
     unique_identifiers = find_unique_substrings(files)
 
@@ -242,7 +297,7 @@ def plot_correlation_matrix(files, matrix):
     # Create the figure and axis
     fig, ax = plt.subplots(figsize=(10, 8))
 
-    # Plot the matrix
+    # Plot the matrix with dynamic color range
     vmin = np.min(matrix)
     vmax = np.max(matrix)
     im = ax.imshow(matrix, cmap="RdBu", interpolation="nearest", vmin=vmin, vmax=vmax)
@@ -266,25 +321,39 @@ def plot_correlation_matrix(files, matrix):
 
     # Adjust layout and save
     plt.tight_layout()
-    plt.savefig("trace_correlation_matrix.png", dpi=300)
+    plt.savefig(output_filename, dpi=300)
     plt.close()
 
-    print("Saved correlation matrix as trace_correlation_matrix.png")
+    print(f"Saved correlation matrix as {output_filename}")
 
 
 def main():
+    """
+    Main function that executes the trace comparison workflow.
+    """
     args, trace_files = parse_arguments()
 
+    if not trace_files:
+        return
+
+    print(f"Analyzing {len(trace_files)} trace files...")
+
+    # Calculate distance maps for each file
     distance_maps = {}
     for fpath in trace_files:
+        print(f"Processing {os.path.basename(fpath)}")
         trace = ChromatinTraceTable()
         trace.load(fpath)
         distance_maps[fpath] = accumulate_distances(trace.data)
 
+    # Compare distance maps and generate correlation matrix
     files, corr_matrix = compare_distance_maps(distance_maps)
-    print("Pearson Correlation Matrix:")
+
+    print("\nPearson Correlation Matrix:")
     print(corr_matrix)
-    plot_correlation_matrix(files, corr_matrix)
+
+    # Plot and save the correlation matrix
+    plot_correlation_matrix(files, corr_matrix, output_filename=args.output)
 
 
 if __name__ == "__main__":
