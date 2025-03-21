@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 
 """
+
 Created on Mar 20 2025
 
 @author: marcnol
 
-plot_3way_4M.py
-===============
+# plot_3way.py
 
-Description:
------------
+## Description
 A script for performing three-way co-localization analysis in 4M (Multi-way Measurement of
 Molecular interactions in space) data. This tool analyzes spatial co-localization between
 a specified anchor barcode and all possible pairs of other barcodes in 3D chromatin trace data.
@@ -23,41 +22,44 @@ pairs of other barcodes.
 This is particularly useful for analyzing higher-order chromatin organization and complex
 spatial relationships in microscopy data.
 
-Usage:
------
-    $ python plot_3way_4M.py --input TRACE_FILE.ecsv --anchor BARCODE_NUMBER [options]
-    $ cat file_list.txt | python plot_3way_4M.py --pipe --anchor BARCODE_NUMBER [options]
+## Usage
+```bash
+$ python plot_3way_4M.py --input TRACE_FILE.ecsv --anchor BARCODE_NUMBER [options]
+$ cat file_list.txt | python plot_3way_4M.py --pipe --anchor BARCODE_NUMBER [options]
+```
 
-Arguments:
----------
-    --input TRACE_FILE          Path to input trace table in ECSV format
-    --anchor BARCODE_NUMBER     Anchor barcode number for three-way co-localization analysis
-    --cutoff DISTANCE           Distance cutoff for co-localization (default: 0.2 µm)
-    --bootstrapping_cycles N    Number of bootstrap iterations (default: 10)
-    --output FILENAME           Output file name for the plot (default: threeway_coloc_plot.png)
-    --pipe                      Read trace file list from stdin (for batch processing)
+## Arguments
+- `--input TRACE_FILE` - Path to input trace table in ECSV format
+- `--anchor BARCODE_NUMBER` - Anchor barcode number for three-way co-localization analysis
+- `--cutoff DISTANCE` - Distance cutoff for co-localization (default: 0.2 µm)
+- `--bootstrapping_cycles N` - Number of bootstrap iterations (default: 10)
+- `--output FILENAME` - Output file name for the plot (default: threeway_coloc_plot.png)
+- `--pipe` - Read trace file list from stdin (for batch processing)
 
-Examples:
---------
+## Examples
+
 1. Analyze a single trace file with default parameters:
-    $ python plot_3way_4M.py --input traces.ecsv --anchor 42
+   ```bash
+   $ python plot_3way_4M.py --input traces.ecsv --anchor 42
+   ```
 
 2. Analyze with custom distance cutoff and more bootstrap cycles:
-    $ python plot_3way_4M.py --input traces.ecsv --anchor 42 --cutoff 0.25 --bootstrapping_cycles 100
+   ```bash
+   $ python plot_3way_4M.py --input traces.ecsv --anchor 42 --cutoff 0.25 --bootstrapping_cycles 100
+   ```
 
-Output:
-------
+## Output
 - A PNG image with a heatmap showing three-way co-localization frequencies between the
-    anchor barcode and all possible pairs of other barcodes
+  anchor barcode and all possible pairs of other barcodes
 - The output filename will include the anchor barcode number
-    (e.g., "threeway_coloc_plot_anchor_42.png")
+  (e.g., "threeway_coloc_plot_anchor_42.png")
 
-Notes:
------
+## Notes
 - The script requires the ChromatinTraceTable class from the matrixOperations module
 - Input files must be in ECSV format compatible with ChromatinTraceTable.load()
 - Bootstrapping is used to estimate mean and standard error of co-localization frequencies
 - The distance cutoff is in micrometers (µm)
+
 """
 import argparse
 import itertools
