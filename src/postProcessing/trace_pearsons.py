@@ -14,13 +14,11 @@ Output:
 
 import argparse
 import itertools
-import os
 import select
 import sys
 from collections import defaultdict
 from itertools import combinations
 
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr
 
@@ -156,6 +154,9 @@ def find_unique_substrings(filenames):
         if (expanded_end - expanded_start) <= 2 * (end - start):
             unique_substring = filename[expanded_start:expanded_end]
 
+        # remove extension
+        unique_substring = unique_substring.split(".")[0]
+
         unique_identifiers[filename] = unique_substring.strip()
 
     return unique_identifiers
@@ -213,27 +214,61 @@ def compare_distance_maps(distance_maps):
 
 
 def plot_correlation_matrix(files, matrix):
+    """
+    Plot a correlation matrix between files with unique identifiers as labels.
 
+    Parameters:
+    ----------
+    files : list
+        List of filenames to use
+    matrix : numpy.ndarray
+        Square correlation matrix of the files
+
+    Returns:
+    -------
+    None
+        Saves the plot as a PNG file
+    """
+    import os
+
+    import matplotlib.pyplot as plt
+
+    # Get unique identifiers for each file
     unique_identifiers = find_unique_substrings(files)
 
-    plt.figure(figsize=(8, 6))
-    plt.imshow(matrix, cmap="RdBu", interpolation="nearest")
-    plt.colorbar(label="Pearson Correlation", fontsize=12)
-    plt.xticks(
-        range(len(files)),
-        [os.path.basename(f) for f in unique_identifiers],
-        rotation=90,
-        fontsize=10,
-    )
-    plt.yticks(
-        range(len(files)),
-        [os.path.basename(f) for f in unique_identifiers],
-        fontsize=10,
-    )
+    # Create labels for the plot
+    labels = [os.path.basename(unique_identifiers[f]) for f in files]
 
-    plt.title("Trace Table Similarity Matrix", fontsize=16)
-    plt.savefig("trace_correlation_matrix.png")
+    # Create the figure and axis
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # Plot the matrix
+    vmin = np.min(matrix)
+    vmax = np.max(matrix)
+    im = ax.imshow(matrix, cmap="RdBu", interpolation="nearest", vmin=vmin, vmax=vmax)
+
+    # Add colorbar
+    cbar = fig.colorbar(im, ax=ax)
+    cbar.set_label("Pearson Correlation", fontsize=12)
+
+    # Set tick labels
+    ax.set_xticks(range(len(files)))
+    ax.set_yticks(range(len(files)))
+    ax.set_xticklabels(labels, rotation=90, fontsize=10)
+    ax.set_yticklabels(labels, fontsize=10)
+
+    # Add axis labels
+    ax.set_xlabel("Files", fontsize=14)
+    ax.set_ylabel("Files", fontsize=14)
+
+    # Add title
+    ax.set_title("Trace Table Similarity Matrix", fontsize=16)
+
+    # Adjust layout and save
+    plt.tight_layout()
+    plt.savefig("trace_correlation_matrix.png", dpi=300)
     plt.close()
+
     print("Saved correlation matrix as trace_correlation_matrix.png")
 
 
