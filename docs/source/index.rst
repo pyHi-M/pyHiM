@@ -6,42 +6,134 @@ pyHiM - Documentation
 
 `pyHiM` implements the analysis of multiplexed DNA-FISH data, as described in our `protocols paper <https://www.nature.com/articles/s41596-019-0269-9>`_.
 
-=============
-Main features
-=============
-
-* Register nuclei and barcode images to remove or minimize drift
-* Segment nuclei
-* Localize barcodes
-* Construct chromatin traces
-* Build single-trace and ensemble pair-wise distance maps
-* Work with 2D or 3D images
-
-==============
-How to proceed
-==============
-
+===============
+Getting started
+===============
 
 .. panels::
     :card: + intro-card text-center
-    :column: col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2
+    :body: text-center p-2
+    :column: col-lg-4 col-md-4 col-sm-6 col-xs-12 p-2
 
     ---
-    .. image:: _static/index_getting_started.svg
-       :width: 50
-
-    Getting started
-    ^^^^^^^^^^^^^^^
-
-    New to *pyHiM*? Check out the getting started guides. They contain an
-    introduction to *pyHiM'* main concepts and links to additional tutorials.
+    .. image:: getting_started/tutorials/notebooks/_static/Download-Icon.png
+       :height: 180
 
     +++
 
     .. link-button:: getting_started/quick_install
             :type: ref
-            :text: To the getting started guides
+            :text: Installation
             :classes: btn-block btn-info stretched-link text-white
+
+    ---
+    .. image:: _static/spot2matrix.png
+       :height: 180
+
+    +++
+
+    .. link-button:: getting_started/tutorials/notebooks/full_pyHiM_run
+            :type: ref
+            :text: 3D pipeline step by step
+            :classes: btn-block btn-info stretched-link text-white
+
+    ---
+    .. image:: _static/index_getting_started.svg
+       :height: 180
+
+    +++
+
+    .. link-button:: getting_started/typical_run
+            :type: ref
+            :text: Running pyHiM
+            :classes: btn-block btn-info stretched-link text-white
+
+=============
+Main features
+=============
+
+.. panels::
+    :card: + intro-card text-center
+    :body: text-center p-2
+    :footer: text-center p-2
+    :column: col-lg-2 col-md-4 col-sm-6 col-xs-12 p-2
+
+    ---
+    .. image:: _static/getting_started/dim_space.gif
+       :height: 100
+
+
+    +++
+
+    .. link-button:: user_guide/modules/preprocessing/make_projections
+            :type: ref
+            :text: 2D or 3D Pipeline
+            :classes: stretched-link
+
+    ---
+    .. image:: _static/registration_zoom.svg
+       :height: 100
+
+    +++
+
+    .. link-button:: user_guide/modules/preprocessing/align_images
+            :type: ref
+            :text: Image registration
+            :classes: stretched-link
+
+    ---
+    .. image:: _static/segmentation_mask.png
+       :width: 100
+
+    +++
+
+    .. link-button:: user_guide/modules/identification/segment_masks_3d
+            :type: ref
+            :text: Segment nuclei
+            :classes: stretched-link
+
+
+    ---
+    .. image:: _static/localizations.svg
+       :width: 100
+
+    +++
+
+    .. link-button:: user_guide/modules/identification/segment_sources_3d
+            :type: ref
+            :text: Localize spots
+            :classes: stretched-link
+
+    ---
+    .. image:: _static/trace_zoom.png
+       :height: 90
+
+    +++
+
+    .. link-button:: user_guide/modules/building_traces/build_traces
+            :type: ref
+            :text: Chromatin traces
+            :classes: stretched-link
+
+    ---
+    .. image:: _static/matrix_example.png
+       :width: 100
+
+    +++
+
+    .. link-button:: user_guide/modules/building_traces/build_matrices
+            :type: ref
+            :text: Distance maps
+            :classes: stretched-link
+
+==============
+Documentation
+==============
+
+
+.. panels::
+    :card: + intro-card text-center
+    :column: col-lg-4 col-md-6 col-sm-6 col-xs-12 p-2
 
     ---
     .. image:: _static/index_user_guide.svg
@@ -50,7 +142,7 @@ How to proceed
     User guide
     ^^^^^^^^^^
 
-    The user guide provides in-depth information on the
+    Find in-depth information on the
     key concepts of *pyHiM* with background information and explanation.
 
     +++
@@ -67,9 +159,7 @@ How to proceed
     API reference
     ^^^^^^^^^^^^^
 
-    The reference guide contains a detailed description of
-    the *pyHiM* API. The reference describes how the methods work and which parameters can
-    be used.
+    The reference guide describes the *pyHiM* API and how the methods work with which parameters.
 
     +++
 
@@ -85,8 +175,7 @@ How to proceed
     Developer guide
     ^^^^^^^^^^^^^^^
 
-    Saw a typo in the documentation? Want to improve
-    existing functionalities? The contributing guidelines will guide
+    The contributing guidelines will guide
     you through the process of improving *pyHiM*.
 
     +++
@@ -97,7 +186,7 @@ How to proceed
             :classes: btn-block btn-info stretched-link text-white
 
 
-`pyHiM` is a software package developed by the `Nollmann Lab <http://www.nollmannlab.org>`_ at the `Center of Structural Biology <http://www.cbs.cnrs.fr>`_, a department of the `CNRS <http://www.cnrs.fr>`_ and the `INSERM <http://www.inserm.fr>`_. 
+`pyHiM` is a software package developed by the `Nollmann Lab <http://www.nollmannlab.org>`_ at the `Center of Structural Biology <http://www.cbs.cnrs.fr>`_, a department of the `CNRS <http://www.cnrs.fr>`_ and the `INSERM <http://www.inserm.fr>`_.
 
 
 .. toctree::
@@ -105,8 +194,8 @@ How to proceed
    :hidden:
 
    getting_started/quick_install
-   getting_started/typical_run
    getting_started/tutorials
+   getting_started/typical_run
 
 .. toctree::
    :caption: User Guide
@@ -120,6 +209,7 @@ How to proceed
    :caption: Reference
    :hidden:
 
+   reference/Chromatin_trace_table
    reference/pyhim_class_diagram
    reference/infoList_comprehension
    reference/apidoc/modules
@@ -137,6 +227,5 @@ How to proceed
    contributor/no_python_files
    contributor/issues
    contributor/work_with_apifish
-   contributor/ressources
+   contributor/resources
    contributor/license
-

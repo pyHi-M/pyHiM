@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thur Jan 20 2023
-@author: jb, marcnol
-
---> Usage
+Usage:
 
 $ trace_filter.py --input Trace.ecsv --N_barcodes 3 --fraction_missing_barcodes -0.5 --overlapping_threshold 0.03
 
-will analyze 'Trace.ecsv' and remove traces with
-    - less than 3 barcodes
-    - fraction of missing barcodes < 0.5
-    - barcodes closer than 0.03 um will be merged.
+will analyze 'Trace.ecsv' and remove traces with:
 
---> outputs
+
+- less than 3 barcodes
+- fraction of missing barcodes < 0.5
+- barcodes closer than 0.03 um will be merged.
+
+
+outputs:
 
 .ecsv trace table file with the '_filtered' tag appended.
 
@@ -457,9 +457,7 @@ class FilterTraces:
         @param radius_min: (float) lower-bound threshold for the pwd between two barcodes (seeding of the cluster)
         @param radius_max: (float) higher-bound threshold for the pwd between two barcodes (maximum distance allowed)
         @param verbose: (bool) indicate whether the plot should be displayed
-        @return: kept_spot_id (list) contains lists of spot_ID. Each list is a trace reconstructed by the clustering
-                 algorithm
-                 out_spot_id (list) contains all the spot_ID of the isolated detections
+        @return: kept_spot_id (list) contains lists of spot_ID. Each list is a trace reconstructed by the clustering algorithm out_spot_id (list) contains all the spot_ID of the isolated detections
         """
         # load the detections of the selected trace
         # -----------------------------------------
@@ -584,9 +582,9 @@ class FilterTraces:
         # ---------------------------------------------------------------------------------------
         for spot_id in tqdm(in_spot_id):
             new_trace_id = str(uuid.uuid4())
-            new_dataframe.loc[
-                new_dataframe["Spot_ID"].isin(spot_id), "Trace_ID"
-            ] = new_trace_id
+            new_dataframe.loc[new_dataframe["Spot_ID"].isin(spot_id), "Trace_ID"] = (
+                new_trace_id
+            )
 
         # remove all the detections that were left-out
         # --------------------------------------------

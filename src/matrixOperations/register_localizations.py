@@ -414,7 +414,7 @@ class RegisterLocalizations:
 
         if not self.alignment_results_table_read:
             print_log(
-                "Unable to find aligment table.\nDid you run register_local?\n\n "
+                "Unable to find alignment table.\nDid you run register_local?\n\n "
             )
             sys.exit(
                 f"ERROR: Expected to find: {self.local_alignment_filename}--> Aborting."

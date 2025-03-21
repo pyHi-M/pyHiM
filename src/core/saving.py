@@ -16,8 +16,7 @@ from stardist import random_label_cmap
 from tifffile import imsave
 from tqdm import trange
 
-from core.pyhim_logging import print_log, write_string_to_file
-
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"  # ignore tensorflow logging
 np.seterr(divide="ignore", invalid="ignore")
 
 
@@ -69,23 +68,23 @@ def save_image_2d_cmd(image, file_name):
         )
     if image.shape > (1, 1):
         np.save(data_file_path, image)
-        print_log(f"$ Image saved to disk: {data_file_path}.npy", "info")
+        print(f"$ Image saved to disk: {data_file_path}.npy", "info")
     else:
-        print_log("# Warning, image is empty", "Warning")
+        print("# Warning, image is empty", "Warning")
 
 
 def save_image_as_blocks(img, full_filename, block_size_xy=256, label="raw_image"):
     num_planes = img.shape[0]
     block_size = (num_planes, block_size_xy, block_size_xy)
     blocks = view_as_blocks(img, block_shape=block_size).squeeze()
-    print_log(f"\nDecomposing image into {blocks.shape[0] * blocks.shape[1]} blocks")
+    print(f"\nDecomposing image into {blocks.shape[0] * blocks.shape[1]} blocks")
 
     folder = full_filename.split(".")[0]
     file_name = os.path.basename(full_filename).split(".")[0]
 
     if not os.path.exists(folder):
         os.mkdir(folder)
-        print_log(f"Folder created: {folder}")
+        print(f"Folder created: {folder}")
 
     for i in trange(blocks.shape[0]):
         for j in range(blocks.shape[1]):

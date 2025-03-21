@@ -26,9 +26,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-F", "--rootFolder", help="Folder with images, default: .")
     parser.add_argument(
-        "-P", "--fileParameters", help="parameters file, default: parameters.json"
-    )
-    parser.add_argument(
         "-R",
         "--recursive",
         help="One more depth of folders will be explored and zipped",
@@ -41,12 +38,6 @@ def main():
         root_folder = args.rootFolder
     else:
         root_folder = os.getcwd()
-
-    # UNUSED?
-    if args.fileParameters:
-        file_parameters = args.fileParameters
-    else:
-        file_parameters = "parameters.json"
 
     if args.recursive:
         RECURSIVE = args.recursive

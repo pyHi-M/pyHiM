@@ -32,7 +32,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--barcode_type_dict",
-        help="Json dictionnary linking barcodes and atom types (MUST BE 3 characters long!). ",
+        help="Json dictionary linking barcodes and atom types (MUST BE 3 characters long!). ",
     )
     p = {}
 
@@ -76,7 +76,7 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
 
     if len(barcode_type) < 1:
         # all atoms have the same identity
-        print("did not find barcode_type dictionnary")
+        print("did not find barcode_type dictionary")
         for i, barcode in enumerate(barcodes):
             barcode_type["{}".format(barcode)] = default_atom_name
     else:
@@ -87,7 +87,7 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
                 print("$ fixing key {} as not found in dict".format(barcode))
 
     with open(file_name, mode="w+", encoding="utf-8") as fid:
-        ## atom coordinates
+        # atom coordinates
         field_record = "HETATM"
         field_atom_number = " {: 4d} "
         field_atom_name = " C{:02d}"
@@ -132,9 +132,9 @@ def xyz_2_pdb(file_name, xyz, barcode_type=dict()):
                 )
             )
 
-        ## connectivity
-        txt1 = "CONECT  {: 3d}  {: 3d}\n"
-        txt2 = "CONECT  {: 3d}  {: 3d}  {: 3d}\n"
+        # connectivity
+        txt1 = "CONNECT  {: 3d}  {: 3d}\n"
+        txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 
         # first line of connectivity
         fid.write(txt1.format(1, 2))
@@ -252,11 +252,11 @@ if __name__ == "__main__":
         (coords, 'original points'),
         (rec_coords, 'reconstructed points')
     ])
-  
+
     plt.imshow( distances, cmap='Reds')
     plt.colorbar()
     plt.show()
-    
+
     rec_PWD = coord_2_distances(rec_coords)
     plt.imshow(rec_PWD, cmap='Reds')
     plt.colorbar()

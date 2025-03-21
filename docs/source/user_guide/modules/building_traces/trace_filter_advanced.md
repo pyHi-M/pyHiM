@@ -1,6 +1,6 @@
 # trace_filter_advanced
 
-This script is intended to filter trace files. 
+This script is intended to filter trace files.
 
 Multiple filtering options are available:
 
@@ -23,23 +23,23 @@ How to use it:
 
   this will process all  `Trace` files in `buildPWDmatrix`
 
-  
+
 
 - Example 2: using cat or ls to provide a specific list of Trace files to process
 
   ```sh
   # either make list of files to process and write it in a file
-  $ cat files_to_combine 
+  $ cat files_to_combine
   folder1/Trace_3D_barcode_KDtree_ROI:15.ecsv
   folder2/Trace_3D_barcode_KDtree_ROI:6.ecsv
-  
+
   # then pipe these files into trace_combinator
   $ cat files_to_combine | trace_combinator --N_barcodes 2 --pipe
-  
+
   # OR use `ls` to select which files you want to combine
   $ ls folder1/Trace*3D*6.ecsv
   folder1/Trace_3D_barcode_KDtree_ROI:6.ecsv  folder1/Trace_3D_barcode_mask:DAPI_ROI:6.ecsv  folder1/Trace_3D_barcode_mask:mask0_ROI:6.ecsv
-  
+
   # then pipe these files into trace_combinator
   $ ls folder1/Trace*3D*6.ecsv | trace_combinator --N_barcodes 2 --pipe
   ```
@@ -73,4 +73,3 @@ optional arguments:
   --label LABEL         Select traces containing this label, removes all other traces.
 
 ```
-

@@ -1,4 +1,4 @@
-# register_global 2
+# Apply registration
 *Applies registration to DAPI and barcodes*
 
 ## Invoke
@@ -24,4 +24,4 @@ pyhim -C register_global
 ## Relevant options
 
 ## Description
-To run this function exclusively, run *pyHiM* using the ``` -C register_global ``` argument. It loads masks, RNA, and barcodes 2D projected images, and applies registrations to them. The resulting images are saved as npy arrays in the ```alignImages``` folder.  
+To run this function exclusively, run *pyHiM* using the ``` -C register_global ``` argument. It loads masks, RNA, and barcodes 2D projected images, and applies registrations to them. The resulting images are saved as npy arrays in the ```alignImages``` folder.

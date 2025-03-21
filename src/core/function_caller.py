@@ -111,6 +111,13 @@ class Pipeline:
             ]:
                 cmds.append("mask_3d")
             elif cmd.lower() in [
+                "shift_mask",
+                "shiftmask",
+                "shift_masks",
+                "shiftmasks",
+            ]:
+                cmds.append("shift_mask")
+            elif cmd.lower() in [
                 "localize_3d",
                 "localize3d",
                 "segmentsource3d",
@@ -175,6 +182,7 @@ class Pipeline:
             "register_local",
             "register_localizations",
             "mask_3d",
+            "shift_mask",
             "localize_3d",
         }.intersection(set(self.cmds)):
             self.labelled_sections["barcode"].append("registration")
@@ -186,6 +194,7 @@ class Pipeline:
         if {
             "mask_2d",
             "mask_3d",
+            "shift_mask",
             "localize_2d",
             "localize_3d",
             "filter_localizations",
@@ -359,6 +368,35 @@ class Pipeline:
                 segmentation_params,
                 acq_params,
                 reg_params.referenceFiducial,
+            )
+
+    def shift_mask(
+        self,
+        current_param,
+        label,
+        roi_name: str,
+        data_path,
+        segmentation_params,
+        dict_shifts_path,
+        acq_params: AcquisitionParams,
+        reg_params: RegistrationParams,
+    ):
+        if (label in ("DAPI", "mask")) and "3D" in current_param.param_dict[
+            "segmentedObjects"
+        ]["operation"]:
+            print_log(f"Making 3D mask shift for label: {label}")
+            _mask_3d = Mask3D(
+                current_param,
+                parallel=self.parallel,
+            )
+            _mask_3d.shift_mask(
+                roi_name,
+                data_path,
+                dict_shifts_path,
+                segmentation_params,
+                acq_params,
+                reg_params.referenceFiducial,
+                label,
             )
 
     def segment_sources_3d(

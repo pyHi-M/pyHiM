@@ -10,11 +10,6 @@ contains functions and classes needed for the analysis and plotting of HiM matri
 """
 
 
-# =============================================================================
-# IMPORTS
-# =============================================================================
-
-
 import csv
 import glob
 import itertools
@@ -203,7 +198,7 @@ class AnalysisHiMMatrix:
         prop_cycle = plt.rcParams["axes.prop_cycle"]
         colors = prop_cycle.by_key()["color"]
         lwbase = plt.rcParams["lines.linewidth"]
-        thin, thick = lwbase / 2, lwbase * 3
+        thick = lwbase / 2
 
         profile = self.data["ensembleContactProbability"][:, anchor - 1]
         x = np.linspace(0, profile.shape[0], num=profile.shape[0], endpoint=True)
@@ -306,13 +301,11 @@ def normalize_profile(profile1, profile2, run_parameters):
         profile1 = profile1 / profile1.max() / 2
         profile2 = profile2 / profile2.max() / 2
     elif "none" in mode:  # no normalization
-        m1_norm = 1
-        m2_norm = 1
+        pass
     else:  # normalizes by given factor
         norm_factor = float(mode)
         profile1 = profile1 / 1
         profile2 = profile2 / norm_factor
-
     return profile1, profile2
 
 
@@ -330,7 +323,7 @@ def plot_1d_profile2datasets(
     prop_cycle = plt.rcParams["axes.prop_cycle"]
     colors = prop_cycle.by_key()["color"]
     lwbase = plt.rcParams["lines.linewidth"]
-    thin, thick = lwbase / 2, lwbase * 3
+    thick = lwbase / 2
 
     profile1 = him_data_1.data["ensembleContactProbability"][:, anchor - 1]
     profile2 = him_data_2.data["ensembleContactProbability"][:, anchor - 1]
@@ -439,7 +432,7 @@ def attributes_labels2cells(snd_table, results_table, label="doc"):
             ]
             cells_with_label = list(snd_table_with_label_roi["CellID #"].data)
 
-            # finds which cell indeces in Table have label
+            # finds which cell indices in Table have label
             list_of_selected_cells = [
                 index
                 for i_cell, index in zip(cells_to_process, range(len(cells_to_process)))
@@ -501,7 +494,7 @@ def load_sc_data(list_data, dataset_name, p):
     Returns
     -------
     sc_matrix_collated : list of np arrays n_barcodes x n_barcodes x n_cells
-        Cummulative SC PWD matrix.
+        Cumulative SC PWD matrix.
     unique_barcodes : list of np arrays
         containing the barcode identities for each matrix.
     build_pwd_matrix_collated : list of Tables
@@ -587,7 +580,7 @@ def load_sc_data(list_data, dataset_name, p):
                     f"[{i_filename}:{file_order[i_filename]}:{file_time_stamp[file_order[i_filename]]}] \
                         From {os.path.basename(file_name)}, \
                             Read: {len(new_build_pwd_matrix)} cells, \
-                                Cummulative: {len(build_pwd_matrix)} cells"
+                                Cumulative: {len(build_pwd_matrix)} cells"
                 )
 
             # [loads snd_assigned_cells.ecsv files if available]
@@ -1178,7 +1171,7 @@ def fuses_sc_matrix_collated_from_datasets(
         )
 
     if p["getStructure"]:
-        ## multi-dimensional scaling to get coordinates from PWDs
+        # multi-dimensional scaling to get coordinates from PWDs
         # make sure mean_sc_matrix is symmetric
         mean_sc_matrix = 0.5 * (mean_sc_matrix + np.transpose(mean_sc_matrix))
         # run metric mds
@@ -1406,7 +1399,7 @@ def decodes_trace(single_trace):
 
 
 def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
-    # writes xyz coordinates to a PDB file wth pseudoatoms
+    # writes xyz coordinates to a PDB file with pseudoatoms
     # file_name : string of output file path, e.g. '/foo/bar/test2.pdb'
     # xyz      : n-by-3 numpy array with atom coordinates
 
@@ -1429,7 +1422,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
     # defines atom names from barcode properties
     if len(barcode_type) < 1:
         # all atoms have the same identity
-        print("did not find barcode_type dictionnary")
+        print("did not find barcode_type dictionary")
         for i, barcode in enumerate(barcodes):
             barcode_type[str(barcode)] = default_atom_name
     else:
@@ -1440,28 +1433,28 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
                 print(f"$ fixing key {barcode} as not found in dict")
 
     """
-        COLUMNS        DATA TYPE       CONTENTS                            
+        COLUMNS        DATA TYPE       CONTENTS
     --------------------------------------------------------------------------------
-     1 -  6        Record name     "ATOM  "                                            
-     7 - 11        Integer         Atom serial number.                   
-    13 - 16        Atom            Atom name.                            
-    17             Character       Alternate location indicator.         
-    18 - 20        Residue name    Residue name.                         
-    22             Character       Chain identifier.                     
-    23 - 26        Integer         Residue sequence number.              
-    27             AChar           Code for insertion of residues.       
-    31 - 38        Real(8.3)       Orthogonal coordinates for X in Angstroms.                       
-    39 - 46        Real(8.3)       Orthogonal coordinates for Y in Angstroms.                            
-    47 - 54        Real(8.3)       Orthogonal coordinates for Z in Angstroms.                            
-    55 - 60        Real(6.2)       Occupancy.                            
-    61 - 66        Real(6.2)       Temperature factor (Default = 0.0).                   
-    73 - 76        LString(4)      Segment identifier, left-justified.   
-    77 - 78        LString(2)      Element symbol, right-justified.      
-    79 - 80        LString(2)      Charge on the atom.   
+     1 -  6        Record name     "ATOM  "
+     7 - 11        Integer         Atom serial number.
+    13 - 16        Atom            Atom name.
+    17             Character       Alternate location indicator.
+    18 - 20        Residue name    Residue name.
+    22             Character       Chain identifier.
+    23 - 26        Integer         Residue sequence number.
+    27             AChar           Code for insertion of residues.
+    31 - 38        Real(8.3)       Orthogonal coordinates for X in Angstroms.
+    39 - 46        Real(8.3)       Orthogonal coordinates for Y in Angstroms.
+    47 - 54        Real(8.3)       Orthogonal coordinates for Z in Angstroms.
+    55 - 60        Real(6.2)       Occupancy.
+    61 - 66        Real(6.2)       Temperature factor (Default = 0.0).
+    73 - 76        LString(4)      Segment identifier, left-justified.
+    77 - 78        LString(2)      Element symbol, right-justified.
+    79 - 80        LString(2)      Charge on the atom.
     """
 
     with open(file_name, mode="w+", encoding="utf-8") as fid:
-        ## atom coordinates
+        # atom coordinates
         # txt = "HETATM  {: 3d}  C{:02d} {} P   1      {: 5.3f}  {: 5.3f}  {: 5.3f}  0.00  0.00      PSDO C  \n"
         # txt = "HETATM  {: 3d}  {} {} P{: 3d}      {: 5.3f}  {: 5.3f}  {: 5.3f}  0.00  0.00      PSDO C  \n"
         # for i in range(n_atoms):
@@ -1469,7 +1462,7 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
         # fid.write(txt.format(i + 1, i + 1, trace_name, int(barcodes[i]), xyz[i, 0], xyz[i, 1], xyz[i, 2]))
         #    fid.write(txt.format(i + 1, atom_name, trace_name, int(barcodes[i]), xyz[i, 0], xyz[i, 1], xyz[i, 2]))
 
-        ## fills fields with correct spacing
+        # fills fields with correct spacing
         field_record = "HETATM"
         field_atom_number = " {:4d}"
         field_atom_name = "  {}"
@@ -1520,9 +1513,9 @@ def write_xyz_2_pdb(file_name, single_trace, barcode_type=dict()):
                 )
             )
 
-        ## connectivity
-        txt1 = "CONECT  {: 3d}  {: 3d}\n"
-        txt2 = "CONECT  {: 3d}  {: 3d}  {: 3d}\n"
+        # connectivity
+        txt1 = "CONNECT  {: 3d}  {: 3d}\n"
+        txt2 = "CONNECT  {: 3d}  {: 3d}  {: 3d}\n"
 
         # first line of connectivity
         fid.write(txt1.format(1, 2))
@@ -1644,7 +1637,7 @@ def plot_distance_histograms(
     else:
         n_plots_x = n_plots_y = min(
             [limit_n_plots, sc_matrix_collated.shape[0]]
-        )  # sets a max of subplots if you are outputing to screen!
+        )  # sets a max of subplots if you are outputting to screen!
 
     bins = np.arange(0, max_distance, 0.25)
 
@@ -1748,7 +1741,6 @@ def plot_matrix(
         else:
             mean_sc_matrix = pixel_size * sc_matrix_collated
         keep_plotting = True
-    n_barcodes = sc_matrix_collated.shape[0]
     if keep_plotting:
         # no errors occurred
 
@@ -1757,12 +1749,12 @@ def plot_matrix(
             mean_sc_matrix = np.reciprocal(mean_sc_matrix)
 
         # plots figure
-        fig = plt.figure(figsize=(15, 15))
+        plt.figure(figsize=(15, 15))
         pos = plt.imshow(mean_sc_matrix, cmap=c_m)  # colormaps RdBu seismic
         plt.xlabel("barcode #", fontsize=float(font_size) * 1.2)
         plt.ylabel("barcode #", fontsize=float(font_size) * 1.2)
         plt.title(
-            f"{figtitle} | {str(mean_sc_matrix.shape[0])} barcodes | n={str(n_cells)} | FOVs={str(number_rois)}",
+            f"{figtitle} | {str(mean_sc_matrix.shape[0])} barcodes | n={str(n_cells)}",
             fontsize=float(font_size) * 1.3,
         )
 
@@ -1955,7 +1947,7 @@ def distribution_maximum_kernel_density_estimation(
     ]  # removes nans
 
     if bin1 == bin2:
-        # protection agains bins in the diagonal
+        # protection against bins in the diagonal
         distance_distribution_0 = distance_distribution_unlimited
     else:
         # removes values larger than max_distance
@@ -2012,7 +2004,6 @@ def get_rg_from_pwd(pwd_matrix_0, min_number_pwd=4, threshold=6):
     pwd_matrix[pwd_matrix > threshold] = np.nan
 
     # get the number of PWDs that are not NaN
-    num_pwds = pwd_matrix.shape[0] * (pwd_matrix.shape[0] - 1) / 2
     num_not_nan = (
         np.sum(~np.isnan(pwd_matrix)) / 2
     )  # default is to compute the sum of the flattened array
@@ -2083,7 +2074,7 @@ def get_barcodes_per_cell(sc_matrix_collated):
 
 
 def get_coordinates_from_pwd_matrix(matrix):
-    ## multi-dimensional scaling to get coordinates from PWDs
+    # multi-dimensional scaling to get coordinates from PWDs
     # make sure mean_sc_matrix is symmetric
     matrix = 0.5 * (matrix + np.transpose(matrix))
     # run metric mds

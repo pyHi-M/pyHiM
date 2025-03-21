@@ -1,6 +1,6 @@
-# Configuration file `(parameters.json)`
+# Parameters file
 
-*All pyHiM parameters are gathered in a single configuration file called `parameters.json`.* 
+*All pyHiM parameters are gathered in a single configuration file called `parameters.json`.*
 
 This file can be edited [manually](#manually) or using a [graphical user interface](#graphical-user-interface).
 
@@ -8,13 +8,13 @@ You can find a global description of each parameter in the [reference guide](../
 
 ## Manually
 
-- Copy an `parameters.json` file in the folder where you want to run `pyHiM`. 
+- Copy an `parameters.json` file in the folder where you want to run `pyHiM`.
 
 ```{note}
 A typical example can be find on [GitHub <img src="../../_static/getting_started/Download-Icon.png" width="50"/>](https://github.com/marcnol/pyHiM/blob/development/src/toolbox/parameter_file/parameters.json)
 ```
 
-- With a text editor, update the relevant parameters. For example, the  name of the `referenceFiducial` needs to be changed according to your experiment settings. 
+- With a text editor, update the relevant parameters. For example, the  name of the `referenceFiducial` needs to be changed according to your experiment settings.
 
 - The `common` section defines the default parameters for each label. For each label, you can personalize the value of a parameter by  indicating its new value in the `label` section.
 

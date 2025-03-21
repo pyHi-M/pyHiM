@@ -2,7 +2,7 @@
 
 |OS|Linux|Windows|Mac|
 |:-:|:-:|:-:|:-:|
-|**compatibility**|Yes|Yes|Yes| 
+|**compatibility**|Yes|Yes|Yes|
 
 ## Install conda
 
@@ -13,7 +13,6 @@ We recommend to download the lighter version `miniconda` if you only intend to u
 - [Installing conda on Linux](https://conda.io/projects/conda/en/latest/user-guide/install/linux.html)
 - [Installing conda on Windows](https://conda.io/projects/conda/en/latest/user-guide/install/windows.html)
 - [Installing conda on macOS](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html)
-
 
 ## Create conda environment
 
@@ -33,6 +32,3 @@ pip install pyhim
 To check if pyHiM is well installed, run:
 `pyhim --help`
 ```
-
-
-

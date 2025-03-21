@@ -14,25 +14,20 @@ script to compare PWD matrices from two experiments
 
 """
 
-
-# =============================================================================
-# IMPORTS
-# =============================================================================q
-
 import argparse
-import select
 import sys
-import seaborn as sns
-sns.set(font_scale=2)
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
+import seaborn as sns
 
 from matrixOperations.HIMmatrixOperations import (
     calculate_contact_probability_matrix,
     calculate_ensemble_pwd_matrix,
 )
+
+sns.set(font_scale=2)
 
 # =============================================================================
 # FUNCTIONS
@@ -56,7 +51,9 @@ def parse_arguments():
     )
     parser.add_argument("--input1", help="Name of first input trace file.")
     parser.add_argument("--input2", help="Name of second input trace file.")
-    parser.add_argument("--output", help="Name of output plot. Default: scatter_plot.png")
+    parser.add_argument(
+        "--output", help="Name of output plot. Default: scatter_plot.png"
+    )
 
     parser.add_argument(
         "--mode",
@@ -88,11 +85,11 @@ def parse_arguments():
 
     if args.output:
         p["output"] = args.output
-        if len(p["output"].split('.'))<2:
-            p["output"]=p["output"]+'.png'
+        if len(p["output"].split(".")) < 2:
+            p["output"] = p["output"] + ".png"
     else:
         p["output"] = "output.png"
-        
+
     if args.mode:
         p["mode"] = args.mode
     else:
@@ -168,52 +165,57 @@ def plot_result(x, y, r, p):
     plt.xlim([x_min, x_max])
     plt.ylim([x_min, x_max])
 
-    root, ext = p["output"].split('.')[0], p["output"].split('.')[1]
+    root, ext = p["output"].split(".")[0], p["output"].split(".")[1]
     filename = root + "_scatter_plot." + ext
     plt.savefig(filename)
     print(f"> Output image saved as : {filename}")
+
 
 def calculates_pearson_correlation(x, y):
     r, p = scipy.stats.pearsonr(x, y)
     return r
 
+
 def remove_zeros(x):
 
     new_vector = [x[i] for i in np.nonzero(x)[0]]
-    
+
     return np.array(new_vector)
 
-def plots_distributions(x, y, output_filename = 'violin_plot.png', y_axis_label='counts'):
-    '''
-    makes violin plots containing each dataset.    
+
+def plots_distributions(x, y, output_filename="violin_plot.png", y_axis_label="counts"):
+    """
+    makes violin plots containing each dataset.
 
     Parameters
     ----------
     x : dataset 1 NPY array
     y : dataset 2 NPY array
-    
 
-    '''
+
+    """
     # performs Wilcoxon rank sum test
     a, p_value = scipy.stats.ranksums(x, y)
 
     # X = [x.copy(), y.copy()]
     X = [np.log(x.copy()), np.log(y.copy())]
-    
+
     # removes zeros from both vectors
     X = [remove_zeros(x0) for x0 in X]
-    
+
     # starts figure
-    fig = plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 10))
 
     # plots datasets
 
-    ax=sns.violinplot(data = X).set(title=y_axis_label + f' distributions. WX P-value = {p_value:.2e}' )
-    plt.xlabel('datasets')
+    sns.violinplot(data=X).set(
+        title=y_axis_label + f" distributions. WX P-value = {p_value:.2e}"
+    )
+    plt.xlabel("datasets")
     plt.ylabel(y_axis_label)
-    
+
     # saves figure
-    root, ext = output_filename.split('.')[0], output_filename.split('.')[1]
+    root, ext = output_filename.split(".")[0], output_filename.split(".")[1]
     filename = root + "_violin_plot." + ext
     plt.savefig(filename)
     print(f"> Output image saved as : {filename}")
@@ -268,27 +270,30 @@ def calculates_ensemble_matrices(matrices, mode="median", max_distance=2):
 
     return mean_sc_matrices
 
+
 def common_member(a, b):
     result = [i for i in a if i in b]
     return result
 
-def filters_zero_values(x,y):
-    '''
+
+def filters_zero_values(x, y):
+    """
     finds the list of common indices in these arrays that contain nonzero values
-    '''
+    """
 
     # identifies positions with zeros
     non_zero_indices_x = list(np.nonzero(x)[0])
     non_zero_indices_y = list(np.nonzero(y)[0])
-    
+
     non_zero_consensous = common_member(non_zero_indices_x, non_zero_indices_y)
-    
-    print(non_zero_consensous)    
+
+    # print(non_zero_consensous)
 
     x = x[non_zero_consensous]
     y = y[non_zero_consensous]
-    
-    return x, y 
+
+    return x, y
+
 
 def main_script(p):
     print("Processing files\n" + "=" * 16)
@@ -296,7 +301,7 @@ def main_script(p):
     mode = p["mode"]
     files = p["input_files"]
     max_distance = p["max_distance"]
-    
+
     matrices = [load_matrix(file) for file in files]
 
     mean_sc_matrices = calculates_ensemble_matrices(
@@ -305,11 +310,11 @@ def main_script(p):
 
     [x, y] = [parses_matrix_to_vector(matrix) for matrix in mean_sc_matrices]
 
-    x, y = filters_zero_values(x,y)
+    x, y = filters_zero_values(x, y)
 
     r = calculates_pearson_correlation(x, y)
-    
-    plots_distributions(x, y, y_axis_label=p["mode"],output_filename = p["output"])
+
+    plots_distributions(x, y, y_axis_label=p["mode"], output_filename=p["output"])
 
     print("Pearson Correlation Coefficient: ", r)
 

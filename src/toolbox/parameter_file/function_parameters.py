@@ -7,14 +7,14 @@ from core.data_file import save_json
 
 
 def convert_dic_to_string(dic: dict):
-    """Convert a dictionnary {'nuclei':'DAPI','mask1':'mask0'} to a simple
+    """Convert a dictionary {'nuclei':'DAPI','mask1':'mask0'} to a simple
     string: 'nuclei: DAPI, mask1: mask0'."""
     string = str(dic).replace("'", "").replace("{", "").replace("}", "")
     return string
 
 
 def convert_list_to_string(liste: list):
-    """Convert a list of type ['masking','clustering'] to a sting of type ''."""
+    """Convert a list of type ['masking','clustering'] to a string of type ''."""
     string = str(liste).replace("'", "").replace("[", "").replace("]", "")
     return string
 
@@ -27,7 +27,7 @@ def import_parameters(script_dir, current_dir=None):
     """
 
     parameters_script_path = script_dir + os.sep + "parameters.json"
-    if current_dir != None:
+    if current_dir is not None:
         parameters_current_path = current_dir + os.sep + "parameters.json"
         if os.path.exists(parameters_current_path):
             with open(parameters_current_path, mode="r") as file:
@@ -93,7 +93,7 @@ def is_integer(num):
     """Return True if num is an integer, else return False"""
     try:
         convert_num = float(num)
-    except:
+    except Exception:
         return False
     else:
         if convert_num % 1 == 0:
@@ -106,7 +106,7 @@ def is_float(num):
     """Return True if num is an integer or float, else return False if string"""
     try:
         float(num)
-    except:
+    except Exception:
         return False
     return True
 
@@ -120,7 +120,7 @@ def check_blocksize(entry_value):
 def match_name(reg_expression, string_name):
     """Test string_name with regular expression, return True if the string_name is in the form 'RT+integer'"""
     regex = re.fullmatch(reg_expression, string_name)
-    if regex == None:
+    if regex is None:
         return False
     else:
         return True
@@ -131,19 +131,19 @@ def check_brightest(entry_value):
     (=no limit in the number of spot detection)"""
     try:
         output = int(entry_value)
-    except:
+    except Exception:
         output = "None"
     return output
 
 
 def convert_string_to_dictionnary(string: str) -> dict:
     """Convert a string to a dictionary"""
-    dictionnary = {}
+    dictionary = {}
     temp = string.replace(" ", "").split(",")
     for item in temp:
         list_temp = item.split(":")
-        dictionnary[list_temp[0]] = list_temp[1]
-    return dictionnary
+        dictionary[list_temp[0]] = list_temp[1]
+    return dictionary
 
 
 def check_dict(string: str):
@@ -151,7 +151,7 @@ def check_dict(string: str):
     try:
         convert_string_to_dictionnary(string)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -264,7 +264,7 @@ def check_settings(entries_dic):
             if not check_blocksize(int(entered_value)) or not is_integer(entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f"The type of {key} input is not correct.\nPlease enter an interger that is a power of 2.",
+                    f"The type of {key} input is not correct.\nPlease enter an integer that is a power of 2.",
                 )
                 is_ok = False
         # test if name of RT/Barcode is in the form 'RT' + integer
@@ -272,14 +272,14 @@ def check_settings(entries_dic):
             if not match_name("^RT[0-9][0-9]*", entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f'The name of Reference Fiducial is not correct.\nPlease enter a name starting with "RT" and followed only by numbers.',
+                    'The name of Reference Fiducial is not correct.\nPlease enter a name starting with "RT" and followed only by numbers.',
                 )
                 is_ok = False
         elif list_values[2] is int:
             if not is_integer(entered_value):
                 messagebox.showerror(
                     "Input Error",
-                    f"The type of {key} input is not correct.\nPlease enter interger value.",
+                    f"The type of {key} input is not correct.\nPlease enter integer value.",
                 )
                 is_ok = False
         # test for values that would be normally float (not string)

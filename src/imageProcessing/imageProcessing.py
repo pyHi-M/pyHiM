@@ -157,7 +157,7 @@ def reassemble_3d_image(client, futures, output_shape):
 
 def preprocess_3d_image(x, lower_threshold, higher_threshold, parallel_execution=True):
     """
-    3D stack pre-procesing:
+    3D stack pre-processing:
         - rescales intensities to 0->1
         - removes inhomogeneous background plane by plane
         - adjusts image levels by thresholding
@@ -295,7 +295,7 @@ def _remove_inhomogeneous_background(
 
 def _remove_inhomogeneous_background_2d(im, filter_size=(3, 3), background=False):
     """
-    Calls Background2D() from ASTROPY to perform background substraction in a 2D image
+    Calls Background2D() from ASTROPY to perform background subtraction in a 2D image
 
     Parameters
     ----------
@@ -304,13 +304,13 @@ def _remove_inhomogeneous_background_2d(im, filter_size=(3, 3), background=False
     filter_size : tuple of ints, optional
         Size of gaussian filter used for smoothing results. The default is (3, 3).
     background : boolean, optional
-        if True returs the substracted image and the background
+        if True returns the subtracted image and the background
         otherwise only the former. The default is False.
 
     Returns
     -------
     numpy array
-        background substracted 2D image.
+        background subtracted 2D image.
 
     """
     print_log("Removing inhomogeneous background from 2D image...")

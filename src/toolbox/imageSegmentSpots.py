@@ -12,7 +12,7 @@ Created on Mon Mar  8 16:54:49 2021
 
 Steps:
     - defines run_parameters
-    - loads iteratively images and segments volumes 
+    - loads iteratively images and segments volumes
     - saves output
 
 """
@@ -22,7 +22,6 @@ import argparse
 import glob
 import os
 import sys
-from datetime import datetime
 
 import numpy as np
 from skimage import io
@@ -140,7 +139,6 @@ def parse_arguments():
 
 
 def main():
-    begin_time = datetime.now()
 
     # - defines run_parameters
     run_parameters = parse_arguments()
@@ -169,9 +167,6 @@ def main():
     img = io.imread(files_to_process[0]).squeeze()
     imgSize = img.shape
     print("Expected image sizes: {}".format(imgSize))
-
-    # creates output image
-    outputImage = np.zeros(imgSize)
 
     # - loads iteratively images and sums
     i = 0

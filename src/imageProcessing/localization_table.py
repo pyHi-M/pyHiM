@@ -19,6 +19,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from apifish.stack.io import read_table_from_ecsv
+from astropy.table import vstack
 
 from core.pyhim_logging import print_log
 
@@ -99,6 +100,23 @@ class LocalizationTable:
             overwrite=True,
         )
 
+    def append(self, table1, table2):
+        """
+        appends <table> to self.data
+
+        Parameters
+        ----------
+        table : astropy table
+            table to append to existing self.data table.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        return vstack([table1, table2])
+
     def plot_distribution_fluxes(self, barcode_map, filename_list):
         """
         This function plots the distribution of fluxes, sharpness, roundness, magnitude and peak intensity from a Table
@@ -126,10 +144,9 @@ class LocalizationTable:
         peak = barcode_map["peak"]
         zcentroid = barcode_map["zcentroid"]
         flux = barcode_map["flux"]
-        mag = barcode_map["mag"]
 
         # plots data
-        p_1 = ax[0].scatter(peak, zcentroid, c=peak, cmap="Reds", alpha=0.5)
+        ax[0].scatter(peak, zcentroid, c=peak, cmap="Reds", alpha=0.5)
         ax[0].set_title("color: peak intensity")
         ax[0].set_ylabel("zcentroid")
         ax[0].set_xlabel("peak intensity")
@@ -144,6 +161,25 @@ class LocalizationTable:
         fig.savefig("".join(filename_list))
 
         plt.close(fig)
+
+    def plot_intensity_distribution(
+        self, intensities, output_file="intensity_distribution.png"
+    ):
+        """
+        Plots the distribution of intensity values from the localization table
+        with a logarithmic y-axis and saves it as a PNG file.
+        """
+
+        plt.figure(figsize=(8, 6))
+        plt.hist(intensities, bins=50, color="blue", alpha=0.7, edgecolor="black")
+        plt.xlabel("Intensity")
+        plt.ylabel("Frequency (log scale)")
+        plt.title("Localization Intensity Distribution")
+        plt.yscale("log")  # Set y-axis to logarithmic scale
+        plt.grid(True)
+        plt.savefig(output_file)
+        plt.close()
+        print(f"$ Saved intensity distribution plot as {output_file}")
 
     def plots_localizations(self, barcode_map_full, filename_list):
         """
@@ -301,7 +337,7 @@ def plots_localization_projection(coord1, coord2, axis, colors, title="" * 3):
     colors : 1D Numpy array, float
         colorcode used in scatter plot.
     title : string, optional
-        title of subpanel. The default is ''\*3.
+        title of subpanel. The default is ''*3.
 
     Returns
     -------

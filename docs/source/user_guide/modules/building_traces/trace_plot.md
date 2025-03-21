@@ -18,7 +18,8 @@ installs:
     pip install nglview, pdbparser
 
 --------
-### Invoke
+
+## Invoke
 
 ```bash
 $ ls Trace_3D_barcode_KDtree_ROI:1.ecsv | trace_plot --pipe --selected_trace 5b1e6f89-0362-4312-a7ed-fc55ae98a0a5
@@ -34,7 +35,7 @@ this plots all traces in the trace file.
 
 
 
-### Format for json dict
+## Format for json dict
 
 Please use the following format for the json dictionary to link barcode identities with different ATOM names in the PDB file:
 
@@ -44,7 +45,7 @@ keys provide barcode names in the trace file, these should be attributed to 3 ch
 
 
 
-### pymol
+## pymol
 
 Some useful pymol commands:
 
@@ -54,4 +55,3 @@ set grid_mode,1
 color green,  (name C*)
 color red, (name P*)
 ```
-

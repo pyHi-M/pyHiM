@@ -14,7 +14,7 @@ import os
 
 from tqdm import trange
 
-from core.parameters import MatrixParams, RegistrationParams
+from core.parameters import MatrixParams
 from core.pyhim_logging import print_log, print_session_name, write_string_to_file
 from imageProcessing.localization_table import LocalizationTable
 from imageProcessing.makeProjections import Feature
@@ -40,7 +40,7 @@ class FilterLocalizations:
 
     def filter_localizations_quality(self, barcode_map, i):
         """
-        [filters barcode localizations either by brigthness or 3D localization accuracy]
+        [filters barcode localizations either by brightness or 3D localization accuracy]
 
         Parameters
         ----------

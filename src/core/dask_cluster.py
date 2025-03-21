@@ -68,7 +68,7 @@ class DaskCluster:
 
 
 def try_get_client():
-    """Chek if client is alive
+    """Check if client is alive
 
     Returns
     -------

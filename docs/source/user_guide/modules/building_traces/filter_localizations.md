@@ -12,9 +12,9 @@ There are several filters:
 
 2. Accuracy of 3D localization: sigma of fit, correlation between z-position from weighted moment and from gaussian fit, etc
 
-3. Accuracy of drift correction in the region where the barcode was localized. 
+3. Accuracy of drift correction in the region where the barcode was localized.
 
-   This is only applied if LocalDrift correction was **not** run. 
+   This is only applied if LocalDrift correction was **not** run.
 
 ## Inputs
 

@@ -17,33 +17,25 @@ Options:
     - cScale: value of the max of the cScale used to plot the matrix
     - cmap: name of cmap
     - scalingParameter: Normalizing scaling parameter of colormap. Max will matrix.max()/scalingParameter. Default is 1.
-    - mode: indicated the plotting mode, either ["proximity"] or ["KDE", "median"] for PWD matrix. 
+    - mode: indicated the plotting mode, either ["proximity"] or ["KDE", "median"] for PWD matrix.
     - outputFolder: name of outputfolder. 'plots' is the default
-    
+
 Left to do:
     - need to implement a way to select a subset of chromatin traces...
-    
+
 @author: marcnol
 """
 
 
 import argparse
-
-# %% imports and plotting settings
 import os
 import sys
 
 import numpy as np
-
-from matrixOperations.HIMmatrixOperations import (
-    calculate_contact_probability_matrix,
-    plot_matrix,
-    shuffle_matrix,
-)
-
 from plotting_functions import gets_matrix
 
-# %% define and loads datasets
+from matrixOperations.HIMmatrixOperations import plot_matrix
+
 
 def parse_arguments():
     # [parsing arguments]
@@ -77,11 +69,11 @@ def parse_arguments():
     )
     parser.add_argument(
         "--matrix_norm_mode",
-        help="Matrix normalization mode. Can be n_cells (default) or nonNANs",
+        help="Matrix normalization mode. Can be n_cells or nonNANs (default)",
     )
     parser.add_argument(
         "--scalingParameter",
-        help="Scaling parameter. Dafault: 1",
+        help="Scaling parameter. Default: 1",
     )
 
     args = parser.parse_args()
@@ -159,12 +151,17 @@ def parse_arguments():
     else:
         run_parameters["dist_calc_mode"] = "KDE"
 
+    if run_parameters["dist_calc_mode"] == "proximity":
+        run_parameters["cmtitle"] = "proximity frequency"
+    else:
+        run_parameters["cmtitle"] = "distance, um"
+
     if args.matrix_norm_mode:
         run_parameters["matrix_norm_mode"] = args.matrix_norm_mode
     else:
-        run_parameters[
-            "matrix_norm_mode"
-        ] = "n_cells"  # norm: n_cells (default), nonNANs
+        run_parameters["matrix_norm_mode"] = (
+            "nonNANs"  # norm: n_cells (default), nonNANs
+        )
 
     if args.scalingParameter:
         run_parameters["scalingParameter"] = args.scalingParameter
@@ -180,6 +177,7 @@ def parse_arguments():
 # MAIN
 # =============================================================================
 
+
 def main():
     print(">>> Producing HiM matrix")
 
@@ -188,15 +186,19 @@ def main():
     if not os.path.exists(run_parameters["outputFolder"]):
         os.mkdir(run_parameters["outputFolder"])
         print("Folder created: {}".format(run_parameters["outputFolder"]))
-        
-    (sc_matrix,
-     uniqueBarcodes,
-     cScale, 
-     n_cells, 
-     outputFileName,
-     fileNameEnding) = gets_matrix(run_parameters,
-                scPWDMatrix_filename = run_parameters["scPWDMatrix_filename"],
-                uniqueBarcodes=run_parameters["uniqueBarcodes"])
+
+    (
+        sc_matrix,
+        uniqueBarcodes,
+        cScale,
+        n_cells,
+        outputFileName,
+        fileNameEnding,
+    ) = gets_matrix(
+        run_parameters,
+        scPWDMatrix_filename=run_parameters["scPWDMatrix_filename"],
+        uniqueBarcodes=run_parameters["uniqueBarcodes"],
+    )
 
     meansc_matrix = plot_matrix(
         sc_matrix,
@@ -211,11 +213,11 @@ def main():
         c_min=run_parameters["cMin"],
         n_cells=n_cells,
         c_m=run_parameters["cmap"],
-        cmtitle="distance, um",
+        cmtitle=run_parameters["cmtitle"],
         filename_ending=fileNameEnding + run_parameters["plottingFileExtension"],
         font_size=run_parameters["fontsize"],
     )
-    
+
     print("Output figure: {}".format(outputFileName))
 
     # saves output matrix in NPY format

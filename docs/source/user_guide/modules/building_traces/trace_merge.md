@@ -4,7 +4,7 @@ This scripts implements a simpler version of trace_combinator, the objective is 
 
 ## Invoke
 
-This just takes a list of trace files and merges them together 
+This just takes a list of trace files and merges them together
 
 ```
 $ ls Trace*.ecsv | trace_merge
@@ -35,4 +35,3 @@ optional arguments:
   --method METHOD       Method or mask ID used for tracing: KDtree, mask, DAPI
   --pipe                inputs Trace file list from stdin (pipe)
 ```
-

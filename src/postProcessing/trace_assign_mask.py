@@ -21,11 +21,9 @@ ChromatinTraceTable() object and output .ecsv trace table file .
 # =============================================================================q
 
 import argparse
-import glob
 import os
 import select
 import sys
-from datetime import datetime
 
 import numpy as np
 
@@ -40,7 +38,9 @@ from matrixOperations.chromatin_trace_table import ChromatinTraceTable
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="Input trace file")
-    parser.add_argument("--mask_file", help="Input mask image file. Expected format: NPY")
+    parser.add_argument(
+        "--mask_file", help="Input mask image file. Expected format: NPY"
+    )
     parser.add_argument(
         "--pixel_size", help="Lateral pixel size un microns. Default = 0.1"
     )
@@ -61,9 +61,7 @@ def parse_arguments():
     if args.mask_file:
         p["mask_file"] = args.mask_file
     else:
-        print(
-            ">> ERROR: you must provide a filename with a mask file"
-        )
+        print(">> ERROR: you must provide a filename with a mask file")
         sys.exit(-1)
 
     if args.pixel_size:
@@ -72,10 +70,10 @@ def parse_arguments():
         p["pixel_size"] = 0.1
 
     if args.label:
-        p["label"]= args.label
+        p["label"] = args.label
     else:
-        p["label"] = 'labeled'
-        
+        p["label"] = "labeled"
+
     if args.pipe:
         p["pipe"] = True
         if select.select(
@@ -92,17 +90,15 @@ def parse_arguments():
     else:
         p["pipe"] = False
 
-    if len(p["trace_files"])<1:
-        print(
-            ">> ERROR: you must provide a filename with a trace file"
-        )
+    if len(p["trace_files"]) < 1:
+        print(">> ERROR: you must provide a filename with a trace file")
         sys.exit(-1)
     return p
 
-def assign_masks(trace, mask_file, label='labeled', pixel_size=0.1):
-    
-    # [checks if mask file exists for the file to process]
 
+def assign_masks(trace, mask_file, label="labeled", pixel_size=0.1):
+
+    # [checks if mask file exists for the file to process]
 
     if os.path.exists(mask_file):
 
@@ -133,11 +129,11 @@ def assign_masks(trace, mask_file, label='labeled', pixel_size=0.1):
     else:
         print(f"ERROR: No mask image file found with name: {mask_file}")
         sys.exit(-1)
-        
+
     return trace
 
 
-def process_traces(trace_files=[], mask_file='',label = "labeled", pixel_size=0.1):
+def process_traces(trace_files=[], mask_file="", label="labeled", pixel_size=0.1):
 
     print(
         "\n{} trace files to process= {}".format(
@@ -155,12 +151,13 @@ def process_traces(trace_files=[], mask_file='',label = "labeled", pixel_size=0.
             trace.load(trace_file)
 
             trace = assign_masks(trace, mask_file, label=label, pixel_size=pixel_size)
-            
+
             outputfile = trace_file.rstrip(".ecsv") + "_" + label + ".ecsv"
 
             trace.save(outputfile, trace.data, comments=label)
-            
+
             print(f"$ Saved output trace file at: {outputfile}")
+
 
 # =============================================================================
 # MAIN
@@ -172,16 +169,17 @@ def main():
     # [parsing arguments]
     p = parse_arguments()
 
-    print("="*10+"Started execution"+"="*10)
-    
-    process_traces(trace_files=p["trace_files"],
-                            mask_file=p["mask_file"],
-                            label=p["label"],                            
-                            pixel_size=p["pixel_size"]
+    print("=" * 10 + "Started execution" + "=" * 10)
+
+    process_traces(
+        trace_files=p["trace_files"],
+        mask_file=p["mask_file"],
+        label=p["label"],
+        pixel_size=p["pixel_size"],
     )
 
+    print("=" * 9 + "Finished execution" + "=" * 9)
 
-    print("="*9+"Finished execution"+"="*9)
 
 if __name__ == "__main__":
     main()

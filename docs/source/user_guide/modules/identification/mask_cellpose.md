@@ -8,9 +8,9 @@ For more information, follow this tutorial:
 
 
 ## Invoke
-To process 
+To process
 ```shell
-$ mask_cellpose.py --input my_image.tif 
+$ mask_cellpose.py --input my_image.tif
 ```
 
 
@@ -29,4 +29,3 @@ $ mask_cellpose.py --input my_image.tif
 |---|---|---|
 |mask_3d/data/*_3Dmasks.npy|1|NUMPY 3D array. The output labeled image.|
 |mask_2d/data/*_Masks.npy|1|NUMPY 2D array. The output labeled image, projected by maximum.|
-

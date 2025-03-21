@@ -1,4 +1,4 @@
-# mask_2d and localize_2d 
+# mask_2d and localize_2d
 *Segments DAPI and sources in 2D*
 
 ## Invoke
@@ -27,7 +27,7 @@ pyhim -C mask_2d,localize_2d
 |operation|2D| Select 2D mask segmentation|
 ||3D| Select 3D mask segmentation|
 |background_method|inhomogeneous| |
-||flat| | 
+||flat| |
 ||stardist| |
 |stardist_network| | Name of the network used for segmentation|
 |stardist_basename| | Folder containing AI models|
@@ -35,7 +35,7 @@ pyhim -C mask_2d,localize_2d
 |threshold_over_std| | Threshold used to detect sources. Default: 1.0|
 |area_min| | Minimal area to keep object|
 |area_max| | Maximal area to keep object|
-|residual_max| | Maximum difference between axial spot intensity and gaussian fit| 
+|residual_max| | Maximum difference between axial spot intensity and gaussian fit|
 
 
 ## Description
