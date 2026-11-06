@@ -307,6 +307,19 @@ class Localize3D:
             shift = np.array([0.0, 0.0])
             image_3d_aligned = image_3d
 
+        processed_image_filename = (
+            data_path
+            + os.sep
+            + seg_params.localize_3d_folder
+            + os.sep
+            + "data"
+            + os.sep
+            + os.path.splitext(os.path.basename(filename_to_process))[0]
+            + "_processed.npy"
+        )
+        np.save(processed_image_filename, image_3d_aligned)
+        print_log(f"$ Processed image saved to: {processed_image_filename}")
+
         # segments 3D volumes
         _, segmented_image_3d = self._segment_3d_volumes(image_3d_aligned)
 
@@ -899,27 +912,64 @@ def spot_quality_metrics(image_3d_aligned, mask_properties):
     ymin, ymax = [], []
     zmin, zmax = [], []
     roundness = []
+    spot_x, spot_y, spot_z = [], [], []
+    number_skipped_spots_window_size = 0
+    number_skipped_spots_centroid_nan = 0
+
+    xy_min_window_size = 5  # minimum size of the patch to compute metrics
 
     if len(mask_properties) > 0:
 
         for idx, row in mask_properties.iterrows():
-
-            # Convert spot coordinates into integer voxel coordinates
-            x_int = int(round(row["x"]))
-            y_int = int(round(row["y"]))
-            z_int = int(round(row["z"]))
 
             # Extract the local 3D patch using the bounding box coordinates
             y_min, y_max = round(row["y_min"]), round(row["y_max"])
             x_min, x_max = round(row["x_min"]), round(row["x_max"])
             z_min, z_max = round(row["z_min"]), round(row["z_max"])
 
+            # does not calculate metrices for patches that are too small in XY
+            window_size = np.array([(z_max - z_min), (y_max - y_min), (x_max - x_min)])
+
+            if np.any(window_size[1:] < xy_min_window_size) or np.any(
+                np.isnan([row["x"], row["y"], row["z"]])
+            ):
+                number_skipped_spots_window_size += 1
+                continue
+
+            x_int = int(round(row["x"]))
+            y_int = int(round(row["y"]))
+            z_int = int(round(row["z"]))
+
+            if np.any(
+                [
+                    x_int < x_min,
+                    x_int >= x_max,
+                    y_int < y_min,
+                    y_int >= y_max,
+                    z_int < z_min,
+                    z_int >= z_max,
+                ]
+            ):
+                number_skipped_spots_centroid_nan += 1
+                continue
+
+            # If we reach this point, the spot is valid and we can compute its metrics
+
+            # Convert global coordinates into local patch coordinates
+            z_local = z_int - z_min
+            y_local = y_int - y_min
+            x_local = x_int - x_min
+
+            # will save the spots that passed the tests above only, the others are removed from the lists
             xmin.append(x_min)
             xmax.append(x_max)
             ymin.append(y_min)
             ymax.append(y_max)
             zmin.append(z_min)
             zmax.append(z_max)
+            spot_x.append(x_int)
+            spot_y.append(y_int)
+            spot_z.append(z_int)
 
             roundness.append(row["elongation"])
 
@@ -945,17 +995,12 @@ def spot_quality_metrics(image_3d_aligned, mask_properties):
             regions = regionprops(labeled_mask)
             object_count_list.append(len(regions))
 
-            # Convert global coordinates into local patch coordinates
-            z_local = z_int - z_min
-            y_local = y_int - y_min
-            x_local = x_int - x_min
-
+            # Check if the spot coordinates are within the bounds of the labeled mask
             label_at_point = labeled_mask[z_local, y_local, x_local]
 
             if label_at_point == 0:
                 spot_pixel_percentage.append(np.nan)
                 mean_intensity_list.append(np.nan)
-
             else:
                 region = next(r for r in regions if r.label == label_at_point)
 
@@ -969,14 +1014,27 @@ def spot_quality_metrics(image_3d_aligned, mask_properties):
             # Compute intensity distribution asymmetry
             skew_list.append(skew(patch.ravel()))
 
-            # Classify each patch as a spot or background
+        print(
+            f"Number of skipped spots (window size): {number_skipped_spots_window_size}"
+        )
+        print(
+            f"Number of skipped spots (centroid NaN): {number_skipped_spots_centroid_nan}"
+        )
+
+        # Classify each patch as a spot or background
         type_object = [1 if not np.isnan(v) else 0 for v in spot_pixel_percentage]
 
-        spots = np.zeros((len(mask_properties), 3), dtype=np.int64)
+        # assigns spot coordinates to a numpy array for downstream processing
+        spots = np.zeros((len(spot_z), 3), dtype=np.int64)
+        spots[:, 0] = np.array(spot_z).round().astype(int)
+        spots[:, 1] = np.array(spot_y).round().astype(int)
+        spots[:, 2] = np.array(spot_x).round().astype(int)
 
-        spots[:, 0] = mask_properties["z"].round().astype(int)
-        spots[:, 1] = mask_properties["y"].round().astype(int)
-        spots[:, 2] = mask_properties["x"].round().astype(int)
+        # spots = np.zeros((len(mask_properties), 3), dtype=np.int64)
+
+        # spots[:, 0] = mask_properties["z"].round().astype(int)
+        # spots[:, 1] = mask_properties["y"].round().astype(int)
+        # spots[:, 2] = mask_properties["x"].round().astype(int)
 
         flux = snr_list
 
