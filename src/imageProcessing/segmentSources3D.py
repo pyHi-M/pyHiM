@@ -916,7 +916,8 @@ def spot_quality_metrics(image_3d_aligned, mask_properties):
     number_skipped_spots_window_size = 0
     number_skipped_spots_centroid_nan = 0
 
-    xy_min_window_size = 5  # minimum size of the patch to compute metrics
+    xy_min_window_size = 5  # minimum size of the patch to compute metrics in xy
+    z_min_window_size = 5  # minimum size of the patch to compute metrics in z
 
     if len(mask_properties) > 0:
 
@@ -930,9 +931,15 @@ def spot_quality_metrics(image_3d_aligned, mask_properties):
             # does not calculate metrices for patches that are too small in XY
             window_size = np.array([(z_max - z_min), (y_max - y_min), (x_max - x_min)])
 
-            if np.any(window_size[1:] < xy_min_window_size) or np.any(
-                np.isnan([row["x"], row["y"], row["z"]])
+            if (
+                np.any(window_size[1:] < xy_min_window_size)
+                or window_size[0] < z_min_window_size
+                or np.any(np.isnan([row["x"], row["y"], row["z"]]))
             ):
+                print_log(
+                    f"$ Skipping spot at (z,y,x)=({row['z']:.2f},{row['y']:.2f},{row['x']:.2f}) "
+                    f"with window size (z,y,x)=({window_size[0]},{window_size[1]},{window_size[2]})"
+                )
                 number_skipped_spots_window_size += 1
                 continue
 
