@@ -307,19 +307,6 @@ class Localize3D:
             shift = np.array([0.0, 0.0])
             image_3d_aligned = image_3d
 
-        processed_image_filename = (
-            data_path
-            + os.sep
-            + seg_params.localize_3d_folder
-            + os.sep
-            + "data"
-            + os.sep
-            + os.path.splitext(os.path.basename(filename_to_process))[0]
-            + "_processed.npy"
-        )
-        np.save(processed_image_filename, image_3d_aligned)
-        print_log(f"$ Processed image saved to: {processed_image_filename}")
-
         # segments 3D volumes
         _, segmented_image_3d = self._segment_3d_volumes(image_3d_aligned)
 
